@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - cxf54188.github.io</title>
-    <meta name="description" content="cxf54188 的项目列表">
-    <link rel="icon" type="image/svg+xml" href="../img/yb_avatar.svg">
+    <title>小游戏合集 - cxf54188.github.io</title>
+    <meta name="description" content="cxf54188 的 25 款网页小游戏合集">
+    <link rel="icon" type="image/svg+xml" href="../../img/yb_avatar.svg">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
 
@@ -14,8 +14,6 @@
             --cyan-dim: rgba(0, 240, 255, 0.6);
             --magenta: #ff006e;
             --purple: #7b2ff7;
-            --dark: #0a0e27;
-            --darker: #050510;
             --text: #e2e8f0;
             --text-dim: #94a3b8;
         }
@@ -30,7 +28,6 @@
             position: relative;
         }
 
-        /* ========== 背景 ========== */
         .grid-bg {
             position: fixed; top:0; left:0;
             width:100%; height:100%;
@@ -108,109 +105,89 @@
         /* ========== 页面标题 ========== */
         .page-header {
             position: relative; z-index:10;
-            text-align:center; padding: 50px 20px 20px;
+            text-align:center; padding: 50px 20px 10px;
         }
         .page-header h1 {
             font-size: clamp(1.6rem, 4vw, 2.5rem);
             font-weight:700; margin-bottom:10px;
-            color:#fff;
+            background: linear-gradient(90deg, #4fc3f7, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         .page-header p {
             color: var(--text-dim);
             font-size:0.95rem; letter-spacing:1px;
         }
 
-        /* ========== 项目卡片区 ========== */
-        .projects-container {
-            position:relative; z-index:10;
-            max-width:900px; margin:0 auto;
-            padding:20px 30px 60px;
+        /* ========== 返回链接 ========== */
+        .back-link {
+            display:inline-block; margin:10px 0 0;
+            color:var(--text-dim); font-size:0.85rem;
+            padding:4px 12px; border-radius:6px;
+            background:rgba(255,255,255,0.04);
+            text-decoration:none; transition: all 0.3s;
         }
+        .back-link:hover { color:var(--cyan); background:rgba(255,255,255,0.08); }
 
-        .projects-grid {
+        /* ========== 分类按钮 ========== */
+        .categories {
+            display:flex; gap:8px; padding: 0 16px 12px;
+            overflow-x:auto; scroll-snap-type:x mandatory;
+            position:sticky; top:60px; z-index:998;
+            background: rgba(5,5,16,0.85); backdrop-filter:blur(10px);
+            padding-top:8px; padding-bottom:8px;
+        }
+        .cat-btn {
+            flex-shrink:0; padding:6px 16px; border-radius:20px;
+            border:1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            color:#ccc; font-size:13px; cursor:pointer;
+            white-space:nowrap; scroll-snap-align:start;
+            transition: all 0.2s; font-family:inherit;
+        }
+        .cat-btn.active {
+            background: linear-gradient(90deg, #4fc3f7, #a78bfa);
+            color:#fff; border-color:transparent;
+        }
+        .cat-btn:hover { background: rgba(255,255,255,0.15); }
+
+        /* ========== 游戏区域 ========== */
+        .section { margin-bottom:24px; padding:0 30px; }
+        .section h2 {
+            font-size:16px; color:var(--text-dim);
+            margin-bottom:10px; padding-left:4px;
+            border-left:3px solid var(--cyan);
+        }
+        .games-grid {
             display:grid;
-            grid-template-columns: 1fr;
-            gap:20px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap:12px;
         }
 
-        /* ========== 项目卡片 ========== */
-        .project-card {
-            position:relative;
-            display:block;
-            background: rgba(10,10,30,0.5);
-            border:1px solid rgba(0,240,255,0.1);
-            border-radius:16px;
-            padding:32px 28px;
-            text-decoration:none; color:inherit;
-            transition: all 0.35s ease;
-            overflow:hidden;
-            backdrop-filter:blur(6px);
-        }
-        .project-card::before {
-            content:''; position:absolute; inset:0;
-            background: radial-gradient(circle at 50% 0%, rgba(79,195,247,0.08), transparent 70%);
-            opacity:0; transition: opacity 0.4s;
-        }
-        .project-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(79,195,247,0.4);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 30px rgba(79,195,247,0.08);
-        }
-        .project-card:hover::before { opacity:1; }
-
-        .project-num {
-            font-size:0.72rem; color:var(--cyan-dim);
-            letter-spacing:2px; margin-bottom:8px;
-            font-family: "JetBrains Mono", monospace;
-        }
-
-        .project-card h3 {
-            font-size:1.3rem; font-weight:600;
-            margin-bottom:10px; color:#fff;
-            display:flex; align-items:center; gap:10px;
-        }
-        .project-card h3 .icon { font-size:1.5em; }
-
-        .project-card p {
-            font-size:0.88rem; color:var(--text-dim);
-            line-height:1.7; margin-bottom:16px;
-        }
-
-        .project-tags {
-            display:flex; gap:8px; flex-wrap:wrap;
-            margin-bottom:18px;
-        }
-        .tag {
-            padding:3px 12px; border-radius:12px;
-            font-size:0.72rem; letter-spacing:0.5px;
+        /* ========== 游戏卡片 ========== */
+        .game-card {
+            background: rgba(255,255,255,0.06);
             border:1px solid rgba(255,255,255,0.1);
-            color:var(--text-dim); background:rgba(255,255,255,0.02);
+            border-radius:14px; padding:16px 12px;
+            text-align:center; cursor:pointer;
+            transition: all 0.25s; position:relative;
+            overflow:hidden; text-decoration:none;
+            color:inherit; display:block;
         }
-        .tag.hot {
-            color:#f43f5e; border-color:rgba(244,63,94,0.3);
-            background:rgba(244,63,94,0.06);
+        .game-card::before {
+            content:''; position:absolute; inset:0;
+            background: radial-gradient(circle at 50% 0%, rgba(79,195,247,0.12), transparent 70%);
+            opacity:0; transition: opacity 0.3s;
         }
-        .tag.new {
-            color:#34d399; border-color:rgba(52,211,153,0.3);
-            background:rgba(52,211,153,0.06);
+        .game-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(79,195,247,0.35);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
-
-        .project-footer {
-            display:flex; align-items:center; justify-content:space-between;
-            padding-top:14px;
-            border-top:1px solid rgba(255,255,255,0.05);
-        }
-        .view-link {
-            font-size:0.85rem; color:var(--cyan);
-            letter-spacing:1px;
-        }
-        .arrow {
-            font-size:1.2rem; color:var(--text-dim);
-            transition: transform 0.3s, color 0.3s;
-        }
-        .project-card:hover .arrow {
-            transform: translateX(6px); color:var(--cyan);
-        }
+        .game-card:hover::before { opacity:1; }
+        .game-card .icon { font-size:36px; margin-bottom:6px; display:block; }
+        .game-card .name { font-size:14px; font-weight:600; margin-bottom:2px; color:#fff; }
+        .game-card .desc { font-size:11px; color:#64748b; }
 
         /* ========== 底部 ========== */
         .footer {
@@ -225,10 +202,11 @@
         @media (max-width:640px) {
             .navbar { padding:10px 16px; }
             .nav-links a { padding:6px 12px; font-size:0.8rem; }
-            .page-header { padding:30px 16px 16px; }
-            .projects-container { padding:10px 16px 60px; }
-            .project-card { padding:24px 18px; }
-            .project-card h3 { font-size:1.1rem; }
+            .page-header { padding:30px 16px 10px; }
+            .section { padding:0 16px; }
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap:8px; }
+            .game-card { padding:12px 8px; }
+            .game-card .icon { font-size:28px; }
         }
     </style>
 </head>
@@ -241,54 +219,117 @@
 
 <!-- 导航栏 -->
 <nav class="navbar">
-    <a class="nav-brand" href="../">
-        <img class="avatar-mini" src="../img/avatar.png" alt="avatar">
+    <a class="nav-brand" href="../../">
+        <img class="avatar-mini" src="../../img/avatar.png" alt="avatar">
         <span>cxf54188@github.io</span>
     </a>
     <div class="nav-links">
-        <a href="../">首页</a>
-        <a href="../blog/" class="active">项目</a>
-        <a href="../links/">友链</a>
+        <a href="../../">首页</a>
+        <a href="../../blog/" class="active">项目</a>
+        <a href="../../links/">友链</a>
     </div>
 </nav>
 
 <!-- 页面标题 -->
 <div class="page-header">
-    <h1>我的项目列表</h1>
-    <p>以下是我的项目，点击卡片查看详情</p>
+    <h1>🎮 小游戏合集</h1>
+    <p>25 款经典桌游 & 小游戏，纯前端实现，点击即玩</p>
+    <a class="back-link" href="../../blog/">← 返回项目页</a>
 </div>
 
-<!-- 项目卡片 -->
-<div class="projects-container">
-    <div class="projects-grid">
-
-        <!-- 小游戏合集 -->
-        <a class="project-card" href="games/">
-            <div class="project-num">PROJECT_01</div>
-            <h3><span class="icon">🎮</span> 小游戏合集</h3>
-            <p>25 款经典桌游 & 小游戏，纯前端实现，包含卡牌、棋类、派对、骰子、益智、动作六大分类。点击即玩，无需安装，支持手机和电脑。</p>
-            <div class="project-tags">
-                <span class="tag hot">热门</span>
-                <span class="tag">HTML</span>
-                <span class="tag">CSS</span>
-                <span class="tag">JavaScript</span>
-                <span class="tag">Canvas</span>
-            </div>
-            <div class="project-footer">
-                <span class="view-link">进入游戏合集 →</span>
-                <span class="arrow">↗</span>
-            </div>
-        </a>
-
-    </div>
+<!-- 分类按钮 -->
+<div class="categories" id="cats">
+    <button class="cat-btn active" data-cat="all">全部</button>
+    <button class="cat-btn" data-cat="card">🃏 卡牌</button>
+    <button class="cat-btn" data-cat="board">♟️ 棋类</button>
+    <button class="cat-btn" data-cat="party">🎉 派对</button>
+    <button class="cat-btn" data-cat="dice">🎲 骰子</button>
+    <button class="cat-btn" data-cat="puzzle">🧩 益智</button>
+    <button class="cat-btn" data-cat="action">⚡ 动作</button>
 </div>
+
+<!-- 游戏列表 -->
+<div class="section" data-cat="card"><h2>🃏 卡牌游戏</h2><div class="games-grid" id="grid-card"></div></div>
+<div class="section" data-cat="board"><h2>♟️ 棋类游戏</h2><div class="games-grid" id="grid-board"></div></div>
+<div class="section" data-cat="party"><h2>🎉 派对游戏</h2><div class="games-grid" id="grid-party"></div></div>
+<div class="section" data-cat="dice"><h2>🎲 骰子游戏</h2><div class="games-grid" id="grid-dice"></div></div>
+<div class="section" data-cat="puzzle"><h2>🧩 益智游戏</h2><div class="games-grid" id="grid-puzzle"></div></div>
+<div class="section" data-cat="action"><h2>⚡ 动作游戏</h2><div class="games-grid" id="grid-action"></div></div>
 
 <!-- 底部 -->
 <div class="footer">
-    © 2026 cxf54188 · Powered by GitHub Pages · <span id="clock"></span>
+    © 2026 cxf54188 & 元宝AI · 纯前端网页游戏合集 · <span id="clock"></span>
 </div>
 
 <script>
+    const GAMES = [
+        // 卡牌
+        {id:'uno',name:'UNO',icon:'🎴',desc:'经典卡牌对战',cat:'card',file:'uno.html'},
+        {id:'doudizhu',name:'斗地主',icon:'🃏',desc:'三人扑克博弈',cat:'card',file:'doudizhu.html'},
+        {id:'davinci',name:'达芬奇密码',icon:'🔐',desc:'逻辑推理猜数字',cat:'card',file:'davinci.html'},
+        {id:'exploding',name:'爆炸猫',icon:'💣',desc:'抽牌生存策略',cat:'card',file:'exploding.html'},
+        {id:'poison',name:'毒药',icon:'🧪',desc:'放药水比谁毒',cat:'card',file:'poison.html'},
+        {id:'bullhead',name:'牛头王',icon:'🐂',desc:'数字放牌避牛头',cat:'card',file:'bullhead.html'},
+        {id:'splendor',name:'璀璨宝石',icon:'💎',desc:'收集宝石买卡',cat:'card',file:'splendor.html'},
+        {id:'cabo',name:'CABO',icon:'🎴',desc:'记忆+推理卡牌',cat:'card',file:'cabo.html'},
+        {id:'loveletter',name:'情书',icon:'💌',desc:'出牌猜身份',cat:'card',file:'loveletter.html'},
+        {id:'rummikub',name:'拉密',icon:'🃏',desc:'凑顺子/组出牌',cat:'card',file:'rummikub.html'},
+        // 棋类
+        {id:'gobang',name:'五子棋',icon:'⚫',desc:'五子连珠胜',cat:'board',file:'gobang.html'},
+        {id:'tictac',name:'井字棋',icon:'✖️',desc:'三子连珠',cat:'board',file:'tictac.html'},
+        {id:'othello',name:'黑白棋',icon:'⚪',desc:'翻转对手棋子',cat:'board',file:'othello.html'},
+        {id:'roadwall',name:'路墙棋',icon:'🧱',desc:'放墙阻断对手',cat:'board',file:'roadwall.html'},
+        {id:'checkers',name:'跳棋',icon:'🔴',desc:'跳过吃子到终点',cat:'board',file:'checkers.html'},
+        {id:'mancala',name:'非洲播棋',icon:'🌍',desc:'播种捕获策略',cat:'board',file:'mancala.html'},
+        {id:'chess',name:'国际象棋',icon:'♞',desc:'经典策略对弈',cat:'board',file:'chess.html'},
+        {id:'xiangqi',name:'中国象棋',icon:'🐴',desc:'楚河汉界对阵',cat:'board',file:'xiangqi.html'},
+        {id:'go',name:'围棋',icon:'♟',desc:'围地吃子',cat:'board',file:'go.html'},
+        // 派对
+        {id:'herz',name:'德国心脏病',icon:'🍌',desc:'反应抢铃',cat:'party',file:'herz.html'},
+        {id:'spyfall',name:'谁是卧底',icon:'🕵️',desc:'描述投票淘汰',cat:'party',file:'spyfall.html'},
+        {id:'codenames',name:'行动代号',icon:'🗂️',desc:'暗号猜词合作',cat:'party',file:'codenames.html'},
+        {id:'rhythm',name:'节奏大师',icon:'🎵',desc:'音符下落按键',cat:'party',file:'rhythm.html'},
+        {id:'avalon',name:'阿瓦隆',icon:'🎭',desc:'好人vs坏人推理',cat:'party',file:'avalon.html'},
+        {id:'werewolf',name:'狼人杀',icon:'🐺',desc:'夜晚杀人白天投票',cat:'party',file:'werewolf.html'},
+        // 骰子
+        {id:'flight',name:'飞行棋',icon:'✈️',desc:'掷骰子前进',cat:'dice',file:'flight.html'},
+        {id:'yahtzee',name:'快艇骰子',icon:'🎲',desc:'掷骰组合得分',cat:'dice',file:'yahtzee.html'},
+        {id:'catan',name:'卡坦岛',icon:'🏝️',desc:'掷骰建定居点',cat:'dice',file:'catan.html'},
+        // 益智
+        {id:'snake',name:'贪吃蛇',icon:'🐍',desc:'经典贪吃蛇',cat:'puzzle',file:'snake.html'},
+        {id:'tetris',name:'俄罗斯方块',icon:'🧩',desc:'方块消除',cat:'puzzle',file:'tetris.html'},
+        {id:'mine',name:'扫雷',icon:'💣',desc:'逻辑推理扫雷',cat:'puzzle',file:'mine.html'},
+        {id:'2048',name:'2048',icon:'🔢',desc:'数字合并',cat:'puzzle',file:'2048.html'},
+        {id:'mem',name:'记忆翻牌',icon:'🎴',desc:'配对翻牌',cat:'puzzle',file:'mem.html'},
+        // 动作
+        {id:'fruit',name:'接水果',icon:'🍉',desc:'移动接水果',cat:'action',file:'fruit.html'},
+        {id:'pong',name:'弹球对战',icon:'🏓',desc:'挡板击球对战',cat:'action',file:'pong.html'},
+        {id:'breakout',name:'打砖块',icon:'🧱',desc:'弹球碎砖',cat:'action',file:'breakout.html'},
+    ];
+
+    const grids = {
+        card:'grid-card', board:'grid-board', party:'grid-party',
+        dice:'grid-dice', puzzle:'grid-puzzle', action:'grid-action'
+    };
+
+    for (const g of GAMES) {
+        const a = document.createElement('a');
+        a.className = 'game-card';
+        a.href = g.file;
+        a.innerHTML = `<span class="icon">${g.icon}</span><div class="name">${g.name}</div><div class="desc">${g.desc}</div>`;
+        document.getElementById(grids[g.cat]).appendChild(a);
+    }
+
+    document.getElementById('cats').addEventListener('click', e => {
+        if (!e.target.classList.contains('cat-btn')) return;
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        const cat = e.target.dataset.cat;
+        document.querySelectorAll('.section').forEach(s => {
+            s.style.display = (cat === 'all' || s.dataset.cat === cat) ? 'block' : 'none';
+        });
+    });
+
     const clock = document.getElementById("clock");
     function tick() {
         clock.textContent = new Date().toLocaleString("zh-CN", {
