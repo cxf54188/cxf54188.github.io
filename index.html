@@ -221,16 +221,15 @@
         /* ========== 标题 ========== */
         h1.title {
             font-size: clamp(1.5rem, 3.5vw, 2.2rem);
-            font-weight: 400;
+            font-weight: 600;
             margin-bottom: 8px;
             opacity: 0;
             animation: fadeUp 0.8s ease forwards 0.5s;
             line-height: 1.6;
-            color: var(--text-dim);
+            color: #fff;
             letter-spacing: 1px;
         }
 
-        h1.title .prompt { color: var(--cyan); margin-right: 6px; }
         h1.title .cursor   {
             display: inline-block;
             width: 3px; height: 1em;
@@ -428,7 +427,7 @@
         <span class="corner-deco tr"></span>
         <span class="corner-deco bl"></span>
         <span class="corner-deco br"></span>
-        <img class="avatar" src="https://cdn.luogu.com.cn/upload/image_hosting/v70j6st4.png" alt="avatar">
+        <img class="avatar" src="img/avatar.png" alt="avatar">
     </div>
 
     <!-- 终端风格欢迎条 -->
@@ -437,9 +436,9 @@
         <span>系统就绪</span>
     </div>
 
-    <!-- 标题（终端风格） -->
+    <!-- 标题 -->
     <h1 class="title">
-        <span class="prompt">$</span> 欢迎访问 cxf54188.github.io<span class="cursor"></span>
+        欢迎访问 cxf54188.github.io<span class="cursor"></span>
     </h1>
 
     <!-- 打字机副标题 -->
@@ -455,7 +454,7 @@
 
     <!-- 按钮 -->
     <div class="links">
-        <a class="btn primary" href="blog.html">
+        <a class="btn primary" href="blog/">
             <span class="icon">⚡</span> 进入博客
         </a>
         <a class="btn" href="#">
