@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>爆炸猫</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(135deg,#1a0a2e,#2e1065);min-height:100vh;color:#fff;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,0,0,.6);position:sticky;top:0;z-index:999;border-bottom:1px solid rgba(255,255,255,.08)}
+.topbar .avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;border:2px solid #4fc3f7}
+.topbar .info{font-size:12px;color:#94a3b8}
+.topbar .info b{color:#e2e8f0}
+.topbar .yb{width:22px;height:22px;border-radius:50%;background:#00a86b;display:inline-flex;align-items:center;justify-content:center;font-size:12px;vertical-align:middle;margin-right:2px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.overlay h2{font-size:22px;margin-bottom:10px;color:#f43f5e}
+.overlay .rules{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 18px;max-width:420px;margin-bottom:16px;text-align:left;font-size:13px;line-height:1.8;color:#cbd5e1}
+.overlay .rules b{color:#f43f5e}
+.btn{display:inline-block;padding:10px 28px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#f43f5e,#f97316);color:#fff;font-family:inherit}
+.btn:hover{transform:scale(1.05)}
+.btn-sm{padding:6px 14px;font-size:13px;border-radius:8px}
+#game{display:none;height:calc(100vh - 42px);flex-direction:column;align-items:center;padding:10px}
+.deck-area{display:flex;gap:16px;align-items:center;margin:10px 0}
+.deck{width:80px;height:110px;border-radius:12px;background:linear-gradient(135deg,#dc2626,#991b1b);border:3px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:40px;cursor:pointer;user-select:none;transition:.2s}
+.deck:hover{transform:scale(1.08);box-shadow:0 0 20px rgba(244,63,94,.6)}
+.deck.disabled{opacity:.3;cursor:not-allowed}
+.discard-pile{width:80px;height:110px;border-radius:12px;background:rgba(255,255,255,.05);border:2px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:28px;flex-direction:column}
+.discard-pile .count{font-size:11px;color:#64748b;margin-top:4px}
+.msg{font-size:14px;color:#fda4af;margin:6px 0;min-height:20px;text-align:center}
+.hand{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;max-width:95vw;min-height:100px}
+.card{width:60px;height:85px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;cursor:pointer;user-select:none;transition:.15s;border:2px solid rgba(255,255,255,.2);position:relative}
+.card:hover{transform:translateY(-8px) scale(1.06);box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.card.selected{transform:translateY(-12px);border-color:#fbbf24;box-shadow:0 0 14px rgba(251,191,36,.5)}
+.card .lbl{font-size:9px;position:absolute;bottom:3px;color:rgba(255,255,255,.7)}
+.card.exploding{background:linear-gradient(135deg,#dc2626,#7f1d1d)}
+.card.skip{background:linear-gradient(135deg,#3b82f6,#1e40af)}
+.card.shuffle{background:linear-gradient(135deg,#8b5cf6,#5b21b6)}
+.card.see{background:linear-gradient(135deg,#10b981,#064e3b)}
+.card.cat{background:linear-gradient(135deg,#f59e0b,#92400e)}
+.card.favor{background:linear-gradient(135deg,#ec4899,#9d174d)}
+.card.attack{background:linear-gradient(135deg,#ef4444,#7f1d1d)}
+.card.nope{background:linear-gradient(135deg,#6366f1,#312e81)}
+.actions{display:flex;gap:8px;margin-top:8px}
+.lives{display:flex;gap:4px;margin-top:4px}
+.life{width:20px;height:20px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;font-size:12px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:20px;text-align:center}
+.modal.show{display:flex}
+.modal h3{font-size:20px;color:#fbbf24}
+.modal .opt{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <img class="avatar" src="../../img/avatar.png" alt="cxf54188" onerror="this.style.display='none'">
+  <div class="info"><b>作者：cxf54188</b> &nbsp;|&nbsp; <span class="yb">🤖</span><b>辅助：元宝AI</b></div>
+</div>
+<div class="overlay" id="overlay">
+  <h2>💣 爆炸猫</h2>
+  <div class="rules">
+    <b>目标：</b>别抽到💣！最后存活者赢<br>
+    <b>回合：</b>抽1张牌，然后可打任意张功能牌<br>
+    <b>牌类型：</b><br>
+    💣 爆炸猫（抽到就出局，除非用拆除/跳过）<br>
+    ⏭ 跳过（免去抽牌/抵消爆炸）<br>
+    🔀 洗牌（重新洗牌堆）<br>
+    👁 预见（看牌堆顶3张）<br>
+    🐱 猫猫（5种花色，成对可拆炸弹）<br>
+    💝 索取（从他人手牌偷1张）<br>
+    ⚔️ 攻击（让下家连抽2张）<br>
+    🚫 否决（取消他人刚打的牌）<br>
+    <b>操作：</b>点牌堆抽牌 → 点手牌打牌
+  </div>
+  <button class="btn" id="startBtn">开始游戏</button>
+</div>
+<div id="game">
+  <div class="msg" id="msg">点击牌堆抽牌</div>
+  <div class="deck-area">
+    <div class="deck" id="deck" title="抽牌">💣</div>
+    <div class="discard-pile" id="discard"><span>弃牌</span><span class="count" id="discardCnt">0</span></div>
+  </div>
+  <div class="lives" id="lives"></div>
+  <div class="hand" id="hand"></div>
+  <div class="actions">
+    <button class="btn btn-sm" id="endBtn" style="background:linear-gradient(135deg,#6366f1,#312e81)">结束回合</button>
+  </div>
+</div>
+<div class="modal" id="modal"><h3 id="modalTitle"></h3><div id="modalBody"></div></div>
+<script>
+const TYPES={
+  exploding:{icon:'💣',name:'爆炸猫',cls:'exploding'},
+  skip:{icon:'⏭',name:'跳过',cls:'skip'},
+  shuffle:{icon:'🔀',name:'洗牌',cls:'shuffle'},
+  see:{icon:'👁',name:'预见',cls:'see'},
+  cat1:{icon:'🐱',name:'猫1',cls:'cat'},
+  cat2:{icon:'🐯',name:'猫2',cls:'cat'},
+  cat3:{icon:'🦁',name:'猫3',cls:'cat'},
+  cat4:{icon:'🐆',name:'猫4',cls:'cat'},
+  cat5:{icon:'🐈',name:'猫5',cls:'cat'},
+  favor:{icon:'💝',name:'索取',cls:'favor'},
+  attack:{icon:'⚔️',name:'攻击',cls:'attack'},
+  nope:{icon:'🚫',name:'否决',cls:'nope'},
+};
+let deck=[],hands=[],alive=[true,true],current=0,selected=null,extraTurns=0,gameOver=false,pendingExplode=null;
+
+function buildDeck(){
+  const d=[];
+  // 2张爆炸猫（3人游戏放2张）
+  d.push({type:'exploding'});d.push({type:'exploding'});
+  // 功能牌
+  for(let i=0;i<5;i++)d.push({type:'skip'});
+  for(let i=0;i<4;i++)d.push({type:'shuffle'});
+  for(let i=0;i<5;i++)d.push({type:'see'});
+  for(let i=0;i<4;i++)d.push({type:'favor'});
+  for(let i=0;i<4;i++)d.push({type:'attack'});
+  for(let i=0;i<5;i++)d.push({type:'nope'});
+  // 5种猫各3张
+  ['cat1','cat2','cat3','cat4','cat5'].forEach(c=>{for(let i=0;i<3;i++)d.push({type:c});});
+  return d;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function startGame(){
+  deck=shuffle(buildDeck());
+  hands=[[],[]];
+  // 每人发4张（确保没炸弹）
+  for(let p=0;p<2;p++){for(let i=0;i<4;i++){const idx=deck.findIndex(c=>c.type!=='exploding');hands[p].push(deck.splice(idx,1)[0]);}}
+  // 再加1张炸弹进牌堆（共2张在牌堆）
+  alive=[true,true];current=0;selected=null;extraTurns=0;gameOver=false;pendingExplode=null;
+  document.getElementById('game').style.display='flex';
+  render();
+}
+
+function render(){
+  // 牌堆
+  const dk=document.getElementById('deck');
+  dk.classList.toggle('disabled',!alive[current]||gameOver||pendingExplode!==null);
+  // 弃牌堆
+  document.getElementById('discardCnt').textContent=deck.length;
+  // 生命
+  const lv=document.getElementById('lives');
+  lv.innerHTML='';
+  alive.forEach((a,i)=>{if(a){const d=document.createElement('div');d.className='life';d.textContent=i===0?'🫵':'🤖';d.title=i===0?'你':'AI';lv.appendChild(d);}});
+  // 消息
+  const msg=document.getElementById('msg');
+  if(gameOver)return;
+  if(pendingExplode!==null){msg.textContent='💣 抽到爆炸猫！选一张牌拆除它！';}
+  else if(current===0)msg.textContent='你的回合 — 点牌堆抽牌，或点手牌打出';
+  else msg.textContent='AI 思考中...';
+  // 手牌
+  const hand=document.getElementById('hand');
+  hand.innerHTML='';
+  hands[0].forEach((c,i)=>{
+    const t=TYPES[c.type];
+    const div=document.createElement('div');
+    div.className='card '+t.cls+(selected===i?' selected':'');
+    div.innerHTML=t.icon+`<span class="lbl">${t.name}</span>`;
+    div.onclick=()=>{if(current===0&&!gameOver&&pendingExplode===null)playCard(0,i);};
+    hand.appendChild(div);
+  });
+}
+
+function drawCard(player){
+  if(deck.length===0){deck=shuffle(deck);}
+  const card=deck.pop();
+  if(card.type==='exploding'){
+    if(player===0){
+      // 玩家抽到炸弹，必须用手牌拆
+      const hasDefuse=hands[0].some(c=>c.type==='skip'||c.type==='see'||c.type==='shuffle'||c.type==='favor');
+      // 简化：skip/see/shuffle/favor 都算"拆除"
+      if(hasDefuse){pendingExplode=player;render();return;}
+      else{alive[0]=false;checkGameEnd();return;}
+    }else{
+      // AI 抽到炸弹
+      const defuseIdx=hands[player].findIndex(c=>['skip','see','shuffle','favor'].includes(c.type));
+      if(defuseIdx>=0){hands[player].splice(defuseIdx,1);render();return;}
+      else{alive[player]=false;checkGameEnd();return;}
+    }
+  }
+  hands[player].push(card);
+}
+
+function playCard(player,idx){
+  if(pendingExplode!==null){
+    // 必须用这张牌拆炸弹
+    const c=hands[player][idx];
+    if(['skip','see','shuffle','favor'].includes(c.type)){
+      hands[player].splice(idx,1);
+      // 把炸弹放回牌堆随机位置
+      deck.splice(Math.floor(Math.random()*deck.length),0,{type:'exploding'});
+      pendingExplode=null;
+      render();
+      if(player===0&&extraTurns===0){endTurn();}
+      return;
+    }else{alert('必须用功能牌（跳过/预见/洗牌/索取）来拆除炸弹！');return;}
+  }
+  const c=hands[player].splice(idx,1)[0];
+  const t=c.type;
+  // 不同牌效果
+  if(t==='shuffle'){deck=shuffle(deck);}
+  else if(t==='skip'){/* 跳过：本回合结束 */if(player===0)endTurn();return;}
+  else if(t==='see'){
+    // 看牌堆顶3张
+    const top=deck.slice(-3).reverse();
+    showModal('👁 牌堆顶3张',top.map((c,i)=>`${i+1}. ${TYPES[c.type].icon} ${TYPES[c.type].name}`).join('<br>'));
+  }
+  else if(t==='favor'){
+    if(player===0&&hands[1].length>0){
+      const steal=hands[1].splice(Math.floor(Math.random()*hands[1].length),1)[0];
+      hands[0].push(steal);
+    }
+  }
+  else if(t==='attack'){extraTurns=1;}
+  else if(t==='nope'){
+    // 简化：只能否决AI刚打的牌（不实现复杂逻辑）
+    showModal('🚫 否决','没有可否决的目标');
+    hands[player].push(c); // 退回
+    render();return;
+  }
+  else if(t.startsWith('cat')){
+    // 猫牌：需要成对才能拆炸弹（这里简化为直接弃掉）
+    // 检查手牌是否有同类型
+    const same=hands[player].filter(x=>x.type===t);
+    if(same.length>=1){
+      // 成对打出，拆炸弹（如果有的话）
+      const pairIdx=hands[player].findIndex(x=>x.type===t);
+      if(pairIdx>=0)hands[player].splice(pairIdx,1);
+      showModal('🐱 猫猫对！','成功拆掉一个威胁！');
+    }
+  }
+  render();
+  if(player===0&&extraTurns===0)endTurn();
+}
+
+function endTurn(){
+  if(gameOver)return;
+  if(extraTurns>0){extraTurns--;/* 当前玩家再抽 */setTimeout(()=>drawCard(current),500);render();return;}
+  // 切换到下一个存活玩家
+  let next=(current+1)%2;
+  while(!alive[next]&&next!==current)next=(next+1)%2;
+  current=next;
+  render();
+  if(current===1&&alive[1])setTimeout(aiTurn,800);
+}
+
+function aiTurn(){
+  if(gameOver||!alive[1])return;
+  // AI 简单策略：先打功能牌，再抽牌
+  const playable=hands[1].findIndex(c=>!c.type.startsWith('cat')&&c.type!=='exploding');
+  if(playable>=0&&Math.random()<0.6){
+    const c=hands[1].splice(playable,1)[0];
+    if(c.type==='shuffle')deck=shuffle(deck);
+    else if(c.type==='skip'){/* 跳过 */endTurn();return;}
+    else if(c.type==='see'){/* 看牌 */} 
+    else if(c.type==='favor'&&hands[0].length>0){
+      const steal=hands[0].splice(Math.floor(Math.random()*hands[0].length),1)[0];
+      hands[1].push(steal);
+    }
+    render();
+    setTimeout(()=>{if(alive[1]){drawCard(1);endTurn();}},600);
+  }else{
+    drawCard(1);
+    setTimeout(()=>endTurn(),500);
+  }
+  render();
+}
+
+function checkGameEnd(){
+  const survivors=alive.filter(a=>a).length;
+  if(survivors<=1){
+    gameOver=true;
+    const winner=alive[0]?0:1;
+    setTimeout(()=>alert(winner===0?'🎉 你赢了！':'🤖 AI赢了😢'),100);
+    render();
+  }
+}
+
+function showModal(title,body){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').innerHTML=body;
+  document.getElementById('modal').classList.add('show');
+  setTimeout(()=>document.getElementById('modal').classList.remove('show'),2000);
+}
+
+// 抽牌
+document.getElementById('deck').addEventListener('click',()=>{
+  if(current!==0||gameOver||pendingExplode!==null)return;
+  drawCard(0);
+  render();
+  setTimeout(()=>{if(alive[0]&&!pendingExplode)endTurn();},400);
+});
+
+document.getElementById('endBtn').onclick=()=>{
+  if(current===0&&!gameOver&&pendingExplode===null)endTurn();
+};
+
+document.getElementById('startBtn').onclick=()=>{
+  document.getElementById('overlay').style.display='none';
+  setTimeout(startGame,100);
+};
+</script>
+</body>
+</html>

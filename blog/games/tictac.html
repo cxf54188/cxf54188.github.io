@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>井字棋</title>
+<link rel="stylesheet" href="./_common.css">
+<style>
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px}
+#board{display:grid;grid-template-columns:repeat(3,80px);gap:4px;padding:10px;background:rgba(255,255,255,.05);border-radius:12px}
+.cell{width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;border-radius:8px;cursor:pointer;background:rgba(255,255,255,.08);transition:.15s}
+.cell:hover{background:rgba(255,255,255,.15)}
+.cell.x{color:#4fc3f7}
+.cell.o{color:#f43f5e}
+.hud{display:flex;gap:16px;margin:8px 0;font-size:14px;color:#94a3b8}
+.hud b{color:#4fc3f7}
+</style>
+</head>
+<body>
+<a class="back-link" href="../../index.html">← 返回主页</a>
+<div id="topbar"></div>
+<h1 style="font-size:22px;margin:6px 0">✖️ 井字棋</h1>
+<div class="hud"><span>状态：<b id="st">你的回合（X）</b></span></div>
+<div id="board"></div>
+<button class="btn btn-sm btn-danger" id="restart" style="margin-top:10px">重新开始</button>
+
+<script src="./_common.js"></script>
+<script>
+const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
+const board=document.getElementById('board');let grid,turn,over;
+function reset(){grid=Array(9).fill('');turn='X';over=false;render()}
+function render(){board.innerHTML='';grid.forEach((v,i)=>{const d=document.createElement('div');d.className='cell'+(v?' '+v.toLowerCase():'');d.textContent=v;d.onclick=()=>play(i);board.appendChild(d)});document.getElementById('st').textContent=over?'游戏结束':(turn==='X'?'你的回合（X）':'AI 思考中…')}
+function play(i){if(over||grid[i]||turn!=='X')return;grid[i]='X';if(check('X')){over=true;document.getElementById('st').textContent='🎉 你赢了！';render();return}if(grid.every(c=>c)){over=true;document.getElementById('st').textContent='平局';render();return}turn='O';render();setTimeout(ai,300)}
+function ai(){const empty=grid.map((v,i)=>v===''?[i]:[]).flat();if(!empty.length)return;let best=null;for(const i of empty){grid[i]='O';if(check('O')){best=i;break}grid[i]='';for(const j of empty){if(i===j)continue;grid[j]='X';if(check('X')){grid[j]='';best=i;break}grid[j]=''}}if(best===null)best=empty[Math.floor(Math.random()*empty.length)];grid[best]='O';if(check('O')){over=true;document.getElementById('st').textContent='💀 AI 赢了'}else if(grid.every(c=>c)){over=true;document.getElementById('st').textContent='平局'}turn='X';render()}
+function check(p){const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];return w.some(l=>l.every(i=>grid[i]===p))}
+document.getElementById('restart').onclick=reset;
+reset();
+</script>
+</body></html>

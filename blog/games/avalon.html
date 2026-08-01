@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>阿瓦隆</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+.role-card { background:#222; border:2px solid #7C4DFF; border-radius:12px; padding:16px; text-align:center; margin:12px auto; max-width:300px; }
+.role-card .role { font-size:24px; font-weight:700; color:#FFD740; margin:8px 0; }
+.quest-area { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:10px 0; }
+.quest-btn { padding:8px 16px; border-radius:8px; border:2px solid #7C4DFF; background:#222; color:#fff; cursor:pointer; font-family:inherit; font-size:13px; }
+.quest-btn.selected { background:#7C4DFF; }
+.quest-btn:hover { background:#5b3db8; }
+.vote-area { display:flex; gap:10px; justify-content:center; margin:10px 0; flex-wrap:wrap; }
+.log-box { background:#1a1a2e; border-radius:8px; padding:10px; margin:8px 0; max-height:120px; overflow-y:auto; font-size:13px; color:#ccc; }
+.btn { display:inline-block; padding:10px 28px; border-radius:10px; border:none; font-size:15px; font-weight:600; cursor:pointer; background:linear-gradient(135deg,#7C4DFF,#a78bfa); color:#fff; font-family:inherit; }
+.btn:hover { transform:scale(1.05); }
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center; }
+.overlay h2 { font-size:22px; margin-bottom:10px; color:#a78bfa; }
+.overlay p { color:#cbd5e1; font-size:13px; line-height:1.8; max-width:380px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="index.html" style="color:#7C4DFF;font-size:18px;margin-right:8px">←</a>
+  <img class="avatar" src="../../img/avatar.png" alt="cxf54188" onerror="this.style.display='none'">
+  <span class="author">作者：cxf54188</span><span class="sep">|</span><span class="author">🤖 辅助：元宝AI</span>
+</div>
+<div class="game-container">
+  <h2 class="game-title">🎭 阿瓦隆</h2>
+  <div class="info-bar"><span id="phase">准备</span><span class="score" id="score">好:0 坏:0</span></div>
+  <div class="role-card" id="roleCard" style="display:none">
+    <div>你的身份</div>
+    <div class="role" id="roleName"></div>
+    <div id="roleDesc" style="color:#aaa;font-size:12px"></div>
+  </div>
+  <div class="quest-area" id="questArea"></div>
+  <div class="vote-area" id="voteArea"></div>
+  <div class="log-box" id="logBox"></div>
+  <div class="msg" id="msg"></div>
+</div>
+<div class="overlay" id="overlay">
+  <h2>🎭 阿瓦隆</h2>
+  <p>5人局：梅林+珀西瓦尔+忠臣 vs 莫甘娜+刺客<br>组队出征，坏人可破坏任务<br>好人赢3次或坏人刺杀梅林获胜</p>
+  <button class="btn" id="startBtn">开始游戏</button>
+</div>
+<script>
+const ROLES={
+  merlin:{name:'梅林',team:'good',desc:'你知道谁是坏人，但别暴露！'},
+  percival:{name:'珀西瓦尔',team:'good',desc:'你在保护梅林'},
+  good1:{name:'忠臣',team:'good',desc:'你是好人阵营'},
+  morgana:{name:'莫甘娜',team:'evil',desc:'你是坏人，伪装成好人'},
+  assassin:{name:'刺客',team:'evil',desc:'任务结束后可刺杀梅林'}
+};
+
+let players,myRole,phase,questNum,questTeam,votes,questResults,goodWins,badWins,gameOver;
+
+function startGame(){
+  document.getElementById('overlay').style.display='none';
+  // 5个角色随机分配
+  const roles=['merlin','percival','good1','morgana','assassin'];
+  for(let i=roles.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[roles[i],roles[j]]=[roles[j],roles[i]];}
+  // 玩家是0号
+  myRole=roles[0];
+  players=roles.map(r=>({role:r,...ROLES[r]}));
+  phase='team';questNum=0;questTeam=[];votes=[];questResults=[];goodWins=0;badWins=0;gameOver=false;
+  const rc=document.getElementById('roleCard');
+  rc.style.display='block';
+  document.getElementById('roleName').textContent=ROLES[myRole].name;
+  document.getElementById('roleDesc').textContent=ROLES[myRole].desc;
+  logMsg('游戏开始！你是'+ROLES[myRole].name);
+  render();
+}
+
+function render(){
+  document.getElementById('score').textContent=`好:${goodWins} 坏:${badWins}`;
+  const qa=document.getElementById('questArea');
+  qa.innerHTML='';
+  if(phase==='team'&&!gameOver){
+    const teamSize=[2,3,2,3,3][questNum]; // 5人局各任务人数
+    qa.innerHTML=`<p style="color:#aaa;width:100%;text-align:center">选择队员（含你自己，共${teamSize}人）</p>`;
+    players.forEach((p,i)=>{
+      const b=document.createElement('button');b.className='quest-btn'+(questTeam.includes(i)?' selected':'');
+      b.textContent='玩家'+i+(i===0?'(你)':'');
+      b.onclick=()=>{
+        if(questTeam.includes(i))questTeam=questTeam.filter(x=>x!==i);
+        else if(questTeam.length<teamSize)questTeam.push(i);
+        render();
+      };
+      qa.appendChild(b);
+    });
+    const go=document.createElement('button');go.className='quest-btn';go.textContent='确认队伍';
+    go.onclick=()=>{
+      const teamSize=[2,3,2,3,3][questNum];
+      if(questTeam.length!==teamSize){alert(`需要选${teamSize}人`);return;}
+      startVote();
+    };
+    qa.appendChild(go);
+  }
+  const va=document.getElementById('voteArea');va.innerHTML='';
+  if(phase==='vote'&&!gameOver){
+    va.innerHTML='<p style="color:#aaa;width:100%;text-align:center">玩家投票是否同意该队伍</p>';
+    if(!votes.find(v=>v.player===0)){
+      ['同意','拒绝'].forEach(v=>{
+        const b=document.createElement('button');b.className='quest-btn';b.textContent=v;
+        b.onclick=()=>doVote(v==='同意');va.appendChild(b);
+      });
+    }else{
+      va.innerHTML='<p style="color:#aaa">等待AI投票...</p>';
+    }
+  }
+  if(phase==='quest'&&!gameOver){
+    if(questTeam.includes(0)){
+      va.innerHTML='<p style="color:#aaa;width:100%;text-align:center">你被选中执行任务，选择成功或破坏</p>';
+      ['成功','破坏'].forEach(v=>{
+        const b=document.createElement('button');b.className='quest-btn';b.textContent=v;
+        b.onclick=()=>doQuest(v==='成功');va.appendChild(b);
+      });
+    }else{
+      va.innerHTML='<p style="color:#aaa">等待AI执行任务...</p>';
+      setTimeout(aiQuest,800);
+    }
+  }
+  if(phase==='assassinate'&&!gameOver){
+    va.innerHTML='<p style="color:#e53935;width:100%;text-align:center">刺客选择刺杀目标</p>';
+    if(myRole==='assassin'){
+      players.forEach((p,i)=>{if(p.team==='good'){const b=document.createElement('button');b.className='quest-btn';b.textContent='刺杀玩家'+i;b.onclick=()=>doAssassinate(i);va.appendChild(b);}});
+    }else{va.innerHTML='<p style="color:#aaa">等待刺客行动...</p>';setTimeout(()=>aiAssassinate(),800);}
+  }
+  document.getElementById('msg').textContent=phase==='team'?'组队阶段':phase==='vote'?'投票阶段':phase==='quest'?'任务执行':phase==='assassinate'?'刺杀阶段':'';
+}
+
+function startVote(){
+  phase='vote';votes=[];logMsg(`第${questNum+1}次组队，开始投票`);
+  // AI投票（坏人更可能拒绝）
+  setTimeout(()=>{
+    players.forEach((p,i)=>{if(i>0){
+      let approve;
+      if(p.team==='evil')approve=Math.random()>0.6; // 坏人倾向拒绝好人的队
+      else approve=Math.random()>0.3;
+      votes.push({player:i,approve});
+    }});
+    // 玩家默认未投
+    doVote(null);
+  },600);
+}
+
+function doVote(approve){
+  if(!votes.find(v=>v.player===0)&&approve!==null)votes.push({player:0,approve});
+  if(votes.length<5)return;
+  const yes=votes.filter(v=>v.approve).length;
+  if(yes>=3){logMsg(`队伍通过！${yes}票同意`);phase='quest';}
+  else{logMsg(`队伍被拒！${yes}票同意`);questNum++;if(questNum>=5){gameOver=true;logMsg('😢 坏人赢了（5次组队失败）');}}
+  render();
+  if(phase==='quest')setTimeout(executeQuest,600);
+}
+
+function executeQuest(){
+  // AI队员自动投
+  let success=true;
+  questTeam.forEach(i=>{if(i>0&&players[i].team==='evil'&&Math.random()>0.4)success=false;});
+  finishQuest(success);
+}
+
+function doQuest(success){finishQuest(success);}
+
+function finishQuest(success){
+  questResults.push(success);
+  if(success){goodWins++;logMsg('任务成功！');}
+  else{badWins++;logMsg('任务被破坏！');}
+  if(goodWins>=3){phase='assassinate';logMsg('坏人可刺杀梅林！');}
+  else if(badWins>=3){gameOver=true;logMsg('😢 坏人赢了！');}
+  else{questNum++;phase='team';}
+  render();
+}
+
+function aiQuest(){
+  let success=true;
+  questTeam.forEach(i=>{if(players[i].team==='evil'&&Math.random()>0.4)success=false;});
+  finishQuest(success);
+}
+
+function doAssassinate(target){
+  gameOver=true;
+  if(players[target].role==='merlin'){logMsg('刺客刺中了梅林！😢 坏人赢了');}
+  else{logMsg('刺杀失败！🎉 好人赢了');}
+  render();
+}
+
+function aiAssassinate(){
+  // AI刺客猜梅林（从好人里随机）
+  const good=[];
+  players.forEach((p,i)=>{if(p.team==='good'&&p.role!=='percival')good.push(i);});
+  const target=good.length>0?good[Math.floor(Math.random()*good.length)]:0;
+  doAssassinate(target);
+}
+
+function logMsg(t){const l=document.getElementById('logBox');const p=document.createElement('p');p.textContent=t;l.appendChild(p);l.scrollTop=l.scrollHeight;}
+
+document.getElementById('startBtn').onclick=function(){
+  document.getElementById('overlay').style.display='none';
+  setTimeout(startGame,100);
+};
+</script>
+</body>
+</html>

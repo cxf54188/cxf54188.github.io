@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>飞行棋</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(135deg,#0a0e27,#1a1a3e);min-height:100vh;color:#fff;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,0,0,.6);position:sticky;top:0;z-index:999;border-bottom:1px solid rgba(255,255,255,.08)}
+.topbar .avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;border:2px solid #4fc3f7}
+.topbar .info{font-size:12px;color:#94a3b8}
+.topbar .info b{color:#e2e8f0}
+.topbar .yb{width:22px;height:22px;border-radius:50%;background:#00a86b;display:inline-flex;align-items:center;justify-content:center;font-size:12px;vertical-align:middle;margin-right:2px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.overlay h2{font-size:22px;margin-bottom:10px;color:#4ade60}
+.overlay .rules{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 18px;max-width:420px;margin-bottom:16px;text-align:left;font-size:13px;line-height:1.8;color:#cbd5e1}
+.overlay .rules b>{color:#4ade60}
+.btn{display:inline-block;padding:10px 28px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#4ade60,#16a34a);color:#0a0e27;font-family:inherit}
+.btn:hover{transform:scale(1.05)}
+.btn-sm{padding:6px 14px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+#game{display:none;height:calc(100vh - 42px);flex-direction:column;align-items:center;padding:6px}
+.dice-area{display:flex;gap:12px;align-items:center;margin:6px 0}
+.dice{width:50px;height:50px;border-radius:10px;background:linear-gradient(135deg,#f8fafc,#cbd5e1);color:#0f172a;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;user-select:none;border:2px solid #fff}
+.dice:hover{transform:scale(1.08)}
+.dice.rolling{animation:roll .5s ease}
+@keyframes roll{0%,100%{transform:rotate(0)}25%{transform:rotate(90deg)}50%{transform:rotate(180deg)}75%{transform:rotate(270deg)}}
+.board{display:grid;grid-template-columns:repeat(15,1fr);grid-template-rows:repeat(15,1fr);gap:1px;width:min(92vw,500px);aspect-ratio:1;background:rgba(255,255,255,.05);border-radius:8px;padding:2px;margin:4px 0}
+.cell{background:rgba(255,255,255,.03);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;position:relative}
+.cell.track-red{background:rgba(239,68,68,.15)}
+.cell.track-green{background:rgba(34,197,94,.15)}
+.cell.track-blue{background:rgba(59,130,246,.15)}
+.cell.track-yellow{background:rgba(234,179,8,.15)}
+.cell.home-red{background:rgba(239,68,68,.3)}
+.cell.home-green{background:rgba(34,197,94,.3)}
+.cell.home-blue{background:rgba(59,130,246,.3)}
+.cell.home-yellow{background:rgba(234,179,8,.3)}
+.cell.center{background:rgba(251,191,36,.2)}
+.piece{width:70%;height:70%;border-radius:50%;position:absolute;cursor:pointer;border:1.5px solid rgba(255,255,255,.5);transition:.3s}
+.piece.red{background:radial-gradient(circle,#fca5a5,#dc2626)}
+.piece.green{background:radial-gradient(circle,#86efac,#16a34a)}
+.piece.blue{background:radial-gradient(circle,#93c5fd,#2563eb)}
+.piece.yellow{background:radial-gradient(circle,#fde68a,#d97706)}
+.piece.selected{box-shadow:0 0 8px #fff;transform:scale(1.2)}
+.msg{font-size:13px;color:#cbd5e1;text-align:center;margin:2px 0;min-height:18px}
+.players-info{display:flex;gap:10px;font-size:11px;color:#94a3b8;margin:2px 0;flex-wrap:wrap;justify-content:center}
+.p-info{padding:2px 8px;border-radius:4px;display:flex;gap:4px;align-items:center}
+.p-info.active{background:rgba(255,255,255,.1);font-weight:600}
+.p-dot{width:8px;height:8px;border-radius:50%}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <img class="avatar" src="../../img/avatar.png" alt="cxf54188" onerror="this.style.display='none'">
+  <div class="info"><b>作者：cxf54188</b> &nbsp;|&nbsp; <span class="yb">🤖</span><b>辅助：元宝AI</b></div>
+</div>
+<div class="overlay" id="overlay">
+  <h2>✈️ 飞行棋</h2>
+  <div class="rules">
+    <b>目标：</b>把4架飞机全部飞回基地<br>
+    <b>规则：</b><br>
+    🎲 掷出 <b>6</b> 才能起飞（从基地→起点）<br>
+    沿轨道前进，到达<b>终点格</b>即回家<br>
+    踩到他人 → 把对方送回基地<br>
+    同色格是<b>安全区</b>，不会被踩<br>
+    <b>操作：</b>掷骰子 → 点选要移动的棋子
+  </div>
+  <button class="btn" id="startBtn">开始游戏</button>
+</div>
+<div id="game">
+  <div class="msg" id="msg">点骰子开始</div>
+  <div class="players-info" id="pInfo"></div>
+  <div class="board" id="board"></div>
+  <div class="dice-area">
+    <div class="dice" id="dice">🎲</div>
+    <button class="btn btn-sm" id="rollBtn">掷骰子</button>
+  </div>
+</div>
+<script>
+// 15x15 棋盘
+const COLORS=['red','green','blue','yellow'];
+const HOME_CELLS={red:[[1,1],[1,2],[2,1],[2,2]],green:[[1,13],[1,14],[2,13],[2,14]],blue:[[13,1],[13,2],[14,1],[14,2]],yellow:[[13,13],[13,14],[14,13],[14,14]]};
+const START_CELL={red:[4,1],green:[1,4],blue:[1,11],yellow:[4,14]};
+const TRACKS={red:[],green:[],blue:[],yellow:[]};
+// 简化轨道：4条L形
+function buildTracks(){
+  // 红: 从(4,1)→(4,7)→(7,7)→(7,4)→(11,4)→(11,8)→(14,8)→(14,5)→(14,2)→(11,2)→(11,5)→(8,5)→(8,8)→(11,8)→(11,11)→(7,11)→(7,14)→(4,14)→(4,10)→(1,10)→(1,7)→(4,7)→(4,4)→(7,4)→(7,1)→(4,1)
+  // 简化：每条轨道26步
+  const makeTrack=(startX,startY,color)=>{
+    const t=[];
+    // 简化成直线+转弯
+    if(color==='red'){for(let x=4;x>=1;x--)t.push([x,1]);t.push([1,2]);for(let y=2;y<=7;y++)t.push([1,y]);for(let x=2;x<=4;x++)t.push([x,7]);for(let y=8;y<=10;y++)t.push([4,y]);for(let x=5;x<=7;x++)t.push([x,10]);for(let y=9;y>=7;y--)t.push([7,y]);for(let x=6;x>=4;x--)t.push([x,7]);for(let y=6;y>=4;y--)t.push([4,y]);for(let x=5;x<=8;x++)t.push([x,4]);for(let y=5;y<=8;x=8,y++)t.push([8,y]);for(let x=9;x<=11;x++)t.push([x,8]);for(let y=7;y>=4;y--)t.push([11,y]);for(let x=10;x>=8;x--)t.push([x,4]);t.push([7,4]);}
+    // 其他颜色旋转90/180/270度
+    return t.slice(0,24);
+  };
+  TRACKS.red=makeTrack(4,1,'red');
+  // 简化：所有颜色共用同一轨道形状但起始不同
+  TRACKS.green=TRACKS.red.map(([x,y])=>[y,x]); // 旋转
+  TRACKS.blue=TRACKS.red.map(([x,y])=>[14-x,14-y]); // 旋转180
+  TRACKS.yellow=TRACKS.red.map(([x,y])=>[14-y,14-x]);
+}
+let boardState,players,current,diceVal,selectedPiece,gameOver,canRoll;
+
+function startGame(){
+  buildTracks();
+  players=COLORS.map(c=>({color:c,pieces:[0,0,0,0],home:0})); // pieces: 0=基地, 1~N=轨道上位置
+  current=0;diceVal=0;selectedPiece=null;gameOver=false;canRoll=true;
+  document.getElementById('game').style.display='flex';
+  render();
+}
+
+function render(){
+  // 棋盘
+  const b=document.getElementById('board');
+  b.innerHTML='';
+  for(let r=0;r<15;r++){
+    for(let c=0;c<15;c++){
+      const cell=document.createElement('div');
+      cell.className='cell';
+      // 中心
+      if(r>=6&&r<=8&&c>=6&&c<=8)cell.classList.add('center');
+      // 家园
+      COLORS.forEach(col=>{
+        HOME_CELLS[col].forEach(([hr,hc])=>{if(hr===r&&hc===c)cell.classList.add('home-'+col);});
+      });
+      // 轨道
+      COLORS.forEach(col=>{
+        TRACKS[col].forEach(([tx,ty],ti)=>{if(tx===r&&ty===c&&ti<TRACKS[col].length-6)cell.classList.add('track-'+col);});
+      });
+      // 终点格（轨道最后6格）
+      COLORS.forEach(col=>{
+        const end=TRACKS[col].length-1;
+        if(TRACKS[col][end]&&TRACKS[col][end][0]===r&&TRACKS[col][end][1]===c)cell.classList.add('track-'+col);
+      });
+      // 放置棋子
+      COLORS.forEach((col,pi)=>{
+        players[pi].pieces.forEach((pos,pii)=>{
+          if(pos>0&&pos<=TRACKS[col].length){
+            const trackPos=TRACKS[col][pos-1];
+            if(trackPos[0]===r&&trackPos[1]===c){
+              const p=document.createElement('div');
+              p.className='piece '+col+(selectedPiece===pi*4+pii?' selected':'');
+              p.onclick=(e)=>{e.stopPropagation();clickPiece(pi,pii);};
+              cell.appendChild(p);
+            }
+          }
+        });
+      });
+      b.appendChild(cell);
+    }
+  }
+  // 玩家信息
+  const pi=document.getElementById('pInfo');
+  pi.innerHTML='';
+  players.forEach((p,i)=>{
+    const d=document.createElement('div');
+    d.className='p-info'+(current===i?' active':'');
+    d.innerHTML=`<div class="p-dot" style="background:${i===0?'#ef4444':i===1?'#22c55e':i===2?'#3b82f6':'#eab308'}"></div>${['🫵你','🤖绿','🤖蓝','🤖黄'][i]} 基地:${4-p.pieces.filter(x=>x===0).length} 在场:${p.pieces.filter(x=>x>0).length}`;
+    pi.appendChild(d);
+  });
+  // 骰子
+  const dice=document.getElementById('dice');
+  dice.textContent=diceVal>0?diceVal:'🎲';
+  document.getElementById('rollBtn').disabled=!canRoll||gameOver||current!==0;
+  // 消息
+  const msg=document.getElementById('msg');
+  if(gameOver)return;
+  if(current===0){
+    if(canRoll)msg.textContent='你的回合 — 掷骰子';
+    else msg.textContent='点选要移动的棋子';
+  }else msg.textContent=`${['绿','蓝','黄'][current-1]}AI 思考中...`;
+}
+
+function clickPiece(pIdx,pieceIdx){
+  if(current!==0||canRoll||gameOver)return;
+  const p=players[pIdx];
+  const pos=p.pieces[pieceIdx];
+  if(pos===0)return; // 基地
+  // 检查是否是合法移动
+  const newPos=pos+diceVal;
+  if(newPos>TRACKS[p.color].length){return;} // 不能超过终点
+  selectedPiece=pIdx*4+pieceIdx;
+  // 执行移动
+  p.pieces[pieceIdx]=newPos;
+  // 检查是否到家
+  if(newPos===TRACKS[p.color].length){p.home++;p.pieces[pieceIdx]=0;}
+  // 检查踩人
+  checkLanding(pIdx,newPos);
+  // 是否再掷（掷到6）
+  if(diceVal===6){canRoll=true;selectedPiece=null;render();return;}
+  // 下一个玩家
+  nextTurn();
+}
+
+function checkLanding(moverIdx,pos){
+  if(pos<=0||pos>TRACKS[players[moverIdx].color].length)return;
+  const cell=TRACKS[players[moverIdx].color][pos-1];
+  // 检查其他玩家同位置
+  for(let i=0;i<4;i++){
+    if(i===moverIdx)continue;
+    const op=players[i];
+    op.pieces.forEach((opos,oi)=>{
+      if(opos===pos){
+        // 送回基地（简化：同位置就送回）
+        op.pieces[oi]=0;
+      }
+    });
+  }
+}
+
+function rollDice(){
+  if(!canRoll||gameOver)return;
+  canRoll=false;
+  const d=document.getElementById('dice');
+  d.classList.add('rolling');
+  setTimeout(()=>{
+    diceVal=1+Math.floor(Math.random()*6);
+    d.classList.remove('rolling');
+    d.textContent=diceVal;
+    // 检查能否移动
+    const me=players[current];
+    const movable=me.pieces.some((pos,idx)=>{
+      if(pos===0)return diceVal===6; // 起飞
+      return pos+diceVal<=TRACKS[me.color].length;
+    });
+    if(!movable){
+      document.getElementById('msg').textContent='无法移动，跳过';
+      setTimeout(()=>{if(diceVal===6)canRoll=true;else nextTurn();render();},1000);
+      render();
+      return;
+    }
+    // 起飞
+    if(diceVal===6){
+      const baseIdx=me.pieces.indexOf(0);
+      if(baseIdx>=0){me.pieces[baseIdx]=1;render();}
+      // 自动再给一次掷骰
+      setTimeout(()=>{canRoll=true;render();},500);
+    }
+    render();
+    if(current===0)document.getElementById('msg').textContent='点选要移动的棋子';
+    else setTimeout(aiTurn,800);
+  },500);
+}
+
+function aiTurn(){
+  if(gameOver)return;
+  // AI 简单策略
+  const me=players[current];
+  // 掷骰子
+  diceVal=1+Math.floor(Math.random()*6);
+  const d=document.getElementById('dice');
+  d.textContent=diceVal;
+  // 选可移动的棋子
+  const movable=[];
+  me.pieces.forEach((pos,idx)=>{
+    if(pos===0&&diceVal===6)movable.push(idx);
+    else if(pos>0&&pos+diceVal<=TRACKS[me.color].length)movable.push(idx);
+  });
+  if(movable.length===0){
+    render();
+    setTimeout(()=>nextTurn(),600);
+    return;
+  }
+  // 优先选最远的
+  movable.sort((a,b)=>me.pieces[b]-me.pieces[a]);
+  const pick=movable[0];
+  if(me.pieces[pick]===0)me.pieces[pick]=1;
+  else{
+    const np=me.pieces[pick]+diceVal;
+    if(np===TRACKS[me.color].length){me.home++;me.pieces[pick]=0;}
+    else me.pieces[pick]=np;
+    checkLanding(current,np);
+  }
+  render();
+  if(diceVal===6&&!gameOver){setTimeout(()=>{if(!gameOver)aiTurn();},700);}
+  else setTimeout(()=>{if(!gameOver)nextTurn();},700);
+}
+
+function nextTurn(){
+  if(gameOver)return;
+  // 检查胜负
+  for(let i=0;i<4;i++){if(players[i].home===4){gameOver=true;setTimeout(()=>alert(i===0?'🎉 你赢了！':`🤖 ${COLORS[i]}赢了`),100);render();return;}}
+  current=(current+1)%4;
+  canRoll=true;diceVal=0;
+  render();
+  if(current!==0&&!gameOver)setTimeout(aiTurn,600);
+}
+
+document.getElementById('rollBtn').onclick=rollDice;
+document.getElementById('startBtn').onclick=()=>{
+  document.getElementById('overlay').style.display='none';
+  setTimeout(startGame,100);
+};
+</script>
+</body>
+</html>

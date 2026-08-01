@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>德国心脏病</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(135deg,#7f1d1d,#450a0a);min-height:100vh;color:#fff;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,0,0,.6);position:sticky;top:0;z-index:999;border-bottom:1px solid rgba(255,255,255,.08)}
+.topbar .avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;border:2px solid #4fc3f7}
+.topbar .info{font-size:12px;color:#fca5a5}
+.topbar .info b{color:#fecaca}
+.topbar .yb{width:22px;height:22px;border-radius:50%;background:#00a86b;display:inline-flex;align-items:center;justify-content:center;font-size:12px;vertical-align:middle;margin-right:2px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.overlay h2{font-size:22px;margin-bottom:10px;color:#fbbf24}
+.overlay .rules{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 18px;max-width:420px;margin-bottom:16px;text-align:left;font-size:13px;line-height:1.8;color:#fecaca}
+.overlay .rules b{color:#fbbf24}
+.btn{display:inline-block;padding:10px 28px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#fbbf24,#f97316);color:#450a0a;font-family:inherit}
+.btn:hover{transform:scale(1.05)}
+.btn-sm{padding:6px 14px;font-size:13px;border-radius:8px}
+#game{display:none;height:calc(100vh - 42px);flex-direction:column;align-items:center;padding:10px}
+.center-pile{display:flex;gap:8px;justify-content:center;align-items:center;margin:10px 0;min-height:100px}
+.pile-card{width:60px;height:84px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff;border:2px solid rgba(255,255,255,.3);position:relative}
+.pile-card .cnt{position:absolute;bottom:2px;right:4px;font-size:10px;opacity:.8}
+.deck{width:70px;height:100px;border-radius:10px;background:linear-gradient(135deg,#dc2626,#991b1b);border:3px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;user-select:none}
+.deck:hover{transform:scale(1.06)}
+.bell{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,#fbbf24,#d97706);display:flex;align-items:center;justify-content:center;font-size:36px;cursor:pointer;user-select:none;border:3px solid #fef3c7;transition:.1s;margin:8px 0}
+.bell:active{transform:scale(.92)}
+.bell.disabled{opacity:.3;cursor:not-allowed}
+.scores{display:flex;gap:20px;font-size:14px;margin:6px 0}
+.scores .p{background:rgba(255,255,255,.06);padding:4px 12px;border-radius:8px}
+.scores .p.active{background:rgba(251,191,36,.3);font-weight:600}
+.msg{font-size:13px;color:#fecaca;margin:4px 0;min-height:18px;text-align:center}
+.fruit-legend{display:flex;gap:12px;font-size:12px;color:#fca5a5;margin-top:4px}
+.history{font-size:11px;color:#991b1b;margin-top:4px;max-width:300px;text-align:center}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <img class="avatar" src="../../img/avatar.png" alt="cxf54188" onerror="this.style.display='none'">
+  <div class="info"><b>作者：cxf54188</b> &nbsp;|&nbsp; <span class="yb">🤖</span><b>辅助：元宝AI</b></div>
+</div>
+<div class="overlay" id="overlay">
+  <h2>🍌 德国心脏病</h2>
+  <div class="rules">
+    <b>目标：</b>抢铃铛赢牌，最后手牌最多者输<br>
+    <b>玩法：</b><br>
+    ① 轮流翻牌到中央牌堆<br>
+    ② 当<b>某水果总数 = 5</b> 时 → 抢铃！<br>
+    ③ 抢到：收走全部中央牌<br>
+    ④ 抢错：给对方 2 张牌惩罚<br>
+    <b>水果：</b>🍌🍎🍊🍇🍒<br>
+    <b>操作：</b>点「翻牌」→ 看总数 → 抢铃
+  </div>
+  <button class="btn" id="startBtn">开始游戏</button>
+</div>
+<div id="game">
+  <div class="msg" id="msg">点翻牌开始</div>
+  <div class="scores">
+    <div class="p active" id="p0">你：<b id="s0">0</b>张</div>
+    <div class="p" id="p1">AI：<b id="s1">0</b>张</div>
+  </div>
+  <div class="center-pile" id="pile"></div>
+  <div style="display:flex;gap:12px;align-items:center">
+    <div class="deck" id="deck" title="翻牌">🂠</div>
+    <div class="bell" id="bell" title="抢铃">🔔</div>
+  </div>
+  <div class="fruit-legend" id="legend"></div>
+  <div class="history" id="history"></div>
+</div>
+<script>
+const FRUITS=['🍌','🍎','🍊','🍇','🍒'];
+const FRUIT_NAMES={🍌:'香蕉',🍎:'苹果',🍊:'橙子',🍇:'葡萄',🍒:'樱桃'};
+let playerHands,current,centerPile,gameOver,busy;
+
+function makeDeck(){
+  const d=[];
+  FRUITS.forEach(f=>{for(let i=0;i<10;i++)d.push(f);});
+  // 洗牌
+  for(let i=d.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]];}
+  return d;
+}
+
+function startGame(){
+  const deck=makeDeck();
+  // 每人发15张
+  playerHands=[[],[]];
+  for(let i=0;i<15;i++){playerHands[0].push(deck.pop());playerHands[1].push(deck.pop());}
+  // 剩余放中央
+  centerPile=deck.slice();
+  current=0;gameOver=false;busy=false;
+  document.getElementById('game').style.display='flex';
+  render();
+}
+
+function countFruits(){
+  const cnt={};
+  FRUITS.forEach(f=>cnt[f]=0);
+  centerPile.forEach(c=>{if(cnt[c]!==undefined)cnt[c]++;});
+  return cnt;
+}
+
+function render(){
+  // 中央牌堆（显示最近5张）
+  const pile=document.getElementById('pile');
+  pile.innerHTML='';
+  const show=centerPile.slice(-5);
+  show.forEach((c,i)=>{
+    const d=document.createElement('div');
+    d.className='pile-card';
+    d.style.background=['#dc2626','#16a34a','#ca8a04','#7c3aed','#0e7490'][i%5];
+    d.textContent=c;
+    d.innerHTML+=`<span class="cnt">${centerPile.length-show.length+i+1}</span>`;
+    pile.appendChild(d);
+  });
+  // 分数
+  document.getElementById('s0').textContent=playerHands[0].length;
+  document.getElementById('s1').textContent=playerHands[1].length;
+  document.getElementById('p0').classList.toggle('active',current===0&&!gameOver);
+  document.getElementById('p1').classList.toggle('active',current===1&&!gameOver);
+  // 水果统计
+  const cnt=countFruits();
+  const lg=document.getElementById('legend');
+  lg.innerHTML=FRUITS.map(f=>`${f}×${cnt[f]}`).join(' ');
+  // 消息
+  const msg=document.getElementById('msg');
+  if(gameOver)return;
+  if(current===0)msg.textContent='你的回合 — 翻牌或抢铃';
+  else msg.textContent='AI 思考中...';
+  // 按钮
+  document.getElementById('deck').style.opacity=(current===0&&!busy)?'1':'.4';
+  document.getElementById('deck').style.cursor=(current===0&&!busy)?'pointer':'not-allowed';
+}
+
+function flipCard(){
+  if(current!==0||busy||gameOver)return;
+  if(centerPile.length===0){checkGameEnd();return;}
+  busy=true;
+  const card=centerPile.pop();
+  centerPile.unshift(card); // 放顶部
+  render();
+  // 检查是否=5
+  const cnt=countFruits();
+  let matchFruit=null;
+  FRUITS.forEach(f=>{if(cnt[f]===5)matchFruit=f;});
+  if(matchFruit){
+    document.getElementById('msg').textContent=`🍌 ${FRUIT_NAMES[matchFruit]} = 5！抢铃！`;
+    // AI 有概率抢到
+    setTimeout(()=>{
+      const aiWins=Math.random()<0.5;
+      if(aiWins)aiGrab(matchFruit);
+      else{/* 玩家自己按铃 */document.getElementById('msg').textContent='🔔 快按铃！';}
+    },300);
+  }else{
+    current=1;
+    busy=false;
+    render();
+    setTimeout(aiTurn,700);
+  }
+}
+
+function aiTurn(){
+  if(gameOver)return;
+  busy=true;
+  const card=centerPile.pop();
+  centerPile.unshift(card);
+  render();
+  const cnt=countFruits();
+  let matchFruit=null;
+  FRUITS.forEach(f=>{if(cnt[f]===5)matchFruit=f;});
+  if(matchFruit){
+    setTimeout(()=>aiGrab(matchFruit),200+Math.random()*400);
+  }else{
+    // AI 也有概率误抢
+    if(Math.random()<0.05){aiGrabWrong();return;}
+    current=0;busy=false;
+    render();
+  }
+}
+
+function grab(){
+  if(busy||gameOver)return;
+  // 玩家抢铃
+  const cnt=countFruits();
+  let matchFruit=null;
+  FRUITS.forEach(f=>{if(cnt[f]===5)matchFruit=f;});
+  if(matchFruit){
+    // 抢对！收牌
+    const won=centerPile.splice(0,centerPile.length);
+    playerHands[0]=playerHands[0].concat(won);
+    document.getElementById('msg').textContent=`🎉 你抢到了！+${won.length}张`;
+    document.getElementById('history').textContent=`你收走了${won.length}张牌`;
+    current=0;busy=false;
+    render();
+    checkGameEnd();
+  }else{
+    // 抢错！给AI 2张
+    const give=playerHands[0].splice(0,2);
+    playerHands[1]=playerHands[1].concat(give);
+    document.getElementById('msg').textContent='❌ 抢错了！-2张给AI';
+    current=0;busy=false;
+    render();
+    checkGameEnd();
+  }
+}
+
+function aiGrab(fruit){
+  const cnt=countFruits();
+  if(cnt[fruit]===5){
+    const won=centerPile.splice(0,centerPile.length);
+    playerHands[1]=playerHands[1].concat(won);
+    document.getElementById('msg').textContent=`🤖 AI抢到了！+${won.length}张`;
+    document.getElementById('history').textContent=`AI收走了${won.length}张牌`;
+  }
+  current=0;busy=false;
+  render();
+  checkGameEnd();
+}
+
+function aiGrabWrong(){
+  // AI误抢
+  const give=playerHands[1].splice(0,2);
+  playerHands[0]=playerHands[0].concat(give);
+  document.getElementById('msg').textContent='🤖 AI抢错了！你+2张';
+  current=0;busy=false;
+  render();
+  checkGameEnd();
+}
+
+function checkGameEnd(){
+  if(playerHands[0].length===0){
+    gameOver=true;
+    setTimeout(()=>alert('🎉 你赢了！AI没牌了'),100);
+    render();
+  }else if(playerHands[1].length===0){
+    gameOver=true;
+    setTimeout(()=>alert('🤖 AI赢了！你没牌了'),100);
+    render();
+  }
+}
+
+document.getElementById('deck').addEventListener('click',flipCard);
+document.getElementById('bell').addEventListener('click',grab);
+
+document.getElementById('startBtn').onclick=()=>{
+  document.getElementById('overlay').style.display='none';
+  setTimeout(startGame,100);
+};
+</script>
+</body>
+</html>

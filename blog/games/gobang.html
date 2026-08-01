@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>五子棋</title>
+<link rel="stylesheet" href="./_common.css">
+<style>
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px}
+#board{display:grid;gap:0;padding:8px;background:#8b5e3c;border-radius:8px;touch-action:none}
+.cell{width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.cell:hover{background:rgba(255,255,255,.05)}
+.stone{width:24px;height:24px;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.4)}
+.stone.black{background:radial-gradient(circle at 35% 35%,#555,#000)}
+.stone.white{background:radial-gradient(circle at 35% 35%,#fff,#bbb)}
+.hud{display:flex;gap:16px;margin:8px 0;font-size:14px;color:#94a3b8;flex-wrap:wrap;justify-content:center}
+.hud b{color:#4fc3f7}
+</style>
+</head>
+<body>
+<a class="back-link" href="../../index.html">← 返回主页</a>
+<div id="topbar"></div>
+<h1 style="font-size:22px;margin:6px 0;background:linear-gradient(90deg,#333,#999);-webkit-background-clip:text;-webkit-text-fill-color:transparent">⚫ 五子棋</h1>
+<div class="hud">
+  <span>当前：<b id="turn">你（黑）</b></span>
+  <span>结果：<b id="result">-</b></span>
+</div>
+<div id="board"></div>
+<button class="btn btn-sm btn-danger" id="restart" style="margin-top:10px">重新开始</button>
+<p style="color:#64748b;font-size:12px;margin-top:6px">黑先白后，五子连珠获胜</p>
+
+<script src="./_common.js"></script>
+<script>
+const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
+const board=document.getElementById('board');
+const N=15;let grid,turn='black',over=false;
+
+function reset(){grid=Array.from({length:N},()=>Array(N).fill(null));turn='black';over=false;document.getElementById('result').textContent='-';render()}
+function render(){board.style.gridTemplateColumns=`repeat(${N},30px)`;board.innerHTML='';for(let r=0;r<N;r++)for(let c=0;c<N;c++){const d=document.createElement('div');d.className='cell';if(grid[r][c]){const s=document.createElement('div');s.className='stone '+grid[r][c];d.appendChild(s)}d.onclick=()=>play(r,c);board.appendChild(d)}document.getElementById('turn').textContent=turn==='black'?'你（黑）':'AI（白）'}
+function play(r,c){if(over||grid[r][c])return;grid[r][c]=turn;if(checkWin(r,c,turn)){over=true;document.getElementById('result').textContent=turn==='black'?'🎉 你赢了！':'💀 AI 赢了';render();return}turn=turn==='black'?'white':'black';render();if(turn==='white')setTimeout(ai,200)}
+function ai(){const m=bestMove();if(m){grid[m.r][m.c]='white';if(checkWin(m.r,m.c,'white')){over=true;document.getElementById('result').textContent='💀 AI 赢了';render();return}turn='black';render()}}
+function bestMove(){let best=null,bd=-1;for(let r=0;r<N;r++)for(let c=0;c<N;c++){if(grid[r][c])continue;const s=score(r,c,'white')+score(r,c,'black')*0.8;if(s>bd){bd=s;best={r,c}}}return best||{r:7,c:7}}
+function score(r,c,color){let total=0;const dirs=[[0,1],[1,0],[1,1],[1,-1]];for(const[d1,d2]of dirs){let cnt=1;for(let i=1;i<5;i++){const nr=r+d1*i,nc=c+d2*i;if(nr<0||nr>=N||nc<0||nc>=N||grid[nr][nc]!==color)break;cnt++}for(let i=1;i<5;i++){const nr=r-d1*i,nc=c-d2*i;if(nr<0||nr>=N||nc<0||nc>=N||grid[nr][nc]!==color)break;cnt++}if(cnt>=5)total+=100;else if(cnt===4)total+=50;else if(cnt===3)total+=20;else if(cnt===2)total+=5}return total}
+function checkWin(r,c,color){const dirs=[[0,1],[1,0],[1,1],[1,-1]];for(const[d1,d2]of dirs){let cnt=1;for(let i=1;i<5;i++){const nr=r+d1*i,nc=c+d2*i;if(nr<0||nr>=N||nc<0||nc>=N||grid[nr][nc]!==color)break;cnt++}for(let i=1;i<5;i++){const nr=r-d1*i,nc=c-d2*i;if(nr<0||nr>=N||nc<0||nc>=N||grid[nr][nc]!==color)break;cnt++}if(cnt>=5)return true}return false}
+document.getElementById('restart').onclick=reset;
+reset();
+</script>
+</body></html>
