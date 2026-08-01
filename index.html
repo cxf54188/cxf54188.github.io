@@ -6,13 +6,11 @@
     <title>cxf54188.github.io</title>
     <meta name="description" content="cxf54188 的个人网站 - 科技改变未来">
     <style>
-        /* ========== 基础重置 ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --cyan: #00f0ff;
             --cyan-dim: rgba(0, 240, 255, 0.6);
-            --cyan-glow: rgba(0, 240, 255, 0.3);
             --magenta: #ff006e;
             --purple: #7b2ff7;
             --dark: #0a0a1a;
@@ -34,7 +32,17 @@
             color: var(--text);
         }
 
-        /* ========== 科技感网格背景 ========== */
+        /* ========== 矩阵雨 ========== */
+        #matrix-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.12;
+        }
+
+        /* ========== 网格背景 ========== */
         .grid-bg {
             position: fixed;
             top: 0; left: 0;
@@ -47,29 +55,12 @@
             background-size: 60px 60px;
             animation: gridMove 20s linear infinite;
         }
-
         @keyframes gridMove {
             0%   { background-position: 0 0, 0 0; }
             100% { background-position: 60px 60px, 60px 60px; }
         }
 
-        /* ========== 扫描线 ========== */
-        .scanline {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0,0,0,0.08) 2px,
-                rgba(0,0,0,0.08) 4px
-            );
-        }
-
-        /* ========== 径向渐变光晕 ========== */
+        /* ========== 光晕 ========== */
         .glow-orb {
             position: fixed;
             border-radius: 50%;
@@ -96,7 +87,6 @@
             background: radial-gradient(circle, rgba(255,0,110,0.08), transparent 70%);
             animation: orbPulse 6s ease-in-out infinite;
         }
-
         @keyframes orbFloat {
             0%, 100% { transform: translate(0, 0); }
             50%      { transform: translate(30px, -30px); }
@@ -106,14 +96,17 @@
             50%      { opacity: 1;   transform: translate(-50%,-50%) scale(1.2); }
         }
 
-        /* ========== 矩阵雨粒子 ========== */
-        #matrix-canvas {
+        /* ========== 扫描线 ========== */
+        .scanline {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 0;
-            opacity: 0.12;
+            z-index: 9999;
+            background: repeating-linear-gradient(
+                0deg, transparent, transparent 2px,
+                rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+            );
         }
 
         /* ========== 主容器 ========== */
@@ -125,7 +118,13 @@
             max-width: 720px;
         }
 
-        /* ========== 头像 - 科技风框 ========== */
+        /* ========== 头像 ========== */
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
         .avatar-wrapper {
             position: relative;
             width: 150px; height: 150px;
@@ -147,18 +146,10 @@
             animation: conicSpin 4s linear infinite;
             z-index: -1;
         }
-
         .avatar-wrapper::after {
             filter: blur(12px);
             opacity: 0.6;
         }
-
-        @property --angle {
-            syntax: '<angle>';
-            initial-value: 0deg;
-            inherits: false;
-        }
-
         @keyframes conicSpin {
             to { --angle: 360deg; }
         }
@@ -172,7 +163,6 @@
             background: #111;
         }
 
-        /* 角落装饰 */
         .corner-deco {
             position: absolute;
             width: 20px; height: 20px;
@@ -185,7 +175,7 @@
         .corner-deco.bl { bottom: -8px; left: -8px;  border-bottom-width: 2px; border-left-width: 2px; }
         .corner-deco.br { bottom: -8px; right: -8px; border-bottom-width: 2px; border-right-width: 2px; }
 
-        /* ========== 终端风格问候 ========== */
+        /* ========== 终端欢迎条 ========== */
         .terminal-bar {
             display: inline-flex;
             align-items: center;
@@ -198,7 +188,6 @@
             opacity: 0;
             animation: fadeUp 0.8s ease forwards 0.4s;
         }
-
         .terminal-dot {
             width: 8px; height: 8px;
             border-radius: 50%;
@@ -206,12 +195,10 @@
             box-shadow: 0 0 6px var(--cyan);
             animation: dotPulse 2s ease-in-out infinite;
         }
-
         @keyframes dotPulse {
             0%, 100% { opacity: 1; }
             50%      { opacity: 0.3; }
         }
-
         .terminal-bar span {
             font-size: 0.85rem;
             color: var(--cyan-dim);
@@ -229,8 +216,7 @@
             color: #fff;
             letter-spacing: 1px;
         }
-
-        h1.title .cursor   {
+        h1.title .cursor {
             display: inline-block;
             width: 3px; height: 1em;
             background: var(--cyan);
@@ -238,7 +224,6 @@
             margin-left: 4px;
             animation: blink 1s step-end infinite;
         }
-
         @keyframes blink { 50% { opacity: 0; } }
 
         /* ========== 打字机副标题 ========== */
@@ -251,8 +236,6 @@
             animation: fadeUp 0.8s ease forwards 0.7s;
             letter-spacing: 1px;
         }
-
-        .subtitle .prefix { color: var(--cyan); margin-right: 6px; }
         .subtitle .caret {
             display: inline-block;
             width: 2px; height: 1.1em;
@@ -272,7 +255,6 @@
             opacity: 0;
             animation: fadeUp 0.8s ease forwards 0.8s;
         }
-
         .tech-tag {
             padding: 5px 14px;
             border-radius: 4px;
@@ -283,7 +265,6 @@
             color: var(--cyan-dim);
             transition: all 0.3s ease;
         }
-
         .tech-tag:hover {
             border-color: var(--cyan);
             color: var(--cyan);
@@ -291,7 +272,7 @@
             transform: translateY(-2px);
         }
 
-        /* ========== 按钮组 ========== */
+        /* ========== 按钮 ========== */
         .links {
             display: flex;
             gap: 16px;
@@ -300,7 +281,6 @@
             opacity: 0;
             animation: fadeUp 0.8s ease forwards 0.9s;
         }
-
         .btn {
             position: relative;
             display: inline-flex;
@@ -318,45 +298,29 @@
             overflow: hidden;
             letter-spacing: 1px;
         }
-
         .btn::before {
             content: '';
             position: absolute;
             top: 0; left: -100%;
             width: 100%; height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(0,240,255,0.1),
-                transparent
-            );
+            background: linear-gradient(90deg, transparent, rgba(0,240,255,0.1), transparent);
             transition: left 0.5s ease;
         }
-
         .btn:hover::before { left: 100%; }
-
         .btn:hover {
             transform: translateY(-3px);
             border-color: var(--cyan);
             color: var(--cyan);
-            box-shadow:
-                0 0 20px rgba(0,240,255,0.15),
-                inset 0 0 20px rgba(0,240,255,0.05);
+            box-shadow: 0 0 20px rgba(0,240,255,0.15), inset 0 0 20px rgba(0,240,255,0.05);
         }
-
         .btn.primary {
             background: rgba(0,240,255,0.08);
             border-color: var(--cyan);
             color: var(--cyan);
         }
-
         .btn.primary:hover {
             background: rgba(0,240,255,0.15);
             box-shadow: 0 0 30px rgba(0,240,255,0.3);
-        }
-
-        .btn .icon {
-            font-size: 1.1em;
         }
 
         /* ========== 底部状态栏 ========== */
@@ -369,7 +333,6 @@
             opacity: 0;
             animation: fadeUp 0.8s ease forwards 1.1s;
         }
-
         .status-item {
             display: flex;
             align-items: center;
@@ -378,7 +341,6 @@
             color: var(--text-dim);
             letter-spacing: 1px;
         }
-
         .status-dot {
             width: 6px; height: 6px;
             border-radius: 50%;
@@ -386,7 +348,6 @@
             box-shadow: 0 0 6px #00ff88;
             animation: dotPulse 2s ease-in-out infinite;
         }
-
         .status-divider {
             width: 1px; height: 14px;
             background: rgba(255,255,255,0.1);
@@ -486,7 +447,7 @@
 </div>
 
 <script>
-    /* ========== 矩阵雨效果 ========== */
+    /* ========== 矩阵雨 ========== */
     const canvas = document.getElementById('matrix-canvas');
     const ctx = canvas.getContext('2d');
 
@@ -505,18 +466,14 @@
     function drawMatrix() {
         ctx.fillStyle = 'rgba(5, 5, 16, 0.08)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
         ctx.font = fontSize + 'px monospace';
         for (let i = 0; i < drops.length; i++) {
             const text = chars[Math.floor(Math.random() * chars.length)];
             const x = i * fontSize;
             const y = drops[i] * fontSize;
-
-            // 头部亮青色，尾部渐暗
             const alpha = Math.min(1, drops[i] / 10);
             ctx.fillStyle = `rgba(0, 240, 255, ${alpha * 0.8})`;
             ctx.fillText(text, x, y);
-
             if (y > canvas.height && Math.random() > 0.975) {
                 drops[i] = 0;
             }
@@ -525,13 +482,12 @@
     }
     setInterval(drawMatrix, 50);
 
-    // 窗口大小变化时重置列数
     window.addEventListener('resize', () => {
         columns = Math.floor(canvas.width / fontSize);
         drops = Array(columns).fill(0).map(() => Math.random() * -100);
     });
 
-    /* ========== 打字机效果 ========== */
+    /* ========== 打字机 ========== */
     const lines = [
         "正在初始化系统... 完成 ✅",
         "正在加载用户资料... cxf54188",
@@ -543,7 +499,6 @@
 
     function type() {
         if (lineIdx >= lines.length) {
-            // 循环回到第一行
             setTimeout(() => { lineIdx = 0; charIdx = 0; type(); }, 3000);
             return;
         }
@@ -558,13 +513,14 @@
     }
     setTimeout(type, 1000);
 
-    /* ========== 实时时钟 ========== */
+    /* ========== 时钟 ========== */
     const clock = document.getElementById("clock");
     function tick() {
         const now = new Date();
-        const opts = { year:"numeric", month:"2-digit", day:"2-digit",
-                       hour:"2-digit", minute:"2-digit", second:"2-digit" };
-        clock.textContent = "⏰ " + now.toLocaleString("zh-CN", opts);
+        clock.textContent = "⏰ " + now.toLocaleString("zh-CN", {
+            year:"numeric", month:"2-digit", day:"2-digit",
+            hour:"2-digit", minute:"2-digit", second:"2-digit"
+        });
     }
     tick(); setInterval(tick, 1000);
 </script>

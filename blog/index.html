@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>项目列表 - cxf54188.github.io</title>
+    <title>我的项目 - cxf54188.github.io</title>
     <meta name="description" content="cxf54188 的项目展示页">
     <style>
-        /* ========== 基础重置 ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
@@ -30,7 +29,6 @@
             position: relative;
         }
 
-        /* ========== 背景 ========== */
         .grid-bg {
             position: fixed;
             top: 0; left: 0;
@@ -96,7 +94,6 @@
             backdrop-filter: blur(10px);
             background: rgba(5,5,16,0.6);
         }
-
         .nav-brand {
             display: flex;
             align-items: center;
@@ -106,19 +103,13 @@
             text-decoration: none;
             letter-spacing: 1px;
         }
-
         .nav-brand .avatar-mini {
             width: 32px; height: 32px;
             border-radius: 50%;
             border: 2px solid var(--cyan);
             object-fit: cover;
         }
-
-        .nav-links {
-            display: flex;
-            gap: 8px;
-        }
-
+        .nav-links { display: flex; gap: 8px; }
         .nav-links a {
             padding: 8px 18px;
             border-radius: 4px;
@@ -129,7 +120,6 @@
             transition: all 0.3s ease;
             letter-spacing: 1px;
         }
-
         .nav-links a:hover,
         .nav-links a.active {
             color: var(--cyan);
@@ -137,22 +127,19 @@
             background: rgba(0,240,255,0.05);
         }
 
-        /* ========== 页面标题区 ========== */
+        /* ========== 页面标题 ========== */
         .page-header {
             position: relative;
             z-index: 10;
             text-align: center;
             padding: 60px 20px 30px;
         }
-
         .page-header h1 {
             font-size: clamp(1.6rem, 4vw, 2.5rem);
             font-weight: 700;
             margin-bottom: 10px;
+            color: #fff;
         }
-
-        .page-header h1 .accent { color: var(--magenta); }
-
         .page-header p {
             color: var(--text-dim);
             font-size: 0.95rem;
@@ -167,14 +154,13 @@
             margin: 0 auto;
             padding: 20px 30px 80px;
         }
-
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 24px;
         }
 
-        /* ========== 单个项目卡片 ========== */
+        /* ========== 项目卡片 ========== */
         .project-card {
             position: relative;
             background: rgba(10, 10, 30, 0.7);
@@ -189,8 +175,6 @@
             flex-direction: column;
             min-height: 200px;
         }
-
-        /* 顶部装饰线 */
         .project-card::before {
             content: '';
             position: absolute;
@@ -200,35 +184,22 @@
             transform: scaleX(0);
             transition: transform 0.4s ease;
         }
-
-        .project-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        /* hover 流光 */
+        .project-card:hover::before { transform: scaleX(1); }
         .project-card::after {
             content: '';
             position: absolute;
             top: 0; left: -100%;
             width: 100%; height: 100%;
-            background: linear-gradient(
-                90deg, transparent,
-                rgba(0,240,255,0.04), transparent
-            );
+            background: linear-gradient(90deg, transparent, rgba(0,240,255,0.04), transparent);
             transition: left 0.6s ease;
         }
-
         .project-card:hover::after { left: 100%; }
-
         .project-card:hover {
             transform: translateY(-4px);
             border-color: rgba(0,240,255,0.35);
-            box-shadow:
-                0 8px 40px rgba(0,240,255,0.08),
-                inset 0 0 20px rgba(0,240,255,0.02);
+            box-shadow: 0 8px 40px rgba(0,240,255,0.08), inset 0 0 20px rgba(0,240,255,0.02);
         }
 
-        /* 项目编号 */
         .project-num {
             font-size: 0.78rem;
             color: var(--cyan);
@@ -236,8 +207,6 @@
             margin-bottom: 8px;
             opacity: 0.7;
         }
-
-        /* 项目标题 */
         .project-card h3 {
             font-size: 1.2rem;
             font-weight: 600;
@@ -247,12 +216,6 @@
             align-items: center;
             gap: 8px;
         }
-
-        .project-card h3 .icon {
-            font-size: 1.3em;
-        }
-
-        /* 项目描述 */
         .project-card p {
             font-size: 0.88rem;
             color: var(--text-dim);
@@ -260,14 +223,12 @@
             flex-grow: 1;
         }
 
-        /* 标签 */
         .project-tags {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             margin-top: 16px;
         }
-
         .tag {
             padding: 3px 10px;
             border-radius: 3px;
@@ -277,20 +238,17 @@
             background: rgba(0,240,255,0.03);
             color: var(--cyan-dim);
         }
-
         .tag.hot {
             border-color: rgba(255,0,110,0.3);
             color: var(--magenta);
             background: rgba(255,0,110,0.05);
         }
-
         .tag.new {
             border-color: rgba(0,255,136,0.3);
             color: #00ff88;
             background: rgba(0,255,136,0.05);
         }
 
-        /* 底部链接提示 */
         .project-footer {
             margin-top: 16px;
             padding-top: 14px;
@@ -299,50 +257,20 @@
             align-items: center;
             justify-content: space-between;
         }
-
         .project-footer .view-link {
             font-size: 0.8rem;
             color: var(--cyan-dim);
             transition: color 0.3s;
         }
-
-        .project-card:hover .view-link {
-            color: var(--cyan);
-        }
-
+        .project-card:hover .view-link { color: var(--cyan); }
         .project-footer .arrow {
             font-size: 1rem;
             color: var(--text-dim);
             transition: transform 0.3s, color 0.3s;
         }
-
         .project-card:hover .arrow {
             transform: translateX(4px);
             color: var(--cyan);
-        }
-
-        /* ========== 空状态 ========== */
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-            color: var(--text-dim);
-        }
-
-        .empty-state .icon-big {
-            font-size: 3rem;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        .empty-state p {
-            font-size: 0.95rem;
-            line-height: 1.8;
-        }
-
-        .empty-state .hint {
-            margin-top: 12px;
-            font-size: 0.82rem;
-            color: rgba(200,200,255,0.35);
         }
 
         /* ========== 底部 ========== */
@@ -369,7 +297,6 @@
 </head>
 <body>
 
-<!-- 背景 -->
 <div class="grid-bg"></div>
 <div class="glow-orb glow-1"></div>
 <div class="glow-orb glow-2"></div>
@@ -401,7 +328,7 @@
         <!-- 项目 1 -->
         <a class="project-card" href="#">
             <div class="project-num">PROJECT_01</div>
-            <h3><span class="icon">🌐</span> 个人网站</h3>
+            <h3><span>🌐</span> 个人网站</h3>
             <p>基于 GitHub Pages 搭建的纯静态个人站点，集成矩阵雨特效、打字机动画与科技感 UI，零成本运行。</p>
             <div class="project-tags">
                 <span class="tag hot">热门</span>
@@ -418,7 +345,7 @@
         <!-- 项目 2 -->
         <a class="project-card" href="#">
             <div class="project-num">PROJECT_02</div>
-            <h3><span class="icon">🤖</span> AI 助手</h3>
+            <h3><span>🤖</span> AI 助手</h3>
             <p>一个基于大语言模型 API 的智能对话助手，支持多轮对话、上下文记忆与自定义人设。</p>
             <div class="project-tags">
                 <span class="tag new">最新</span>
@@ -435,7 +362,7 @@
         <!-- 项目 3 -->
         <a class="project-card" href="#">
             <div class="project-num">PROJECT_03</div>
-            <h3><span class="icon">📊</span> 数据可视化</h3>
+            <h3><span>📊</span> 数据可视化</h3>
             <p>使用 ECharts 制作的交互式数据看板，支持实时数据更新、多维度筛选与导出功能。</p>
             <div class="project-tags">
                 <span class="tag">ECharts</span>
@@ -451,7 +378,7 @@
         <!-- 项目 4 -->
         <a class="project-card" href="#">
             <div class="project-num">PROJECT_04</div>
-            <h3><span class="icon">🎮</span> 小游戏合集</h3>
+            <h3><span>🎮</span> 小游戏合集</h3>
             <p>用原生 JavaScript 实现的网页小游戏集合，包括贪吃蛇、俄罗斯方块和扫雷，支持手机触屏。</p>
             <div class="project-tags">
                 <span class="tag hot">热门</span>
@@ -468,7 +395,7 @@
         <!-- 项目 5 -->
         <a class="project-card" href="#">
             <div class="project-num">PROJECT_05</div>
-            <h3><span class="icon">🔧</span> 工具箱</h3>
+            <h3><span>🔧</span> 工具箱</h3>
             <p>日常开发常用的在线工具集合：JSON 格式化、Base64 编解码、时间戳转换、正则测试等。</p>
             <div class="project-tags">
                 <span class="tag">工具</span>
@@ -484,7 +411,7 @@
         <!-- 项目 6 -->
         <a class="project-card" href="#">
             <div class="project-num">PROJECT_06</div>
-            <h3><span class="icon">📝</span> 博客系统</h3>
+            <h3><span>📝</span> 博客系统</h3>
             <p>基于 Hexo 搭建的静态博客，支持 Markdown 写作、代码高亮、标签分类与全文搜索。</p>
             <div class="project-tags">
                 <span class="tag new">最新</span>
@@ -507,7 +434,6 @@
 </div>
 
 <script>
-    /* ========== 实时时钟 ========== */
     const clock = document.getElementById("clock");
     function tick() {
         const now = new Date();
