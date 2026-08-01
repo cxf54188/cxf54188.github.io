@@ -126,6 +126,17 @@
             border-color: rgba(0,240,255,0.3);
             background: rgba(0,240,255,0.05);
         }
+        .nav-links a.nav-friend {
+            color: var(--cyan);
+            border-color: rgba(0,240,255,0.4);
+            background: rgba(0,240,255,0.06);
+            box-shadow: 0 0 10px rgba(0,240,255,0.1);
+            animation: navGlow 2.5s ease-in-out infinite;
+        }
+        @keyframes navGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(0,240,255,0.1); }
+            50%      { box-shadow: 0 0 20px rgba(0,240,255,0.25); }
+        }
 
         /* ========== 页面标题 ========== */
         .page-header {
@@ -380,7 +391,7 @@
     <div class="nav-links">
         <a href="../">首页</a>
         <a href="../blog/">项目</a>
-        <a href="../links/" class="active">友链</a>
+        <a href="../links/" class="active nav-friend">友链</a>
     </div>
 </nav>
 
