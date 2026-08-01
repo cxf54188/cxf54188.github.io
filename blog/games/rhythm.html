@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>节奏大师</title>
+<link rel="stylesheet" href="./_common.css">
+<style>
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px}
+#c{border-radius:12px;max-width:100%;touch-action:none;background:#0f172a}
+.hud{display:flex;gap:16px;margin:8px 0;font-size:14px;color:#94a3b8;flex-wrap:wrap;justify-content:center}
+.hud b{color:#4fc3f7}
+#judge{position:fixed;top:30%;left:50%;transform:translateX(-50%);font-size:28px;font-weight:900;pointer-events:none;opacity:0;transition:opacity .3s;z-index:300}
+</style>
+</head>
+<body>
+<a class="back-link" href="../../index.html">← 返回主页</a>
+<div id="topbar"></div>
+<h1 style="font-size:22px;margin:6px 0;background:linear-gradient(90deg,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent">🎵 节奏大师</h1>
+<div class="hud">
+  <span>分数：<b id="sc">0</b></span>
+  <span>连击：<b id="combo">0</b></span>
+  <span>准确率：<b id="acc">100</b>%</span>
+  <span>最高分：<b id="hi">0</b></span>
+</div>
+<canvas id="c" width="320" height="420"></canvas>
+<button class="btn btn-sm btn-danger" id="restart" style="margin-top:10px">重新开始</button>
+<p style="color:#64748b;font-size:12px;margin-top:6px">D F J K 或点击轨道</p>
+<div id="judge"></div>
+
+<script src="./_common.js"></script>
+<script>
+const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
+const C=document.getElementById('c'),X=C.getContext('2d');
+const W=320,H=420,TRACKS=4,TW=W/TRACKS,JUDGE_Y=H-60,SPEED=2.2;
+let notes=[],score=0,combo=0,total=0,hit=0,high=Store.get('rhythm_hi',0),keyHeld={},running=true;
+const COLORS=['#f43f5e','#f97316','#facc15','#34d399'];
+
+function spawn(){const t=Math.floor(Math.random()*TRACKS),y=-20;notes.push({track:t,y,id:Math.random()});total++}
+function showJudge(txt,color){const j=document.getElementById('judge');j.textContent=txt;j.style.color=color;j.style.opacity=1;setTimeout(()=>j.style.opacity=0,400)}
+function tryHit(track){
+  // 找该轨道最近的
+  let best=null,bestD=30;
+  for(const n of notes){if(n.track!==track)continue;const d=Math.abs(n.y-JUDGE_Y);if(d<bestD){bestD=d;best=n}}
+  if(!best){combo=0;updateHUD();return}
+  notes=notes.filter(n=>n!==best);
+  if(bestD<10){score+=300;combo++;hit++;showJudge('PERFECT!','#34d399')}
+  else if(bestD<20){score+=200;combo++;hit++;showJudge('GREAT','#facc15')}
+  else{score+=100;combo++;hit++;showJudge('GOOD','#a78bfa')}
+  if(score>high){high=score;Store.set('rhythm_hi',high)}
+  updateHUD();
+}
+function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('combo').textContent=combo;document.getElementById('acc').textContent=total?Math.round(hit/total*100):100;document.getElementById('hi').textContent=high}
+function step(){
+  if(!running)return;
+  notes.forEach(n=>n.y+=SPEED);
+  notes=notes.filter(n=>{if(n.y>JUDGE_Y+40){combo=0;updateHUD();return false}return true});
+  if(Math.random()<0.03)spawn();
+}
+function draw(){
+  X.fillStyle='#0f172a';X.fillRect(0,0,W,H);
+  // 轨道线
+  X.strokeStyle='rgba(255,255,255,.06)';X.lineWidth=1;
+  for(let i=1;i<TRACKS;i++){X.beginPath();X.moveTo(i*TW,0);X.lineTo(i*TW,H);X.stroke()}
+  // 判定线
+  X.strokeStyle='#4fc3f7';X.lineWidth=2;X.shadowColor='#4fc3f7';X.shadowBlur=8;
+  X.beginPath();X.moveTo(0,JUDGE_Y);X.lineTo(W,JUDGE_Y);X.stroke();X.shadowBlur=0;
+  // 音符
+  notes.forEach(n=>{X.fillStyle=COLORS[n.track];X.shadowColor=COLORS[n.track];X.shadowBlur=6;
+    X.beginPath();X.arc(n.track*TW+TW/2,n.y,12,0,Math.PI*2);X.fill();X.shadowBlur=0});
+}
+function loop(){step();draw();requestAnimationFrame(loop)}
+document.addEventListener('keydown',e=>{
+  const map={d:0,f:1,j:2,k:3};
+  const t=map[e.key.toLowerCase()];if(t===undefined)return;
+  if(keyHeld[t])return;keyHeld[t]=true;tryHit(t);
+});
+document.addEventListener('keyup',e=>{const map={d:0,f:1,j:2,k:3};const t=map[e.key.toLowerCase()];if(t!==undefined)keyHeld[t]=false});
+window.addEventListener('blur',()=>{keyHeld={}});
+C.addEventListener('touchstart',e=>{e.preventDefault();for(const t of e.changedTouches){const r=C.getBoundingClientRect(),x=(t.clientX-r.left)/r.width*W,tr=Math.min(3,Math.floor(x/TW));if(!keyHeld['t'+tr]){keyHeld['t'+tr]=true;tryHit(tr)}}},{passive:false});
+C.addEventListener('touchend',e=>{for(const t of e.changedTouches){const r=C.getBoundingClientRect(),x=(t.clientX-r.left)/r.width*W,tr=Math.min(3,Math.floor(x/TW));keyHeld['t'+tr]=false}},{passive:true});
+C.addEventListener('mousedown',e=>{const r=C.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W,tr=Math.min(3,Math.floor(x/TW));tryHit(tr)});
+document.getElementById('restart').onclick=()=>{notes=[];score=0;combo=0;total=0;hit=0;running=true;updateHUD()};
+updateHUD();requestAnimationFrame(loop);
+</script>
+</body></html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>弹球对战</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(135deg,#0a0e27,#1a1a3e);min-height:100vh;color:#fff;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,0,0,.6);position:sticky;top:0;z-index:999;border-bottom:1px solid rgba(255,255,255,.08)}
+.topbar .avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;border:2px solid #4fc3f7}
+.topbar .info{font-size:12px;color:#94a3b8}
+.topbar .info b{color:#e2e8f0}
+.topbar .yb{width:22px;height:22px;border-radius:50%;background:#00a86b;display:inline-flex;align-items:center;justify-content:center;font-size:12px;vertical-align:middle;margin-right:2px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.overlay h2{font-size:22px;margin-bottom:10px;color:#4fc3f7}
+.overlay .rules{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 18px;max-width:400px;margin-bottom:16px;text-align:left;font-size:13px;line-height:1.8;color:#cbd5e1}
+.overlay .rules b{color:#4fc3f7}
+.btn{display:inline-block;padding:10px 28px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#4fc3f7,#a78bfa);color:#0a0e27;font-family:inherit}
+.btn:hover{transform:scale(1.05)}
+#game{display:none;height:calc(100vh - 42px);flex-direction:column;align-items:center;justify-content:center}
+canvas{display:block;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);background:#0f172a}
+.score-bar{display:flex;gap:40px;font-size:18px;margin-bottom:6px;font-weight:600}
+.score-bar .you{color:#4ade60}.score-bar .ai{color:#f87171}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <img class="avatar" src="../../img/avatar.png" alt="cxf54188" onerror="this.style.display='none'">
+  <div class="info"><b>作者：cxf54188</b> &nbsp;|&nbsp; <span class="yb">🤖</span><b>辅助：元宝AI</b></div>
+</div>
+<div class="overlay" id="overlay">
+  <h2>🏓 弹球对战</h2>
+  <div class="rules">
+    <b>目标：</b>先得 <b>5 分</b>获胜<br>
+    <b>规则：</b>球碰到对方底线 = 你得分<br>
+    <b>操作：</b>鼠标/手指移动控制右挡板<br>
+    <b>技巧：</b>用挡板不同位置改变反弹角度
+  </div>
+  <button class="btn" id="startBtn">开始游戏</button>
+</div>
+<div id="game">
+  <div class="score-bar"><span class="you">你：<b id="scL">0</b></span><span class="ai">AI：<b id="scR">0</b></span></div>
+  <canvas id="c" width="700" height="420"></canvas>
+</div>
+<script>
+const cvs=document.getElementById('c'),ctx=cvs.getContext('2d');
+let W=700,H=420;
+let paddleL,paddleR,ball,scoreL,scoreR,running,keys={},mouseY;
+const WIN=5;
+
+function reset(){
+  paddleL={x:20,y:H/2-40,w:12,h:80,dy:0,speed:6};
+  paddleR={x:W-32,y:H/2-40,w:12,h:80,dy:0,speed:5};
+  ball={x:W/2,y:H/2,r:8,dx:0,dy:0,speed:5};
+  scoreL=0;scoreR=0;running=false;
+  document.getElementById('scL').textContent='0';
+  document.getElementById('scR').textContent='0';
+}
+
+function serve(toRight){
+  ball.x=W/2;ball.y=H/2;
+  const angle=(Math.random()*60-30)*Math.PI/180;
+  const dir=toRight?1:-1;
+  ball.dx=dir*ball.speed*Math.cos(angle);
+  ball.dy=ball.speed*Math.sin(angle);
+  running=true;
+}
+
+function startGame(){
+  reset();
+  document.getElementById('game').style.display='flex';
+  serve(true);
+  requestAnimationFrame(loop);
+}
+
+function loop(){
+  if(!running){
+    // 检查胜负
+    if(scoreL>=WIN||scoreR>=WIN){running=false;setTimeout(()=>alert(scoreL>=WIN?'🎉 你赢了！':'🤖 AI赢了'),100);return;}
+    return;
+  }
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+function update(){
+  // 玩家挡板（鼠标/触摸）
+  const targetY=mouseY!==undefined?mouseY:H/2;
+  paddleR.y+=(targetY-paddleR.y-paddleR.h/2)*0.15;
+  paddleR.y=Math.max(0,Math.min(H-paddleR.h,paddleR.y));
+  // AI 挡板
+  const aiCenter=paddleL.y+paddleL.h/2;
+  const ballCenter=ball.y;
+  paddleL.y+=(ballCenter-aiCenter)*0.08;
+  paddleL.y=Math.max(0,Math.min(H-paddleL.h,paddleL.y));
+  // 球移动
+  ball.x+=ball.dx;ball.y+=ball.dy;
+  // 上下墙
+  if(ball.y<ball.r){ball.y=ball.r;ball.dy*=-1;}
+  if(ball.y>H-ball.r){ball.y=H-ball.r;ball.dy*=-1;}
+  // 左挡板
+  if(ball.dx<0&&ball.x-ball.r<paddleL.x+paddleL.w&&ball.y>paddleL.y&&ball.y<paddleL.y+paddleL.h){
+    const hit=(ball.y-(paddleL.y+paddleL.h/2))/(paddleL.h/2);
+    ball.dx=Math.abs(ball.dx);
+    ball.dy=hit*4;
+    ball.x=paddleL.x+paddleL.w+ball.r;
+    ball.speed=Math.min(10,ball.speed+0.3);
+    const a=Math.atan2(ball.dy,ball.dx);const s=ball.speed;
+    ball.dx=s*Math.cos(a);ball.dy=s*Math.sin(a);
+  }
+  // 右挡板
+  if(ball.dx>0&&ball.x+ball.r>paddleR.x&&ball.y>paddleR.y&&ball.y<paddleR.y+paddleR.h){
+    const hit=(ball.y-(paddleR.y+paddleR.h/2))/(paddleR.h/2);
+    ball.dx=-Math.abs(ball.dx);
+    ball.dy=hit*4;
+    ball.x=paddleR.x-ball.r;
+    ball.speed=Math.min(10,ball.speed+0.3);
+    const a=Math.atan2(ball.dy,ball.dx);const s=ball.speed;
+    ball.dx=s*Math.cos(a);ball.dy=s*Math.sin(a);
+  }
+  // 得分
+  if(ball.x<0){scoreR++;document.getElementById('scR').textContent=scoreR;running=false;setTimeout(()=>{if(scoreR<WIN)serve(true);loop();},800);}
+  else if(ball.x>W){scoreL++;document.getElementById('scL').textContent=scoreL;running=false;setTimeout(()=>{if(scoreL<WIN)serve(false);loop();},800);}
+}
+
+function draw(){
+  ctx.fillStyle='#0f172a';ctx.fillRect(0,0,W,H);
+  // 中线
+  ctx.strokeStyle='rgba(255,255,255,.1)';ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.stroke();ctx.setLineDash([]);
+  // 挡板
+  ctx.fillStyle='#4ade60';ctx.fillRect(paddleR.x,paddleR.y,paddleR.w,paddleR.h);
+  ctx.fillStyle='#f87171';ctx.fillRect(paddleL.x,paddleL.y,paddleL.w,paddleL.h);
+  // 球
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();
+  // 粒子
+  ctx.fillStyle='rgba(255,255,255,.3)';ctx.beginPath();ctx.arc(ball.x-ball.dx*2,ball.y-ball.dy*2,ball.r*0.6,0,Math.PI*2);ctx.fill();
+}
+
+cvs.addEventListener('mousemove',e=>{const r=cvs.getBoundingClientRect();mouseY=(e.clientY-r.top)*H/r.height;});
+cvs.addEventListener('touchmove',e=>{e.preventDefault();const r=cvs.getBoundingClientRect();mouseY=(e.touches[0].clientY-r.top)*H/r.height;},{passive:false});
+
+document.getElementById('startBtn').onclick=()=>{
+  document.getElementById('overlay').style.display='none';
+  setTimeout(startGame,100);
+};
+</script>
+</body>
+</html>

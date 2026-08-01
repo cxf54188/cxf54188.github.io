@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-C-N">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>国际象棋</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px}
+#board{display:grid;grid-template-columns:repeat(8,48px);gap:0;padding:6px;background:rgba(255,255,255,.05);border-radius:10px}
+.sq{width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;user-select:none}
+.sq.light{background:#f0d9b5}.sq.dark{background:#b58863}
+.sq.sel{box-shadow:inset 0 0 0 3px #4fc3f7}
+.sq.valid{box-shadow:inset 0 0 0 2px #34d399}
+.hud{display:flex;gap:16px;margin:8px 0;font-size:14px;color:#94a3b8}
+.hud b{color:#4fc3f7}
+.btn{display:inline-block;padding:8px 20px;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#f43f5e,#dc2626);color:#fff;font-family:inherit}
+.btn:hover{transform:scale(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.overlay h2{font-size:22px;margin-bottom:10px;color:#a78bfa}
+.overlay p{color:#cbd5e1;font-size:13px;line-height:1.8;max-width:380px}
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">← 返回主页</a>
+<div id="topbar"></div>
+<h1 style="font-size:22px;margin:6px 0">♞ 国际象棋</h1>
+<div class="hud"><span>状态：<b id="st">你（白）先手</b></span></div>
+<div id="board"></div>
+<button class="btn" id="restart" style="margin-top:10px">重新开始</button>
+
+<script src="_common.js"></script>
+<script>
+const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
+const PIECES={wK:'♔',wQ:'♕',wR:'♖',wB:'♗',wN:'♘',wP:'♙',bK:'♚',bQ:'♛',bR:'♜',bB:'♝',bN:'♞',bP:'♟'};
+let board,cur,sel,valid,over;
+
+function reset(){
+  board=[
+    ['bR','bN','bB','bQ','bK','bB','bN','bR'],
+    ['bP','bP','bP','bP','bP','bP','bP','bP'],
+    ['','','','','','','',''],
+    ['','','','','','','',''],
+    ['','','','','','','',''],
+    ['','','','','','','',''],
+    ['wP','wP','wP','wP','wP','wP','wP','wP'],
+    ['wR','wN','wB','wQ','wK','wB','wN','wR']
+  ];
+  cur='w';over=false;sel=null;valid=[];render();
+}
+
+function inB(r,c){return r>=0&&r<8&&c>=0&&c<8;}
+
+function movesFor(r,c){
+  const p=board[r][c];if(!p)return[];
+  const color=p[0],type=p[1];
+  const opp=color==='w'?'b':'w';
+  const dirs={N:[-1,0],S:[1,0],E:[0,1],W:[0,-1],NE:[-1,1],NW:[-1,-1],SE:[1,1],SW:[1,-1]};
+  const res=[];
+  function slide(d){
+    const[dr,dc]=dirs[d];let nr=r+dr,nc=c+dc;
+    while(inB(nr,nc)&&!board[nr][nc]){res.push([nr,nc]);nr+=dr;nc+=dc;}
+    if(inB(nr,nc)&&board[nr][nc][0]===opp)res.push([nr,nc]);
+  }
+  function step(d){
+    const[dr,dc]=dirs[d];const nr=r+dr,nc=c+dc;
+    if(inB(nr,nc)&&(!board[nr][nc]||board[nr][nc][0]===opp))res.push([nr,nc]);
+  }
+  switch(type){
+    case'P':{
+      const dir=color==='w'?-1:1;
+      const startRow=color==='w'?6:1;
+      if(inB(r+dir,c)&&!board[r+dir][c]){
+        res.push([r+dir,c]);
+        if(r===startRow&&!board[r+dir*2][c])res.push([r+dir*2,c]);
+      }
+      for(const dc of[-1,1]){
+        const nr=r+dir,nc=c+dc;
+        if(inB(nr,nc)&&board[nr][nc]&&board[nr][nc][0]===opp)res.push([nr,nc]);
+      }
+      break;
+    }
+    case'N':{
+      for(const[mr,mc] of[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]){
+        const nr=r+mr,nc=c+mc;
+        if(inB(nr,nc)&&(!board[nr][nc]||board[nr][nc][0]===opp))res.push([nr,nc]);
+      }
+      break;
+    }
+    case'B':{for(const d of['NE','NW','SE','SW'])slide(d);break;}
+    case'R':{for(const d of['N','S','E','W'])slide(d);break;}
+    case'Q':{for(const d of['N','S','E','W','NE','NW','SE','SW'])slide(d);break;}
+    case'K':{for(const d of['N','S','E','W','NE','NW','SE','SW'])step(d);break;}
+  }
+  return res;
+}
+
+function click(r,c){
+  if(over||cur!=='w')return;
+  if(sel){
+    if(valid.some(([a,b])=>a===r&&b===c){move(sel.r,sel.c,r,c);return;}
+    if(board[r][c]&&board[r][c][0]==='w'){sel={r,c};valid=movesFor(r,c);render();return;}
+    sel=null;valid=[];render();return;
+  }
+  if(board[r][c]&&board[r][c][0]==='w'){sel={r,c};valid=movesFor(r,c);render();}
+}
+
+function move(fr,fc,tr,tc){
+  const p=board[fr][fc];
+  board[fr][fc]='';
+  board[tr][tc]=p;
+  // 升变
+  if(p==='wP'&&tr===0)board[tr][tc]='wQ';
+  if(p==='bP'&&tr===7)board[tr][tc]='bQ';
+  sel=null;valid=[];cur='b';render();
+  if(checkEnd())return;
+  setTimeout(ai,400);
+}
+
+function ai(){
+  if(over)return;
+  const my='b';const all=[];
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    if(board[r][c]&&board[r][c][0]===my){
+      const m=movesFor(r,c);
+      m.forEach(x=>all.push({fr:r,fc:c,tr:x[0],tc:x[1]}));
+    }
+  }
+  if(!all.length){endGame('w');return;}
+  // 优先吃子
+  const caps=all.filter(m=>board[m.tr][m.tc]!=='');
+  const pick=caps.length>0&&Math.random()<0.7?caps[Math.floor(Math.random()*caps.length)]:all[Math.floor(Math.random()*all.length)];
+  const p=board[pick.fr][pick.fc];
+  board[pick.fr][pick.fc]='';
+  board[pick.tr][pick.tc]=p;
+  if(p==='bP'&&pick.tr===0)board[pick.tr][pick.tc]='bQ';
+  cur='w';render();
+  checkEnd();
+}
+
+function checkEnd(){
+  // 检查当前方是否有合法步
+  const color=cur;let any=false;
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    if(board[r][c]&&board[r][c][0]===color&&movesFor(r,c).length){any=true;break;}
+  }
+  if(!any){
+    over=true;
+    const winner=color==='w'?'💀 AI 赢了':'🎉 你赢了';
+    document.getElementById('st').textContent=winner;
+    render();return true;
+  }
+  return false;
+}
+
+function render(){
+  const b=document.getElementById('board');b.innerHTML='';
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    const d=document.createElement('div');
+    d.className='sq '+(r+c)%2===0?'light':'dark'+(sel&&sel.r===r&&sel.c===c?' sel':'')+(valid.some(([a,b])=>a===r&&b===c)?' valid':'');
+    if(board[r][c])d.textContent=PIECES[board[r][c]];
+    d.onclick=()=>click(r,c);b.appendChild(d);
+  }
+  document.getElementById('st').textContent=over?'结束':(cur==='w'?'你的回合（白）':'AI 思考中…');
+}
+
+document.getElementById('restart').onclick=reset;
+reset();
+</script>
+</body></html>

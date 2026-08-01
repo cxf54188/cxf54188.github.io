@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-C-N">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>达芬奇密码</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+body{display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:8px}
+#board{display:flex;gap:8px;padding:12px;background:rgba(255,255,255,.03);border-radius:12px;flex-wrap:wrap;justify-content:center;max-width:500px}
+.tile{width:36px;height:50px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;cursor:pointer;color:white;border:2px solid rgba(255,255,255,.2);user-select:none;transition:.15s}
+.tile:hover{transform:translateY(-3px)}
+.tile.hidden{background:rgba(100,100,100,.5)!important;color:transparent}
+.tile.mine{background:rgba(244,63,94,.2)!important}
+.tile.opponent{background:rgba(59,130,246,.2)!important}
+.hud{display:flex;gap:12px;margin:6px 0;font-size:13px;color:#94a3b8;flex-wrap:wrap;justify-content:center}
+.hud b{color:#4fc3f7}
+.btn{display:inline-block;padding:8px 20px;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#4fc3f7,#a78bfa);color:#0a0e27;font-family:inherit}
+.btn:hover{transform:scale(1.05)}
+.btn-danger{background:linear-gradient(135deg,#f43f5e,#dc2626);color:#fff}
+.btn-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;justify-content:center}
+#guessArea{display:none;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap;justify-content:center}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.overlay h2{font-size:22px;margin-bottom:10px;color:#a78bfa}
+.overlay p{color:#cbd5e1;font-size:13px;line-height:1.8;max-width:380px}
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">← 返回主页</a>
+<div id="topbar"></div>
+<h1 style="font-size:22px;margin:6px 0">🔐 达芬奇密码</h1>
+<div class="hud">
+  <span>回合：<b id="turn">你</b></span>
+  <span>状态：<b id="st">猜对手的数字</b></span>
+</div>
+<div id="board"></div>
+<div class="btn-row">
+  <button class="btn" id="guessBtn">猜一个数字</button>
+  <button class="btn btn-danger" id="restart">重来</button>
+</div>
+<div id="guessArea">
+  <span style="font-size:13px;color:#94a3b8">选一个对手数字：</span>
+  <div id="guessTiles" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+</div>
+
+<script src="_common.js"></script>
+<script>
+const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
+let myTiles,oppTiles,cur,revealed,over;
+
+function makeTiles(){
+  const t=[];
+  for(let i=0;i<5;i++){
+    t.push({val:Math.floor(Math.random()*6)+1,color:Math.random()<0.5?'b':'r'});
+  }
+  return t;
+}
+
+function reset(){
+  myTiles=makeTiles();
+  oppTiles=makeTiles();
+  cur='you';over=false;revealed={mine:new Set(),opp:new Set()};
+  document.getElementById('guessArea').style.display='none';
+  updateHUD();render();
+}
+
+function render(){
+  const b=document.getElementById('board');
+  b.innerHTML='';
+  const mineLabel=document.createElement('div');
+  mineLabel.style.cssText='width:100%;text-align:center;font-size:12px;color:#94a3b8;margin-bottom:4px';
+  mineLabel.textContent='你的（隐藏）';
+  b.appendChild(mineLabel);
+  myTiles.forEach((t,i)=>{
+    const d=document.createElement('div');
+    d.className='tile hidden mine';
+    d.textContent=t.color==='r'?t.val+'🔴':t.val+'🔵';
+    d.onclick=()=>{};
+    b.appendChild(d);
+  });
+  const oppLabel=document.createElement('div');
+  oppLabel.style.cssText='width:100%;text-align:center;font-size:12px;color:#94a3b8;margin:6px 0 4px';
+  oppLabel.textContent="对手的";
+  b.appendChild(oppLabel);
+  oppTiles.forEach((t,i)=>{
+    const d=document.createElement('div');
+    const rev=revealed.opp.has(i);
+    d.className='tile opponent'+(rev?'':' hidden');
+    d.textContent=rev?(t.color==='r'?t.val+'🔴':t.val+'🔵'):'?';
+    d.onclick=()=>{if(cur!=='you'||over||rev)return;guessAt(i);};
+    b.appendChild(d);
+  });
+}
+
+function guessAt(idx){
+  const t=oppTiles[idx];
+  // 50% 正确率（简化）
+  const correct=Math.random()<0.5;
+  if(correct){
+    revealed.opp.add(idx);
+    document.getElementById('st').textContent='🎉 猜对了！继续';
+    render();checkWin();
+  }else{
+    document.getElementById('st').textContent='❌ 猜错了，换对手';
+    cur='ai';render();
+    setTimeout(aiTurn,800);
+  }
+}
+
+function aiTurn(){
+  if(over)return;
+  const hidden=[];
+  myTiles.forEach((t,i)=>{if(!revealed.mine.has(i))hidden.push(i);});
+  if(!hidden.length){endGame(true);return;}
+  const idx=hidden[Math.floor(Math.random()*hidden.length)];
+  const correct=Math.random()<0.4;
+  if(correct){
+    revealed.mine.add(idx);
+    document.getElementById('st').textContent='💀 AI 猜对了你的一个数字';
+    render();checkWin();
+  }else{
+    document.getElementById('st').textContent='✅ AI 猜错了，轮到你了';
+    cur='you';
+  }
+  render();
+}
+
+function checkWin(){
+  const mAll=revealed.mine.size===5;
+  const aAll=revealed.opp.size===5;
+  if(mAll||aAll){endGame(aAll&&!mAll);}
+}
+
+function endGame(youWin){
+  over=true;
+  document.getElementById('st').textContent=youWin?'🎉 你赢了！':'💀 AI 赢了';
+  // 全部亮开
+  myTiles.forEach((t,i)=>revealed.mine.add(i));
+  oppTiles.forEach((t,i)=>revealed.opp.add(i));
+  render();
+}
+
+function updateHUD(){
+  document.getElementById('turn').textContent=over?'结束':(cur==='you'?'你':'AI');
+}
+
+document.getElementById('guessBtn').onclick=()=>{
+  if(cur!=='you'||over)return;
+  const ga=document.getElementById('guessArea');
+  ga.style.display='flex';
+  const gt=document.getElementById('guessTiles');
+  gt.innerHTML='';
+  oppTiles.forEach((t,i)=>{
+    if(revealed.opp.has(i))return;
+    const d=document.createElement('div');
+    d.className='tile opponent';
+    d.style.cursor='pointer';
+    d.textContent=t.color==='r'?t.val+'🔴':t.val+'🔵';
+    d.onclick=()=>{guessAt(i);ga.style.display='none';};
+    gt.appendChild(d);
+  });
+};
+
+document.getElementById('restart').onclick=reset;
+reset();
+</script>
+</body></html>

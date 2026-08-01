@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>俄罗斯方块</title>
+<link rel="stylesheet" href="./_common.css">
+<style>
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px}
+canvas{border-radius:12px;max-width:100%}
+.hud{display:flex;gap:16px;margin:8px 0;font-size:14px;color:#94a3b8;flex-wrap:wrap;justify-content:center}
+.hud b{color:#4fc3f7}
+</style>
+</head>
+<body>
+<a class="back-link" href="../../index.html">← 返回主页</a>
+<div id="topbar"></div>
+<h1 style="font-size:22px;margin:6px 0;background:linear-gradient(90deg,#34d399,#4fc3f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent">🧩 俄罗斯方块</h1>
+<div class="hud">
+  <span>分数：<b id="sc">0</b></span>
+  <span>行数：<b id="ln">0</b></span>
+  <span>等级：<b id="lv">1</b></span>
+  <span>最高分：<b id="hi">0</b></span>
+</div>
+<canvas id="c" width="240" height="400"></canvas>
+<button class="btn btn-sm btn-danger" id="restart" style="margin-top:10px">重新开始</button>
+<p style="color:#64748b;font-size:12px;margin-top:6px">← → 移动 · ↑旋转 · ↓加速 · 空格硬降</p>
+
+<script src="./_common.js"></script>
+<script>
+const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
+const C=document.getElementById('c'),X=C.getContext('2d');
+const COLS=10,ROWS=20,SZ=24;
+let board,piece,score=0,lines=0,level=1,high=Store.get('tetris_hi',0),running=true,dropT=0,dropI=800;
+
+const SHAPES=[
+  [[1,1,1,1]], // I
+  [[1,1],[1,1]], // O
+  [[0,1,0],[1,1,1]], // T
+  [[1,0,0],[1,1,1]], // L
+  [[0,0,1],[1,1,1]], // J
+  [[0,1,1],[1,1,0]], // S
+  [[1,1,0],[0,1,1]], // Z
+];
+const COLS7=['#06b6d4','#facc15','#a78bfa','#f97316','#3b82f6','#34d399','#f43f5e'];
+
+function newPiece(){const i=Math.floor(Math.random()*7);piece={shape:SHAPES[i],color:COLS7[i],x:Math.floor(COLS/2)-1,y:0}}
+function reset(){board=Array.from({length:ROWS},()=>Array(COLS).fill(0));score=0;lines=0;level=1;dropI=800;running=true;newPiece();updateHUD()}
+function collide(p,dx,dy){for(let r=0;r<p.shape.length;r++)for(let c=0;c<p.shape[r].length;c++){if(!p.shape[r][c])continue;const nx=p.x+c+dx,ny=p.y+r+dy;if(nx<0||nx>=COLS||ny>=ROWS)return true;if(ny>=0&&board[ny][nx])return true}return false}
+function merge(){for(let r=0;r<piece.shape.length;r++)for(let c=0;c<piece.shape[r].length;c++){if(!piece.shape[r][c])continue;const y=piece.y+r,x=piece.x+c;if(y>=0)board[y][x]=piece.color}clearLines()}
+function clearLines(){let cleared=0;for(let r=ROWS-1;r>=0;r--){if(board[r].every(c=>c)){board.splice(r,1);board.unshift(Array(COLS).fill(0));cleared++;r++}}}if(cleared){lines+=cleared;score+=cleared*100*level;level=Math.floor(lines/10)+1;dropI=Math.max(100,800-level*80);updateHUD()}}
+function move(dx,dy){if(!collide(piece,dx,dy)){piece.x+=dx;piece.y+=dy;return true}return false}
+function rotate(){const s=piece.shape,m=s.length,n=s[0].length;const r=Array.from({length:n},()=>Array(m).fill(0));for(let i=0;i<m;i++)for(let j=0;j<n;j++)r[j][m-1-i]=s[i][j];const old=piece.shape;piece.shape=r;if(collide(piece,0,0)){piece.shape=old}}
+function step(){if(!move(0,1)){merge();newPiece();if(collide(piece,0,0)){running=false;if(score>high){high=score;Store.set('tetris_hi',high)}updateHUD();alert('💀 游戏结束 得分:'+score)}}}
+function draw(){X.fillStyle='#0f172a';X.fillRect(0,0,COLS*SZ,ROWS*SZ);for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){if(board[r][c]){X.fillStyle=board[r][c];X.fillRect(c*SZ+1,r*SZ+1,SZ-2,SZ-2)}}if(piece)for(let r=0;r<piece.shape.length;r++)for(let c=0;c<piece.shape[r].length;c++){if(piece.shape[r][c]){X.fillStyle=piece.color;X.fillRect((piece.x+c)*SZ+1,(piece.y+r)*SZ+1,SZ-2,SZ-2)}}}
+function loop(t){if(running&&t-dropT>dropI){dropT=t;step()}draw();requestAnimationFrame(loop)}
+function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('ln').textContent=lines;document.getElementById('lv').textContent=level;document.getElementById('hi').textContent=high}
+document.addEventListener('keydown',e=>{if(!running)return;switch(e.key){case'ArrowLeft':move(-1,0);break;case'ArrowRight':move(1,0);break;case'ArrowDown':move(0,1);break;case'ArrowUp':rotate();break;case' ':e.preventDefault();while(move(0,1)){}step();break}});
+document.getElementById('restart').onclick=reset;
+reset();requestAnimationFrame(loop);
+</script>
+</body></html>

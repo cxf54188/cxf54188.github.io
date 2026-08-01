@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-C-N">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>💌 情书</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+.hand-cards { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; min-height:140px; }
+.lcard { width:80px; height:110px; border-radius:8px; border:2px solid #e53935; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:28px; cursor:pointer; transition:all .2s; background:linear-gradient(135deg,#fce4ec,#f8bbd0); color:#c62828; }
+.lcard:hover { transform:translateY(-8px) scale(1.05); box-shadow:0 8px 20px rgba(229,57,53,.4); }
+.discard-pile { display:flex; gap:6px; justify-content:center; margin:12px 0; min-height:120px; flex-wrap:wrap; }
+.opponent-info { text-align:center; color:#aaa; margin:8px 0; font-size:13px; }
+.btn { display:inline-block; padding:8px 20px; border-radius:8px; border:none; font-size:14px; font-weight:600; cursor:pointer; background:linear-gradient(135deg,#e53935,#f06292); color:#fff; font-family:inherit; }
+.btn:hover { transform:scale(1.05); }
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center; }
+.overlay h2 { font-size:22px; margin-bottom:10px; color:#f06292; }
+.overlay p { color:#f8bbd0; font-size:13px; line-height:1.8; max-width:380px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="index.html" style="color:#e53935;font-size:18px;margin-right:8px">←</a>
+  <img class="avatar" src="../../img/avatar.png" alt="cxf54188" onerror="this.style.display='none'">
+  <span class="author">作者：cxf54188</span><span class="sep">|</span><span class="author">🤖 辅助：元宝AI</span>
+</div>
+<div class="game-container">
+  <h2 class="game-title">💌 情书</h2>
+  <div class="info-bar"><span id="turnInfo">你的回合</span><span class="score" id="roundInfo">第1轮</span></div>
+  <div class="opponent-info" id="oppInfo">AI手牌: 1张</div>
+  <div class="discard-pile" id="discard"></div>
+  <div class="hand-cards" id="hand"></div>
+  <div class="msg" id="msg">点击手牌打出，离公主最近的人获胜</div>
+</div>
+<div class="overlay" id="overlay">
+  <h2>💌 情书</h2>
+  <p>每人手牌只有1张<br>每轮抽1打1，效果立即生效<br>轮数结束时离公主最近者赢<br>先赢3轮者胜</p>
+  <button class="btn" id="startBtn">开始游戏</button>
+</div>
+<script>
+const DECK=[
+  {n:'公主',v:8,icon:'👸'},{n:'伯爵',v:7,icon:'🎭'},{n:'男爵',v:6,icon:'🦊'},
+  {n:'男爵',v:6,icon:'🦊'},{n:'主教',v:5,icon:'⛪'},{n:'主教',v:5,icon:'⛪'},
+  {n:'主教',v:5,icon:'⛪'},{n:'侍女',v:4,icon:'💃'},{n:'侍女',v:4,icon:'💃'},
+  {n:'侍女',v:4,icon:'💃'},{n:'侍女',v:4,icon:'💃'},{n:'王子',v:3,icon:'🤴'},
+  {n:'王子',v:3,icon:'🤴'},{n:'王子',v:3,icon:'🤴'},{n:'王子',v:3,icon:'🤴'},
+  {n:'国王',v:2,icon:'👑'},{n:'国王',v:2,icon:'👑'},{n:'国王',v:2,icon:'👑'},
+  {n:'国王',v:2,icon:'👑'},{n:'卫兵',v:1,icon:'💂'},{n:'卫兵',v:1,icon:'💂'},
+  {n:'卫兵',v:1,icon:'💂'},{n:'卫兵',v:1,icon:'💂'},{n:'卫兵',v:1,icon:'💂'},
+  {n:'卫兵',v:1,icon:'💂'},{n:'卫兵',v:1,icon:'💂'}
+];
+
+let deck=[],myHand=[],aiHand=[],discardPile=[],round=1,myWins=0,aiWins=0,roundActive=true,gameOver=false;
+
+function startGame(){
+  document.getElementById('overlay').style.display='none';
+  myWins=0;aiWins=0;round=1;
+  startRound();
+}
+
+function startRound(){
+  deck=DECK.slice();
+  for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+  myHand=[];aiHand=[];discardPile=[];
+  // 烧2张
+  discardPile.push(deck.pop());discardPile.push(deck.pop());
+  myHand.push(deck.pop());aiHand.push(deck.pop());
+  roundActive=true;
+  render();setTurn('你的回合 - 打出你的牌');
+}
+
+function playCard(idx){
+  if(!roundActive||gameOver)return;
+  const card=myHand.splice(idx,1)[0];
+  applyCard(card,true);
+  if(!roundActive)return;
+  if(deck.length>0)myHand.push(deck.pop());
+  render();
+  if(roundActive)setTimeout(aiTurn,600);
+}
+
+function aiTurn(){
+  if(!roundActive||gameOver||aiHand.length===0)return;
+  const card=aiHand.splice(0,1)[0];
+  applyCard(card,false);
+  if(!roundActive)return;
+  if(deck.length>0)aiHand.push(deck.pop());
+  render();
+  if(roundActive)setTurn('你的回合');
+}
+
+function applyCard(card,isPlayer){
+  discardPile.push(card);
+  let msg='';
+  if(isPlayer){
+    switch(card.v){
+      case 8: msg='你打出了公主！直接出局！';break;
+      case 7: msg='你用伯爵看了AI的牌！';break;
+      case 6: msg='你用男爵比较，大者弃牌！';break;
+      case 5: msg='你用主教弃了牌堆顶！';break;
+      case 4: msg='你用了侍女，本回合免疫！';break;
+      case 3: msg='你用王子换了对面的牌！';break;
+      case 2: msg='你用国王换了牌！';break;
+      case 1: msg='你用卫兵猜了对方数字！';break;
+    }
+  }else{
+    switch(card.v){
+      case 8: msg='AI打出了公主！直接出局！';break;
+      case 7: msg='AI用伯爵看了你的牌！';break;
+      case 6: msg='AI用男爵比较！';break;
+      case 5: msg='AI用主教弃了牌堆顶！';break;
+      case 4: msg='AI用了侍女，本回合免疫！';break;
+      case 3: msg='AI用王子换了对面的牌！';break;
+      case 2: msg='AI用国王换了牌！';break;
+      case 1: msg='AI用卫兵猜了你的数字！';break;
+    }
+  }
+  // 出公主直接输
+  if(card.v===8){
+    if(isPlayer){aiWins++;msg+=' AI赢此轮！';}
+    else{myWins++;msg+=' 你赢此轮！';}
+    endRound(msg);return;
+  }
+  // 牌堆空→比大小
+  if(deck.length===0){
+    const myV=myHand.length>0?myHand[0].v:0;
+    const aiV=aiHand.length>0?aiHand[0].v:0;
+    if(myV>aiV){myWins++;msg=' 你赢此轮（牌面大）！';}
+    else if(aiV>myV){aiWins++;msg=' AI赢此轮（牌面大）！';}
+    else{msg=' 平局！';}
+    endRound(msg);return;
+  }
+  setMsg(msg);render();
+}
+
+function endRound(msg){
+  roundActive=false;
+  setMsg(msg);
+  render();
+  if(myWins>=3||aiWins>=3){
+    setMsg(myWins>=3?'🎉 你赢了整局！':'😢 AI赢了整局');
+    gameOver=true;
+  }else{
+    round++;
+    setTimeout(startRound,2000);
+  }
+}
+
+function render(){
+  const d=document.getElementById('discard');d.innerHTML='';
+  discardPile.slice(-8).forEach(c=>{
+    const el=document.createElement('div');el.className='lcard';
+    el.style.opacity='.7';
+    el.innerHTML=`<span>${c.icon}</span><span style="font-size:10px">${c.n}</span>`;
+    d.appendChild(el);
+  });
+  const h=document.getElementById('hand');h.innerHTML='';
+  myHand.forEach((c,i)=>{
+    const el=document.createElement('div');el.className='lcard';
+    el.innerHTML=`<span>${c.icon}</span><span style="font-size:10px">${c.n}</span>`;
+    el.onclick=()=>playCard(i);h.appendChild(el);
+  });
+  document.getElementById('oppInfo').textContent=`AI手牌: ${aiHand.length}张 | 弃牌堆: ${discardPile.length}`;
+  document.getElementById('roundInfo').textContent=`你${myWins}:${aiWins}AI | 第${round}轮`;
+}
+
+function setMsg(m){document.getElementById('msg').textContent=m;}
+function setTurn(t){document.getElementById('turnInfo').textContent=t;}
+
+document.getElementById('startBtn').onclick=()=>{
+  document.getElementById('overlay').style.display='none';
+  setTimeout(startGame,100);
+};
+</script>
+</body>
+</html>

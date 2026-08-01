@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>CABO</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+body{display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:8px}
+#myCards{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap;justify-content:center}
+.ccard{width:50px;height:70px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;cursor:pointer;color:white;border:2px solid rgba(255,255,255,.2);user-select:none;transition:.15s}
+.ccard:hover{transform:translateY(-3px)}
+.ccard.flipped{background:linear-gradient(135deg,#3b82f6,#8b5cf6)!important}
+.ccard.selected{border-color:#4fc3f7;box-shadow:0 0 8px rgba(79,195,247,.5)}
+#drawPile,#discardPile{width:50px;height:70px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:white;font-weight:700;border:2px solid rgba(255,255,255,.3);user-select:none}
+#drawPile{background:linear-gradient(135deg,#e53e3e,#c53030)}
+#discardPile{background:rgba(100,100,100,.5)}
+.hud{display:flex;gap:12px;margin:6px 0;font-size:13px;color:#94a3b8;flex-wrap:wrap;justify-content:center}
+.btn{display:inline-block;padding:8px 20px;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#4fc3f7,#a78bfa);color:#0a0e27;font-family:inherit}
+.btn:hover{transform:scale(1.05)}
+.btn-danger{background:linear-gradient(135deg,#f43f5e,#dc2626);color:#fff}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.overlay h2{font-size:22px;margin-bottom:10px;color:#a78bfa}
+.overlay p{color:#cbd5e1;font-size:13px;line-height:1.8;max-width:380px}
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">← 返回主页</a>
+<div id="topbar"></div>
+<h1 style="font-size:22px;margin:6px 0">🎴 CABO</h1>
+<div class="hud">
+  <span>回合：<b id="turn">你</b></span>
+  <span>状态：<b id="st">抽牌或摸弃牌堆</b></span>
+  <span>你的分：<b id="ys">-</b></span>
+</div>
+<div id="myCards"></div>
+<div style="display:flex;gap:10px;margin:8px 0">
+  <div id="drawPile" title="抽牌堆">🂠</div>
+  <div id="discardPile" title="弃牌堆">-</div>
+</div>
+<button class="btn btn-danger" id="caboBtn" style="margin-top:6px">喊 CABO!</button>
+<p style="color:#64748b;font-size:12px;margin-top:6px">记住你的牌，凑低分。喊CABO后各亮牌比大小</p>
+
+<script src="_common.js"></script>
+<script>
+const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
+const $=(id)=>document.getElementById(id);
+
+function makeDeck(){
+  const d=[];
+  for(let v=0;v<=13;v++){
+    const cnt=v===0?5:v<=4?2:1;
+    for(let i=0;i<cnt;i++)d.push({val:v});
+  }
+  return shuffle(d);
+}
+
+let myHand,aiHand,drawPile,discardPile,cur,selected,gameOver,caboCalled;
+
+function reset(){
+  const d=makeDeck();
+  myHand=[d.pop(),d.pop(),d.pop(),d.pop()];
+  aiHand=[d.pop(),d.pop(),d.pop(),d.pop()];
+  drawPile=d;
+  discardPile=[d.pop()];
+  cur='you';selected=null;gameOver=false;caboCalled=false;
+  myHand.forEach(c=>c.flipped=false);
+  aiHand.forEach(c=>c.flipped=false);
+  render();
+  setTurn('你');setMsg('抽牌或摸弃牌堆顶');
+}
+
+function render(){
+  const m=$('myCards');m.innerHTML='';
+  myHand.forEach((c,i)=>{
+    const div=document.createElement('div');
+    div.className='ccard'+(c.flipped?' flipped':'')+(selected===i?' selected':'');
+    div.style.background=c.flipped?'':'';
+    div.textContent=c.flipped?c.val:'?';
+    div.onclick=()=>{
+      if(cur!=='you'||gameOver)return;
+      if(!c.flipped){c.flipped=true;render();return;}
+      selected=selected===i?null:i;render();
+    };
+    m.appendChild(div);
+  });
+  $('discardPile').textContent=discardPile[discardPile.length-1].val;
+  $('drawPile').textContent=drawPile.length>0?'🂠':'空';
+  $('turn').textContent=gameOver?'结束':(cur==='you'?'你':'AI');
+  $('st').textContent=caboCalled?'CABO已喊！':'抽牌或摸弃牌堆';
+}
+
+function handleDraw(c,fromDiscard){
+  if(cur!=='you'||gameOver)return;
+  if(selected===null){
+    // 不替换，直接弃掉
+    discardPile.push(c);
+    cur='ai';render();setTimeout(aiTurn,700);
+    return;
+  }
+  // 用抽到的牌替换选中的牌
+  const idx=selected;
+  const oldCard=myHand[idx];
+  oldCard.flipped=true; // 旧牌亮出
+  myHand[idx]=c;
+  c.flipped=true;
+  discardPile.push(oldCard);
+  selected=null;cur='ai';render();setTimeout(aiTurn,700);
+}
+
+$('drawPile').onclick=()=>{
+  if(cur!=='you'||gameOver||drawPile.length===0)return;
+  const c=drawPile.pop();
+  handleDraw(c,false);
+};
+$('discardPile').onclick=()=>{
+  if(cur!=='you'||gameOver||discardPile.length===0)return;
+  const c=discardPile.pop();
+  handleDraw(c,true);
+};
+
+function aiTurn(){
+  if(gameOver)return;
+  if(caboCalled){endGame();return;}
+  const top=discardPile[discardPile.length-1];
+  // AI策略：如果弃牌堆顶牌小，有概率拿
+  const take=Math.random()<0.3&&top.val<=4;
+  if(take){
+    const idx=Math.floor(Math.random()*4);
+    const oldCard=aiHand[idx];
+    oldCard.flipped=true;
+    aiHand[idx]=top;
+    discardPile.push(oldCard);
+  }else{
+    if(drawPile.length>0){
+      const c=drawPile.pop();
+      // 随机替换一张高牌
+      const highIdx=aiHand.map((c,i)=>c.val>6?i:-1).filter(i=>i>=0);
+      if(highIdx.length>0&&Math.random()<0.7){
+        const idx=highIdx[Math.floor(Math.random()*highIdx.length)];
+        const oldCard=aiHand[idx];
+        oldCard.flipped=true;
+        aiHand[idx]=c;
+        c.flipped=true;
+        discardPile.push(oldCard);
+      }else{
+        discardPile.push(c);
+      }
+    }
+  }
+  // AI也有概率喊CABO
+  const aiScore=aiHand.reduce((s,c)=>s+(c.flipped?c.val:7),0);
+  if(aiScore<=10&&Math.random()<0.2){caboCalled=true;endGame();return;}
+  cur='you';render();setTurn('你');setMsg('你的回合');
+}
+
+function endGame(){
+  gameOver=true;
+  const myScore=myHand.reduce((s,c)=>s+c.val,0);
+  const aiScore=aiHand.reduce((s,c)=>s+(c.flipped?c.val:c.val||7),0);
+  $('ys').textContent=myScore;
+  // 都亮牌
+  myHand.forEach(c=>c.flipped=true);
+  aiHand.forEach(c=>c.flipped=true);
+  render();
+  setTimeout(()=>alert(`🎉 游戏结束\n你：${myScore}分\nAI：${aiScore}分\n${myScore<aiScore?'你赢了！':'AI赢了！'}`),200);
+}
+
+$('caboBtn').onclick=()=>{
+  if(gameOver)return;
+  caboCalled=true;
+  endGame();
+};
+
+// 启动
+reset();
+</script>
+</body></html>
