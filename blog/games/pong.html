@@ -26,7 +26,7 @@ canvas{display:block;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);bac
 </head>
 <body>
 <div class="topbar">
-  <img class="avatar" src="../../img/avatar.png" alt="cxf54188" onerror="this.style.display='none'">
+  <img class="avatar" src="../img/avatar.png" alt="cxf54188" onerror="this.style.display='none'">
   <div class="info"><b>作者：cxf54188</b> &nbsp;|&nbsp; <span class="yb">🤖</span><b>辅助：元宝AI</b></div>
 </div>
 <div class="overlay" id="overlay">
@@ -87,10 +87,10 @@ function loop(){
 
 function update(){
   // 玩家挡板（鼠标/触摸）
-  const targetY=mouseY!==undefined?mouseY:H/2;
+  const targetY=(mouseY!==undefined)?mouseY:H/2;
   paddleR.y+=(targetY-paddleR.y-paddleR.h/2)*0.15;
   paddleR.y=Math.max(0,Math.min(H-paddleR.h,paddleR.y));
-  // AI 挡板
+  // AI 挡板 — 追踪球
   const aiCenter=paddleL.y+paddleL.h/2;
   const ballCenter=ball.y;
   paddleL.y+=(ballCenter-aiCenter)*0.08;
@@ -100,7 +100,7 @@ function update(){
   // 上下墙
   if(ball.y<ball.r){ball.y=ball.r;ball.dy*=-1;}
   if(ball.y>H-ball.r){ball.y=H-ball.r;ball.dy*=-1;}
-  // 左挡板
+  // 左挡板(AI)
   if(ball.dx<0&&ball.x-ball.r<paddleL.x+paddleL.w&&ball.y>paddleL.y&&ball.y<paddleL.y+paddleL.h){
     const hit=(ball.y-(paddleL.y+paddleL.h/2))/(paddleL.h/2);
     ball.dx=Math.abs(ball.dx);
@@ -110,7 +110,7 @@ function update(){
     const a=Math.atan2(ball.dy,ball.dx);const s=ball.speed;
     ball.dx=s*Math.cos(a);ball.dy=s*Math.sin(a);
   }
-  // 右挡板
+  // 右挡板(玩家)
   if(ball.dx>0&&ball.x+ball.r>paddleR.x&&ball.y>paddleR.y&&ball.y<paddleR.y+paddleR.h){
     const hit=(ball.y-(paddleR.y+paddleR.h/2))/(paddleR.h/2);
     ball.dx=-Math.abs(ball.dx);
@@ -120,7 +120,7 @@ function update(){
     const a=Math.atan2(ball.dy,ball.dx);const s=ball.speed;
     ball.dx=s*Math.cos(a);ball.dy=s*Math.sin(a);
   }
-  // 得分
+  // 得分：球出左边界=AI得分，出右边界=玩家得分
   if(ball.x<0){scoreR++;document.getElementById('scR').textContent=scoreR;running=false;setTimeout(()=>{if(scoreR<WIN)serve(true);loop();},800);}
   else if(ball.x>W){scoreL++;document.getElementById('scL').textContent=scoreL;running=false;setTimeout(()=>{if(scoreL<WIN)serve(false);loop();},800);}
 }

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>打砖块</title>
-<link rel="stylesheet" href="./_common.css">
+<link rel="stylesheet" href="_common.css">
 <style>
 body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px}
 canvas{border-radius:12px;max-width:100%;touch-action:none}
@@ -13,7 +13,7 @@ canvas{border-radius:12px;max-width:100%;touch-action:none}
 </style>
 </head>
 <body>
-<a class="back-link" href="../../index.html">← 返回主页</a>
+<a class="back-link" href="index.html">← 返回游戏列表</a>
 <div id="topbar"></div>
 <h1 style="font-size:22px;margin:6px 0;background:linear-gradient(90deg,#f43f5e,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">🧱 打砖块</h1>
 <div class="hud">
@@ -25,7 +25,7 @@ canvas{border-radius:12px;max-width:100%;touch-action:none}
 <button class="btn btn-sm btn-danger" id="restart" style="margin-top:10px">重新开始</button>
 <p style="color:#64748b;font-size:12px;margin-top:6px">← → / 鼠标拖动挡板</p>
 
-<script src="./_common.js"></script>
+<script src="_common.js"></script>
 <script>
 const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
 const C=document.getElementById('c'),X=C.getContext('2d');
@@ -44,7 +44,8 @@ function reset(){
 function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('hp').textContent=lives;document.getElementById('hi').textContent=high}
 function normalizeBall(){
   const sp=Math.hypot(ball.vx,ball.vy);
-  if(sp<2.5||sp>7)return;
+  if(sp===0)return;
+  if(sp<2.5||sp>7){const target=Math.max(2.5,Math.min(7,ball.speed||4));ball.vx=ball.vx/sp*target;ball.vy=ball.vy/sp*target;return}
   ball.vx=ball.vx/sp*ball.speed;ball.vy=ball.vy/sp*ball.speed;
 }
 function step(){
@@ -69,10 +70,8 @@ function step(){
     if(ball.x+ball.r>b.x&&ball.x-ball.r<b.x+b.w&&ball.y+ball.r>b.y&&ball.y-ball.r<b.y+b.h){
       // 计算从哪边撞入
       const ox=(ball.x-(b.x+b.w/2))/(b.w/2),oy=(ball.y-(b.y+b.h/2))/(b.h/2);
-      if(Math.abs(ox)>Math.abs(oy))ball.vx*=-1;else ball.vy*=-1;
-      // 位置修正
-      if(Math.abs(ox)>Math.abs(oy))ball.x=ball.x>0?b.x+b.w+ball.r+0.5:b.x-ball.r-0.5;
-      else ball.y=ball.y>0?b.y+b.h+ball.r+0.5:b.y-ball.r-0.5;
+      if(Math.abs(ox)>Math.abs(oy)){ball.vx*=-1;ball.x=ball.vx>0?b.x+b.w+ball.r+0.5:b.x-ball.r-0.5}
+      else{ball.vy*=-1;ball.y=ball.vy>0?b.y+b.h+ball.r+0.5:b.y-ball.r-0.5}
       b.hp--;score+=10;if(b.hp<=0)b.alive=false;
       normalizeBall();break;
     }

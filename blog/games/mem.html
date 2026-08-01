@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>记忆翻牌</title>
-<link rel="stylesheet" href="./_common.css">
+<link rel="stylesheet" href="_common.css">
 <style>
 body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px}
 #board{display:grid;gap:6px;padding:12px;background:rgba(255,255,255,.05);border-radius:14px;border:1px solid rgba(255,255,255,.1)}
@@ -17,7 +17,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 </style>
 </head>
 <body>
-<a class="back-link" href="../../index.html">← 返回主页</a>
+<a class="back-link" href="index.html">← 返回游戏列表</a>
 <div id="topbar"></div>
 <h1 style="font-size:22px;margin:6px 0;background:linear-gradient(90deg,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent">🎴 记忆翻牌</h1>
 <div class="hud">
@@ -32,17 +32,68 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
   <button class="btn btn-sm btn-danger" data-d="8">困难8×6</button>
 </div>
 
-<script src="./_common.js"></script>
+<script src="_common.js"></script>
 <script>
 const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
-const board=document.getElementById('board'),SYMBOLS='🍎🍌🍇🍊🍓🥝🍑🥥🍒🫐🍍🥭🍐🥑🍋🍈🫒🍅'.split('');
+const board=document.getElementById('board');
+const SYMBOLS='🍎🍌🍇🍊🍓🥝🍑🥥🍒🍋🍈🫐🍅🍆🫒🍄'.split('');
 let cards=[],flipped=[],matched=0,moves=0,locked=false;
 
-function reset(cols){const rows=Math.max(3,Math.floor(24/cols));const total=rows*cols,pairs=total/2;const sym=shuffle(SYMBOLS.slice()).slice(0,pairs);const deck=shuffle([...sym,...sym]);board.style.gridTemplateColumns=`repeat(${cols},1fr)`;board.innerHTML='';cards=[];flipped=[];matched=0;moves=0;locked=false;updateHUD();
-  for(let i=0;i<total;i++){const c=document.createElement('div');c.className='card';c.dataset.idx=i;c.dataset.sym=deck[i];c.onclick=()=>flip(i,c);board.appendChild(c);cards.push(c)}
+function reset(cols){
+  const rows=Math.max(3,Math.floor(24/cols));
+  const total=rows*cols;
+  const pairs=total/2;
+  const sym=shuffle(SYMBOLS.slice()).slice(0,pairs);
+  const deck=shuffle([...sym,...sym]);
+  board.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+  board.innerHTML='';
+  cards=[];flipped=[];matched=0;moves=0;locked=false;
+  updateHUD();
+  for(let i=0;i<total;i++){
+    const c=document.createElement('div');c.className='card';
+    c.dataset.idx=i;c.dataset.sym=deck[i];
+    c.onclick=()=>flip(i,c);
+    board.appendChild(c);cards.push(c);
+  }
 }
-function flip(i,el){if(locked||el.classList.contains('flipped')||el.classList.contains('matched'))return;el.classList.add('flipped');el.textContent=el.dataset.sym;flipped.push({i,el});if(flipped.length===2){moves++;updateHUD();const[a,b]=flipped;if(a.el.dataset.sym===b.el.dataset.sym){a.el.classList.add('matched');b.el.classList.add('matched');matched++;flipped=[];if(matched===cards.length/2)setTimeout(()=>alert('🎉 完成！步数：'+moves),200)}else{locked=true;setTimeout(()=>{a.el.classList.remove('flipped');b.el.classList.remove('flipped');a.el.textContent='';b.el.textContent='';flipped=[];locked=false},800)}}}
-function updateHUD(){document.getElementById('moves').textContent=moves;document.getElementById('pairs').textContent=matched;const best=Store.get('mem_best_'+board.children.length,'-');document.getElementById('best').textContent=best;if(matched===cards.length/2&&cards.length){const key='mem_best_'+cards.length,prev=Store.get(key,9999);if(moves<prev)Store.set(key,moves)}}
+
+function flip(i,el){
+  if(locked||el.classList.contains('flipped')||el.classList.contains('matched'))return;
+  el.classList.add('flipped');el.textContent=el.dataset.sym;
+  flipped.push({i,el});
+  if(flipped.length===2){
+    moves++;updateHUD();
+    const[a,b]=flipped;
+    if(a.el.dataset.sym===b.el.dataset.sym){
+      a.el.classList.add('matched');b.el.classList.add('matched');
+      matched++;flipped=[];
+      if(matched===cards.length/2)setTimeout(()=>{alert('🎉 完成！步数：'+moves);checkBest()},200);
+    }else{
+      locked=true;
+      setTimeout(()=>{
+        a.el.classList.remove('flipped');b.el.classList.remove('flipped');
+        a.el.textContent='';b.el.textContent='';
+        flipped=[];locked=false;
+      },800);
+    }
+  }
+}
+
+function checkBest(){
+  const key='mem_best_'+cards.length;
+  const prev=Store.get(key,9999);
+  if(moves<prev)Store.set(key,moves);
+  updateHUD();
+}
+
+function updateHUD(){
+  document.getElementById('moves').textContent=moves;
+  document.getElementById('pairs').textContent=matched;
+  const key='mem_best_'+cards.length;
+  const best=Store.get(key,null);
+  document.getElementById('best').textContent=best?(best===9999?'-':best):'-';
+}
+
 document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>reset(+b.dataset.d));
 reset(4);
 </script>

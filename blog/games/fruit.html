@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>接水果</title>
-<link rel="stylesheet" href="./_common.css">
+<link rel="stylesheet" href="_common.css">
 <style>
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px}
-canvas{border-radius:12px;max-width:100%;touch-action:none}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px;touch-action:none}
+canvas{border-radius:12px;max-width:100%}
 .hud{display:flex;gap:16px;margin:8px 0;font-size:14px;color:#94a3b8;flex-wrap:wrap;justify-content:center}
 .hud b{color:#4fc3f7}
 </style>
 </head>
 <body>
-<a class="back-link" href="../../index.html">← 返回主页</a>
+<a class="back-link" href="index.html">← 返回游戏列表</a>
 <div id="topbar"></div>
 <h1 style="font-size:22px;margin:6px 0;background:linear-gradient(90deg,#f43f5e,#f97316,#facc15);-webkit-background-clip:text;-webkit-text-fill-color:transparent">🍉 接水果大作战</h1>
 <div class="hud">
@@ -25,24 +25,65 @@ canvas{border-radius:12px;max-width:100%;touch-action:none}
 <button class="btn btn-sm btn-danger" id="restart" style="margin-top:10px">重新开始</button>
 <p style="color:#64748b;font-size:12px;margin-top:6px">← → / 鼠标拖动</p>
 
-<script src="./_common.js"></script>
+<script src="_common.js"></script>
 <script>
 const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
 const C=document.getElementById('c'),X=C.getContext('2d');
 const W=360,H=480;
-let player,fruits,score=0,combo=0,lives=5,running=true,items=[];
+let player,fruits,score=0,combo=0,lives=5,running=true;
 
-function reset(){player={x:W/2,w:60,h:14,vx:0};fruits=[];items=[];score=0;combo=0;lives=5;running=true;updateHUD()}
-function spawn(){const f=['🍎','🍇','🍊','🍌','🍓','🥝','🍑'];fruits.push({x:Math.random()*(W-30)+15,y:-20,emoji:f[Math.floor(Math.random()*f.length)],spd:1.5+Math.random()*2+score/500})}
-function step(){player.x=Math.max(0,Math.min(W-player.w,player.x+player.vx));if(Math.random()<0.02)spawn();fruits.forEach(f=>f.y+=f.spd);items.forEach(i=>i.y+=i.spd);const caught=[],missed=[];fruits.forEach(f=>{if(f.y>H){missed.push(f);return}if(f.y>player.y-10&&f.y<player.y+player.h&&f.x>player.x-10&&f.x<player.x+player.w+10){caught.push(f);score+=10;combo++;updateHUD()}});fruits=fruits.filter(f=>!caught.includes(f)&&!missed.includes(f));if(missed.length){combo=0;lives--;updateHUD();if(lives<=0){running=false;alert('💀 游戏结束 得分:'+score)}}}
-function draw(){X.fillStyle='#0f172a';X.fillRect(0,0,W,H);X.fillStyle='#4fc3f7';X.shadowColor='#4fc3f7';X.shadowBlur=10;X.fillRect(player.x,H-30,player.w,player.h);X.shadowBlur=0;fruits.forEach(f=>{X.font='24px serif';X.fillText(f.emoji,f.x-10,f.y+8)})}
+function reset(){
+  player={x:W/2-30,w:60,h:14,vx:0};
+  fruits=[];score=0;combo=0;lives=5;running=true;
+  updateHUD();
+}
+
+function spawnFruit(){
+  const f=['🍎','🍇','🍊','🍌','🍓','🥝','🍑'];
+  // 避免重叠
+  let x,attempts=0;
+  do{x=Math.random()*(W-30)+15;attempts++;}
+  while(attempts<10&&fruits.some(fr=>Math.abs(fr.x-x)<30&&fr.y<40));
+  fruits.push({x,y:-20,emoji:f[Math.floor(Math.random()*f.length)],spd:1.5+Math.random()*2+Math.min(3,score/300)});
+}
+
+function step(){
+  player.x=Math.max(0,Math.min(W-player.w,player.x+player.vx));
+  if(Math.random()<0.02+Math.min(0.03,score/10000))spawnFruit();
+  const caught=[],missed=[];
+  fruits.forEach(f=>{
+    f.y+=f.spd;
+    if(f.y>H){missed.push(f);return}
+    if(f.y>player.y-10&&f.y<player.y+player.h&&f.x>player.x-10&&f.x<player.x+player.w+10){
+      caught.push(f);score+=10;combo++;updateHUD();
+    }
+  });
+  fruits=fruits.filter(f=>!caught.includes(f)&&!missed.includes(f));
+  if(missed.length>0){combo=0;lives--;updateHUD();if(lives<=0){running=false;setTimeout(()=>alert('💀 游戏结束 得分:'+score),100)}}
+}
+
+function draw(){
+  X.fillStyle='#0f172a';X.fillRect(0,0,W,H);
+  // 玩家挡板
+  X.fillStyle='#4fc3f7';X.shadowColor='#4fc3f7';X.shadowBlur=10;
+  X.fillRect(player.x,player.y,player.w,player.h);X.shadowBlur=0;
+  // 水果
+  X.font='24px serif';
+  fruits.forEach(f=>{X.fillText(f.emoji,f.x-10,f.y+8)});
+  // 粒子效果(连击)
+  if(combo>5){X.fillStyle='rgba(250,204,21,.3)';X.font='bold 16px sans-serif';X.fillText('🔥 x'+combo,W/2-20,30)}
+}
+
 function loop(){if(running){step();draw()}requestAnimationFrame(loop)}
 function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('combo').textContent=combo;document.getElementById('hp').textContent=lives}
+
 document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')player.vx=-7;if(e.key==='ArrowRight')player.vx=7});
 document.addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight')player.vx=0});
 C.addEventListener('mousemove',e=>{const r=C.getBoundingClientRect();player.x=(e.clientX-r.left)/r.width*W-player.w/2});
 C.addEventListener('touchmove',e=>{e.preventDefault();const r=C.getBoundingClientRect(),t=e.touches[0];player.x=(t.clientX-r.left)/r.width*W-player.w/2},{passive:false});
+
 document.getElementById('restart').onclick=reset;
+player={x:W/2-30,y:H-30,w:60,h:14,vx:0};
 reset();requestAnimationFrame(loop);
 </script>
 </body></html>

@@ -1,344 +1,166 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小游戏合集 - cxf54188.github.io</title>
-    <meta name="description" content="cxf54188 的 25 款网页小游戏合集">
-    <link rel="icon" type="image/svg+xml" href="../../img/yb_avatar.svg">
-    <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<title>🎮 小游戏合集 — cxf54188 × 元宝AI</title>
+<link rel="icon" type="image/svg+xml" href="yb_avatar.svg">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--vh:1vh}
+body{min-height:100vh;min-height:calc(var(--vh)*100);background:linear-gradient(160deg,#0a0e1b,#111133 30%,#0d1b2a 60%,#1a0a2e);font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;overflow-x:hidden;color:#fff}
 
-        :root {
-            --cyan: #00f0ff;
-            --cyan-dim: rgba(0, 240, 255, 0.6);
-            --magenta: #ff006e;
-            --purple: #7b2ff7;
-            --text: #e2e8f0;
-            --text-dim: #94a3b8;
-        }
+/* 顶栏 */
+.topbar{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;background:rgba(0,0,0,.45);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:1000;flex-shrink:0;flex-wrap:wrap}
+.topbar .av{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.25)}
+.topbar .av-yb{width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin:0 3px;border:1.5px solid #00a86b;background:#00a86b;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.topbar .av-yb svg{width:13px;height:13px}
+.topbar .txt{color:rgba(255,255,255,.85);font-size:12px;font-weight:600;white-space:nowrap}
+.topbar .tag{font-weight:800}
+.topbar .sep{color:rgba(255,255,255,.3);font-size:11px;flex-shrink:0}
+.topbar .yb-label{color:rgba(255,255,255,.5);font-size:11px}
+@media(max-width:540px){.topbar{padding:6px 8px;gap:5px}.topbar .txt{font-size:10px}.topbar .av{width:22px;height:22px}.topbar .av-yb{width:20px;height:20px}}
 
-        body {
-            min-height: 100vh;
-            font-family: "JetBrains Mono", "Fira Code", "Consolas",
-                         "PingFang SC", "Microsoft YaHei", monospace;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0d1b2a 100%);
-            color: var(--text);
-            overflow-x: hidden;
-            position: relative;
-        }
+/* 背景粒子 */
+#bgp{position:fixed;inset:0;pointer-events:none;z-index:0}
+.bp{position:absolute;background:rgba(100,200,255,.4);border-radius:50%;animation:bf linear infinite}
+@keyframes bf{0%{transform:translateY(105vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) scale(1);opacity:0}}
 
-        .grid-bg {
-            position: fixed; top:0; left:0;
-            width:100%; height:100%;
-            pointer-events:none; z-index:0;
-            background:
-                linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            animation: gridMove 20s linear infinite;
-        }
-        @keyframes gridMove {
-            0%   { background-position: 0 0, 0 0; }
-            100% { background-position: 60px 60px, 60px 60px; }
-        }
-        .scanline {
-            position: fixed; top:0; left:0;
-            width:100%; height:100%;
-            pointer-events:none; z-index:9999;
-            background: repeating-linear-gradient(
-                0deg, transparent, transparent 2px,
-                rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
-        }
-        .glow-orb {
-            position: fixed; border-radius:50%;
-            filter: blur(80px); pointer-events:none; z-index:0;
-        }
-        .glow-1 {
-            width:400px; height:400px; top:-100px; left:-100px;
-            background: radial-gradient(circle, rgba(0,240,255,0.08), transparent 70%);
-            animation: orbFloat 8s ease-in-out infinite;
-        }
-        .glow-2 {
-            width:350px; height:350px; bottom:-80px; right:-80px;
-            background: radial-gradient(circle, rgba(123,47,247,0.08), transparent 70%);
-            animation: orbFloat 10s ease-in-out infinite reverse;
-        }
-        @keyframes orbFloat {
-            0%,100% { transform: translate(0,0); }
-            50%     { transform: translate(30px,-30px); }
-        }
+/* 主页 */
+#home{position:relative;z-index:1;padding:16px 10px 30px;text-align:center;overflow-y:auto;min-height:calc(100vh - 44px)}
+#home h1{font-size:clamp(22px,6vw,40px);font-weight:900;letter-spacing:2px;margin:8px 0 4px;background:linear-gradient(135deg,#00ff88,#00a8ff,#ff6b6b,#ffd93d,#aa44ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:hue 10s ease infinite}
+@keyframes hue{0%,100%{filter:hue-rotate(0)}50%{filter:hue-rotate(60deg)}}
+#home .sub{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:4px}
+#home .legend{font-size:10px;color:rgba(255,255,255,.25);margin-bottom:14px}
 
-        /* ========== 导航栏 ========== */
-        .navbar {
-            position: relative; z-index:10;
-            display:flex; align-items:center; justify-content:space-between;
-            padding: 14px 40px;
-            border-bottom: 1px solid rgba(0,240,255,0.08);
-            backdrop-filter: blur(10px);
-            background: rgba(5,5,16,0.6);
-        }
-        .nav-brand {
-            display:flex; align-items:center; gap:10px;
-            font-size:1rem; color:var(--cyan);
-            text-decoration:none; letter-spacing:1px;
-        }
-        .nav-brand .avatar-mini {
-            width:32px; height:32px;
-            border-radius:50%; border:2px solid var(--cyan);
-            object-fit:cover;
-        }
-        .nav-links { display:flex; gap:8px; }
-        .nav-links a {
-            padding:8px 18px; border-radius:4px;
-            font-size:0.85rem; color:var(--text-dim);
-            text-decoration:none; border:1px solid transparent;
-            transition: all 0.3s ease; letter-spacing:1px;
-        }
-        .nav-links a:hover,
-        .nav-links a.active {
-            color:var(--cyan);
-            border-color: rgba(0,240,255,0.3);
-            background: rgba(0,240,255,0.05);
-        }
+/* 分类按钮 */
+.cats{display:flex;gap:6px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
+.cat-btn{padding:5px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#94a3b8;font-size:12px;cursor:pointer;transition:.2s;font-family:inherit}
+.cat-btn.active{background:linear-gradient(90deg,#4fc3f7,#a78bfa);color:#0a0e27;border-color:transparent;font-weight:600}
+.cat-btn:hover{background:rgba(255,255,255,.12)}
 
-        /* ========== 页面标题 ========== */
-        .page-header {
-            position: relative; z-index:10;
-            text-align:center; padding: 50px 20px 10px;
-        }
-        .page-header h1 {
-            font-size: clamp(1.6rem, 4vw, 2.5rem);
-            font-weight:700; margin-bottom:10px;
-            background: linear-gradient(90deg, #4fc3f7, #a78bfa, #f472b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .page-header p {
-            color: var(--text-dim);
-            font-size:0.95rem; letter-spacing:1px;
-        }
+/* 游戏网格 */
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;max-width:900px;margin:0 auto;padding:0 6px}
 
-        /* ========== 返回链接 ========== */
-        .back-link {
-            display:inline-block; margin:10px 0 0;
-            color:var(--text-dim); font-size:0.85rem;
-            padding:4px 12px; border-radius:6px;
-            background:rgba(255,255,255,0.04);
-            text-decoration:none; transition: all 0.3s;
-        }
-        .back-link:hover { color:var(--cyan); background:rgba(255,255,255,0.08); }
+.gcard{display:block;padding:16px 12px;border-radius:14px;cursor:pointer;background:rgba(255,255,255,.05);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);text-align:left;transition:all .35s cubic-bezier(.25,.8,.25,1);overflow:hidden;color:#fff;text-decoration:none;position:relative}
+.gcard::before{content:'';position:absolute;inset:0;background:var(--accent);opacity:0;transition:opacity .35s;border-radius:14px;z-index:0}
+.gcard:hover::before{opacity:.12}
+.gcard:hover{transform:translateY(-4px) scale(1.03);border-color:var(--ac);box-shadow:0 10px 25px var(--sh,transparent)}
+.gcard>*{position:relative;z-index:1}
+.gcard .ico{font-size:30px;display:block;margin-bottom:4px}
+.gcard .nm{font-size:14px;font-weight:800;margin-bottom:2px}
+.gcard .ds{font-size:9px;color:rgba(255,255,255,.5);line-height:1.4;margin-bottom:4px}
+.gcard .tags{display:flex;gap:3px;flex-wrap:wrap}
+.tag-s{padding:1px 6px;border-radius:8px;font-size:7px;font-weight:700;background:rgba(255,255,255,.08);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.08)}
 
-        /* ========== 分类按钮 ========== */
-        .categories {
-            display:flex; gap:8px; padding: 0 16px 12px;
-            overflow-x:auto; scroll-snap-type:x mandatory;
-            position:sticky; top:60px; z-index:998;
-            background: rgba(5,5,16,0.85); backdrop-filter:blur(10px);
-            padding-top:8px; padding-bottom:8px;
-        }
-        .cat-btn {
-            flex-shrink:0; padding:6px 16px; border-radius:20px;
-            border:1px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.05);
-            color:#ccc; font-size:13px; cursor:pointer;
-            white-space:nowrap; scroll-snap-align:start;
-            transition: all 0.2s; font-family:inherit;
-        }
-        .cat-btn.active {
-            background: linear-gradient(90deg, #4fc3f7, #a78bfa);
-            color:#fff; border-color:transparent;
-        }
-        .cat-btn:hover { background: rgba(255,255,255,0.15); }
+/* 主题色 */
+.c-snake{--accent:linear-gradient(#00ff88,#00a8ff);--ac:#00ff88;--sh:rgba(0,255,136,.25)}
+.c-tetris{--accent:linear-gradient(#00f0f0,#a000f0);--ac:#00f0f0;--sh:rgba(0,240,240,.25)}
+.c-mine{--accent:linear-gradient(#ffd700,#ff8c00);--ac:#ffd700;--sh:rgba(255,215,0,.25)}
+.c-2048{--accent:linear-gradient(#f0932b,#eb4d4b,#6ab04c);--ac:#f0932b;--sh:rgba(240,147,43,.25)}
+.c-mem{--accent:linear-gradient(#4cc9f0,#4895ef,#f72585);--ac:#4cc9f0;--sh:rgba(76,201,240,.25)}
+.c-fruit{--accent:linear-gradient(#ff4444,#ff8800,#88cc22);--ac:#ff4444;--sh:rgba(255,68,68,.25)}
+.c-pong{--accent:linear-gradient(#00f5ff,#ff3366);--ac:#00f5ff;--sh:rgba(0,245,255,.25)}
+.c-break{--accent:linear-gradient(#ff00ff,#33ccff);--ac:#ff00ff;--sh:rgba(255,0,255,.25)}
+.c-puzzle{--accent:linear-gradient(#55efc4,#00b894);--ac:#55efc4;--sh:rgba(85,239,196,.25)}
+.c-action{--accent:linear-gradient(#74b9ff,#0984e3);--ac:#74b9ff;--sh:rgba(116,185,255,.25)}
 
-        /* ========== 游戏区域 ========== */
-        .section { margin-bottom:24px; padding:0 30px; }
-        .section h2 {
-            font-size:16px; color:var(--text-dim);
-            margin-bottom:10px; padding-left:4px;
-            border-left:3px solid var(--cyan);
-        }
-        .games-grid {
-            display:grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap:12px;
-        }
+/* 页脚 */
+.footer{text-align:center;padding:16px;font-size:10px;color:rgba(255,255,255,.2)}
+.footer a{color:rgba(100,168,255,.5);text-decoration:none}
 
-        /* ========== 游戏卡片 ========== */
-        .game-card {
-            background: rgba(255,255,255,0.06);
-            border:1px solid rgba(255,255,255,0.1);
-            border-radius:14px; padding:16px 12px;
-            text-align:center; cursor:pointer;
-            transition: all 0.25s; position:relative;
-            overflow:hidden; text-decoration:none;
-            color:inherit; display:block;
-        }
-        .game-card::before {
-            content:''; position:absolute; inset:0;
-            background: radial-gradient(circle at 50% 0%, rgba(79,195,247,0.12), transparent 70%);
-            opacity:0; transition: opacity 0.3s;
-        }
-        .game-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(79,195,247,0.35);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-        }
-        .game-card:hover::before { opacity:1; }
-        .game-card .icon { font-size:36px; margin-bottom:6px; display:block; }
-        .game-card .name { font-size:14px; font-weight:600; margin-bottom:2px; color:#fff; }
-        .game-card .desc { font-size:11px; color:#64748b; }
-
-        /* ========== 底部 ========== */
-        .footer {
-            position:relative; z-index:10;
-            text-align:center; padding:24px;
-            border-top:1px solid rgba(0,240,255,0.06);
-            font-size:0.78rem; color:rgba(200,200,255,0.25);
-            letter-spacing:1px;
-        }
-
-        /* ========== 响应式 ========== */
-        @media (max-width:640px) {
-            .navbar { padding:10px 16px; }
-            .nav-links a { padding:6px 12px; font-size:0.8rem; }
-            .page-header { padding:30px 16px 10px; }
-            .section { padding:0 16px; }
-            .games-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap:8px; }
-            .game-card { padding:12px 8px; }
-            .game-card .icon { font-size:28px; }
-        }
-    </style>
+/* 回到顶部 */
+.back-top{position:fixed;bottom:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(100,100,255,.35);border:1px solid rgba(100,100,255,.5);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(6px);transition:all .3s;opacity:0;pointer-events:none}
+.back-top.show{opacity:1;pointer-events:auto}
+.back-top:hover{background:rgba(100,100,255,.6);transform:scale(1.1)}
+</style>
 </head>
 <body>
 
-<div class="grid-bg"></div>
-<div class="glow-orb glow-1"></div>
-<div class="glow-orb glow-2"></div>
-<div class="scanline"></div>
+<div id="bgp"></div>
 
-<!-- 导航栏 -->
-<nav class="navbar">
-    <a class="nav-brand" href="../../">
-        <img class="avatar-mini" src="../../img/avatar.png" alt="avatar">
-        <span>cxf54188@github.io</span>
-    </a>
-    <div class="nav-links">
-        <a href="../../">首页</a>
-        <a href="../../blog/" class="active">项目</a>
-        <a href="../../links/">友链</a>
-    </div>
-</nav>
-
-<!-- 页面标题 -->
-<div class="page-header">
-    <h1>🎮 小游戏合集</h1>
-    <p>25 款经典桌游 & 小游戏，纯前端实现，点击即玩</p>
-    <a class="back-link" href="../../blog/">← 返回项目页</a>
+<!-- 顶栏 -->
+<div class="topbar">
+  <img class="av" src="../img/avatar.png" alt="cxf54188" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2750%27 fill=%27%234a90d8%27/%3E%3Ctext x=%2750%27 y=%2758%27 text-anchor=%27middle%27 font-size=%2736%27 fill=%27white%27 font-family=%27sans-serif%27 font-weight=%27bold%27%3EC%3C/text%3E%3C/svg%3E'">
+  <span class="txt">作者：<span class="tag" style="color:#ffd93d">cxf54188</span></span>
+  <span class="sep">|</span>
+  <img class="av-yb" src="yb_avatar.svg" alt="元宝AI" onerror="this.outerHTML='<div class=&quot;av-yb&quot; style=&quot;background:#00a86b&quot;><svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;white&quot; stroke-width=&quot;2&quot;><path d=&quot;M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5&quot;/></svg></div>'">
+  <span class="txt">辅助：<span class="tag" style="color:#00a8ff">元宝AI</span></span>
 </div>
 
-<!-- 分类按钮 -->
-<div class="categories" id="cats">
+<!-- 主页 -->
+<div id="home">
+  <h1>🎮 桌游合集</h1>
+  <p class="sub">8 款经典游戏 · 纯前端实现 · 即点即玩</p>
+  <p class="legend">全部与 AI 对战 · 无广告 · 无内购 · 支持手机/电脑</p>
+
+  <!-- 分类按钮 -->
+  <div class="cats" id="cats">
     <button class="cat-btn active" data-cat="all">全部</button>
-    <button class="cat-btn" data-cat="card">🃏 卡牌</button>
-    <button class="cat-btn" data-cat="board">♟️ 棋类</button>
-    <button class="cat-btn" data-cat="party">🎉 派对</button>
-    <button class="cat-btn" data-cat="dice">🎲 骰子</button>
     <button class="cat-btn" data-cat="puzzle">🧩 益智</button>
     <button class="cat-btn" data-cat="action">⚡ 动作</button>
+  </div>
+
+  <div class="games-grid" id="grid"></div>
+
+  <div class="footer">
+    © 2026 cxf54188 · 辅助：元宝AI · 所有游戏纯前端实现，无需联网<br>
+    灵感来源：game.hullqin.cn
+  </div>
 </div>
 
-<!-- 游戏列表 -->
-<div class="section" data-cat="card"><h2>🃏 卡牌游戏</h2><div class="games-grid" id="grid-card"></div></div>
-<div class="section" data-cat="board"><h2>♟️ 棋类游戏</h2><div class="games-grid" id="grid-board"></div></div>
-<div class="section" data-cat="party"><h2>🎉 派对游戏</h2><div class="games-grid" id="grid-party"></div></div>
-<div class="section" data-cat="dice"><h2>🎲 骰子游戏</h2><div class="games-grid" id="grid-dice"></div></div>
-<div class="section" data-cat="puzzle"><h2>🧩 益智游戏</h2><div class="games-grid" id="grid-puzzle"></div></div>
-<div class="section" data-cat="action"><h2>⚡ 动作游戏</h2><div class="games-grid" id="grid-action"></div></div>
-
-<!-- 底部 -->
-<div class="footer">
-    © 2026 cxf54188 & 元宝AI · 纯前端网页游戏合集 · <span id="clock"></span>
-</div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script>
-    const GAMES = [
-        // 卡牌
-        {id:'uno',name:'UNO',icon:'🎴',desc:'经典卡牌对战',cat:'card',file:'uno.html'},
-        {id:'doudizhu',name:'斗地主',icon:'🃏',desc:'三人扑克博弈',cat:'card',file:'doudizhu.html'},
-        {id:'davinci',name:'达芬奇密码',icon:'🔐',desc:'逻辑推理猜数字',cat:'card',file:'davinci.html'},
-        {id:'exploding',name:'爆炸猫',icon:'💣',desc:'抽牌生存策略',cat:'card',file:'exploding.html'},
-        {id:'poison',name:'毒药',icon:'🧪',desc:'放药水比谁毒',cat:'card',file:'poison.html'},
-        {id:'bullhead',name:'牛头王',icon:'🐂',desc:'数字放牌避牛头',cat:'card',file:'bullhead.html'},
-        {id:'splendor',name:'璀璨宝石',icon:'💎',desc:'收集宝石买卡',cat:'card',file:'splendor.html'},
-        {id:'cabo',name:'CABO',icon:'🎴',desc:'记忆+推理卡牌',cat:'card',file:'cabo.html'},
-        {id:'loveletter',name:'情书',icon:'💌',desc:'出牌猜身份',cat:'card',file:'loveletter.html'},
-        {id:'rummikub',name:'拉密',icon:'🃏',desc:'凑顺子/组出牌',cat:'card',file:'rummikub.html'},
-        // 棋类
-        {id:'gobang',name:'五子棋',icon:'⚫',desc:'五子连珠胜',cat:'board',file:'gobang.html'},
-        {id:'tictac',name:'井字棋',icon:'✖️',desc:'三子连珠',cat:'board',file:'tictac.html'},
-        {id:'othello',name:'黑白棋',icon:'⚪',desc:'翻转对手棋子',cat:'board',file:'othello.html'},
-        {id:'roadwall',name:'路墙棋',icon:'🧱',desc:'放墙阻断对手',cat:'board',file:'roadwall.html'},
-        {id:'checkers',name:'跳棋',icon:'🔴',desc:'跳过吃子到终点',cat:'board',file:'checkers.html'},
-        {id:'mancala',name:'非洲播棋',icon:'🌍',desc:'播种捕获策略',cat:'board',file:'mancala.html'},
-        {id:'chess',name:'国际象棋',icon:'♞',desc:'经典策略对弈',cat:'board',file:'chess.html'},
-        {id:'xiangqi',name:'中国象棋',icon:'🐴',desc:'楚河汉界对阵',cat:'board',file:'xiangqi.html'},
-        {id:'go',name:'围棋',icon:'♟',desc:'围地吃子',cat:'board',file:'go.html'},
-        // 派对
-        {id:'herz',name:'德国心脏病',icon:'🍌',desc:'反应抢铃',cat:'party',file:'herz.html'},
-        {id:'spyfall',name:'谁是卧底',icon:'🕵️',desc:'描述投票淘汰',cat:'party',file:'spyfall.html'},
-        {id:'codenames',name:'行动代号',icon:'🗂️',desc:'暗号猜词合作',cat:'party',file:'codenames.html'},
-        {id:'rhythm',name:'节奏大师',icon:'🎵',desc:'音符下落按键',cat:'party',file:'rhythm.html'},
-        {id:'avalon',name:'阿瓦隆',icon:'🎭',desc:'好人vs坏人推理',cat:'party',file:'avalon.html'},
-        {id:'werewolf',name:'狼人杀',icon:'🐺',desc:'夜晚杀人白天投票',cat:'party',file:'werewolf.html'},
-        // 骰子
-        {id:'flight',name:'飞行棋',icon:'✈️',desc:'掷骰子前进',cat:'dice',file:'flight.html'},
-        {id:'yahtzee',name:'快艇骰子',icon:'🎲',desc:'掷骰组合得分',cat:'dice',file:'yahtzee.html'},
-        {id:'catan',name:'卡坦岛',icon:'🏝️',desc:'掷骰建定居点',cat:'dice',file:'catan.html'},
-        // 益智
-        {id:'snake',name:'贪吃蛇',icon:'🐍',desc:'经典贪吃蛇',cat:'puzzle',file:'snake.html'},
-        {id:'tetris',name:'俄罗斯方块',icon:'🧩',desc:'方块消除',cat:'puzzle',file:'tetris.html'},
-        {id:'mine',name:'扫雷',icon:'💣',desc:'逻辑推理扫雷',cat:'puzzle',file:'mine.html'},
-        {id:'2048',name:'2048',icon:'🔢',desc:'数字合并',cat:'puzzle',file:'2048.html'},
-        {id:'mem',name:'记忆翻牌',icon:'🎴',desc:'配对翻牌',cat:'puzzle',file:'mem.html'},
-        // 动作
-        {id:'fruit',name:'接水果',icon:'🍉',desc:'移动接水果',cat:'action',file:'fruit.html'},
-        {id:'pong',name:'弹球对战',icon:'🏓',desc:'挡板击球对战',cat:'action',file:'pong.html'},
-        {id:'breakout',name:'打砖块',icon:'🧱',desc:'弹球碎砖',cat:'action',file:'breakout.html'},
-    ];
+// 视口高度修正
+function setVH(){document.documentElement.style.setProperty('--vh',`${window.innerHeight*0.01}px`)}
+setVH();window.addEventListener('resize',setVH);
 
-    const grids = {
-        card:'grid-card', board:'grid-board', party:'grid-party',
-        dice:'grid-dice', puzzle:'grid-puzzle', action:'grid-action'
-    };
+// 背景粒子
+(function(){
+  const c=document.getElementById('bgp');
+  for(let i=0;i<18;i++){const p=document.createElement('div');p.className='bp';p.style.left=Math.random()*100+'%';p.style.animationDuration=(Math.random()*8+5)+'s';p.style.animationDelay=(Math.random()*12)+'s';p.style.width=p.style.height=(Math.random()*2.5+1)+'px';c.appendChild(p);}
+})();
 
-    for (const g of GAMES) {
-        const a = document.createElement('a');
-        a.className = 'game-card';
-        a.href = g.file;
-        a.innerHTML = `<span class="icon">${g.icon}</span><div class="name">${g.name}</div><div class="desc">${g.desc}</div>`;
-        document.getElementById(grids[g.cat]).appendChild(a);
-    }
+// 游戏数据（仅保留 8 款）
+const GAMES = [
+  {id:'snake',name:'贪吃蛇',ico:'🐍',ds:'经典贪吃蛇+霓虹特效',cat:'puzzle',tags:['单人','休闲']},
+  {id:'tetris',name:'俄罗斯方块',ico:'🧩',ds:'七种方块旋转消除',cat:'puzzle',tags:['单人','经典']},
+  {id:'mine',name:'扫雷',ico:'💣',ds:'逻辑推理三档难度',cat:'puzzle',tags:['单人','逻辑']},
+  {id:'2048',name:'2048',ico:'🔢',ds:'数字合并滑动动画',cat:'puzzle',tags:['单人','策略']},
+  {id:'mem',name:'记忆翻牌',ico:'🎴',ds:'锻炼记忆力配对',cat:'puzzle',tags:['单人','记忆']},
+  {id:'fruit',name:'接水果',ico:'🍉',ds:'动感休闲连击系统',cat:'action',tags:['单人','反应']},
+  {id:'pong',name:'弹球对战',ico:'🏓',ds:'经典Pong挑战AI',cat:'action',tags:['2人','反应']},
+  {id:'breakout',name:'打砖块',ico:'🧱',ds:'弹球击碎砖块',cat:'action',tags:['单人','动作']},
+];
 
-    document.getElementById('cats').addEventListener('click', e => {
-        if (!e.target.classList.contains('cat-btn')) return;
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        const cat = e.target.dataset.cat;
-        document.querySelectorAll('.section').forEach(s => {
-            s.style.display = (cat === 'all' || s.dataset.cat === cat) ? 'block' : 'none';
-        });
-    });
+// 渲染
+const grid = document.getElementById('grid');
+function render(cat){
+  grid.innerHTML = '';
+  const list = cat==='all' ? GAMES : GAMES.filter(g=>g.cat===cat);
+  for(const g of list){
+    const tags = g.tags.map(t=>`<span class="tag-s">${t}</span>`).join('');
+    const a = document.createElement('a');
+    a.className = `gcard c-${g.cat}`;
+    a.href = g.id + '.html';
+    a.innerHTML = `<span class="ico">${g.ico}</span><div class="nm">${g.name}</div><div class="ds">${g.ds}</div><div class="tags">${tags}</div>`;
+    grid.appendChild(a);
+  }
+}
+render('all');
 
-    const clock = document.getElementById("clock");
-    function tick() {
-        clock.textContent = new Date().toLocaleString("zh-CN", {
-            year:"numeric", month:"2-digit", day:"2-digit",
-            hour:"2-digit", minute:"2-digit", second:"2-digit"
-        });
-    }
-    tick(); setInterval(tick, 1000);
+// 分类切换
+document.getElementById('cats').addEventListener('click', e=>{
+  if(!e.target.classList.contains('cat-btn')) return;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  render(e.target.dataset.cat);
+});
+
+// 回到顶部
+const bt=document.getElementById('backTop');
+window.addEventListener('scroll',()=>{bt.classList.toggle('show',window.scrollY>300)});
 </script>
-
 </body>
 </html>

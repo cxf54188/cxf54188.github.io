@@ -1,9 +1,9 @@
 // 公共工具函数
-const YB_AVATAR = `<img class="yb-avatar" src="https://yuanbao.tencent.com/favicon.ico" alt="元宝AI" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%2300a86b%22/><text x=%2250%22 y=%2258%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22white%22>元</text></svg>'">`;
+const YB_AVATAR = `<img class="yb-avatar" src="yb_avatar.svg" alt="元宝AI" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%2300a86b%22/><text x=%2250%22 y=%2258%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22white%22>元</text></svg>'">`;
 
 function makeTopbar(extra){
   return `<div class="topbar">
-    <img class="avatar" src="../../img/avatar.png" alt="cxf54188" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <img class="avatar" src="../img/avatar.png" alt="cxf54188" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
     <div class="avatar-fallback" style="display:none;width:30px;height:30px;border-radius:50%;background:#4fc3f7;align-items:center;justify-content:center;font-size:14px">👤</div>
     <div class="info"><b>作者：cxf54188</b> &nbsp;|&nbsp; <span class="yb-label">辅助：</span>${YB_AVATAR}<b>元宝AI</b>${extra||''}</div>
   </div>`;

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>俄罗斯方块</title>
-<link rel="stylesheet" href="./_common.css">
+<link rel="stylesheet" href="_common.css">
 <style>
 body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px}
 canvas{border-radius:12px;max-width:100%}
@@ -13,7 +13,7 @@ canvas{border-radius:12px;max-width:100%}
 </style>
 </head>
 <body>
-<a class="back-link" href="../../index.html">← 返回主页</a>
+<a class="back-link" href="index.html">← 返回游戏列表</a>
 <div id="topbar"></div>
 <h1 style="font-size:22px;margin:6px 0;background:linear-gradient(90deg,#34d399,#4fc3f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent">🧩 俄罗斯方块</h1>
 <div class="hud">
@@ -26,7 +26,7 @@ canvas{border-radius:12px;max-width:100%}
 <button class="btn btn-sm btn-danger" id="restart" style="margin-top:10px">重新开始</button>
 <p style="color:#64748b;font-size:12px;margin-top:6px">← → 移动 · ↑旋转 · ↓加速 · 空格硬降</p>
 
-<script src="./_common.js"></script>
+<script src="_common.js"></script>
 <script>
 const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
 const C=document.getElementById('c'),X=C.getContext('2d');
