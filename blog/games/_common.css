@@ -6,6 +6,8 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gr
 .topbar .info{font-size:12px;color:#94a3b8}
 .topbar .info b{color:#e2e8f0}
 .topbar .yb{width:24px;height:24px;border-radius:50%;background:#00a86b;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-right:3px;font-size:13px}
+.topbar .yb-avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:middle;margin:0 3px;border:1.5px solid #00a86b;background:#00a86b}
+.topbar .yb-label{color:#64748b;font-size:11px}
 .btn{display:inline-block;padding:10px 28px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#4fc3f7,#a78bfa);color:#0a0e27;transition:.2s;font-family:inherit}
 .btn:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(79,195,247,.4)}
 .btn:active{transform:scale(.97)}
