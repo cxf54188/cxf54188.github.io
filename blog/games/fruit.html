@@ -114,8 +114,10 @@ function draw(){
   ctx.beginPath();ctx.roundRect(bx+4,basket.y+2,bw-8,4,2);ctx.fill();
 }
 function gameOver(){
+  window._lastScore = Math.floor(score);
+  showScoreDialog(Math.floor(score));
   ov.style.display='flex';
-  ov.innerHTML='<h1>💔 游戏结束</h1><p>分数: '+Math.floor(score)+'<br>最高连击: '+combo+'</p><button id="btn" style="margin-top:16px;padding:12px 44px;font-size:18px;font-weight:700;border:none;border-radius:999px;cursor:pointer;background:linear-gradient(135deg,#f0932b,#f5576c);color:#fff" onclick="location.reload()">再来一次</button>';
+  ov.innerHTML='<h1>💔 游戏结束</h1>...';
 }
 function loop(){update();draw();if(running)animId=requestAnimationFrame(loop)}
 function start(){ov.style.display='none';reset();running=true;if(animId)cancelAnimationFrame(animId);loop()}

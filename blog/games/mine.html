@@ -121,14 +121,20 @@ function onRight(r,c){
 function checkWin(){
   let ok=true;
   for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(!grid[r][c].mine&&!grid[r][c].revealed){ok=false;break}
-  if(ok){running=false;clearInterval(timer);statusEl.textContent='😎';
-    ov.style.display='flex';ov.innerHTML='<h1>🎉 你赢了！</h1><p>用时: '+Math.floor((Date.now()-timeStart)/1000)+' 秒</p><button id="btn" style="margin-top:16px;padding:12px 44px;font-size:18px;font-weight:700;border:none;border-radius:999px;cursor:pointer;background:linear-gradient(135deg,#f39c12,#e74c3c);color:#fff" onclick="location.reload()">再来一次</button>';
+  if(ok){
+    running=false;clearInterval(timer);
+    window._lastScore = Math.floor((Date.now()-timeStart)/1000);
+    showScoreDialog(window._lastScore);
+    ov.style.display='flex';
+    ov.innerHTML='<h1>🎉 你赢了！</h1>...';
   }
 }
 function lose(){
-  running=false;clearInterval(timer);statusEl.textContent='😵';
-  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(grid[r][c].mine){const el=getCell(r,c);el.textContent='💣';el.className='cell mine'}
-  ov.style.display='flex';ov.innerHTML='<h1>💥 游戏结束</h1><p>你踩到地雷了！</p><button id="btn" style="margin-top:16px;padding:12px 44px;font-size:18px;font-weight:700;border:none;border-radius:999px;cursor:pointer;background:linear-gradient(135deg,#f39c12,#e74c3c);color:#fff" onclick="location.reload()">再来一次</button>';
+  running=false;clearInterval(timer);
+  window._lastScore = 0;
+  showScoreDialog(0);
+  ov.style.display='flex';
+  ov.innerHTML='<h1>💥 游戏结束</h1>...';
 }
 // difficulty
 document.querySelectorAll('#diff button').forEach(b=>{

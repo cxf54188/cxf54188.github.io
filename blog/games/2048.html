@@ -236,9 +236,10 @@ body{background:#0f0c29;display:flex;justify-content:center;align-items:center;m
 
   function gameOver(){
     running = false;
+    window._lastScore = score;
+    showScoreDialog(score);
     ov.style.display = 'flex';
-    ov.innerHTML = '<h1>💥 游戏结束</h1><p>分数: '+score+'</p>' +
-      '<button id="btn" style="margin-top:16px;padding:12px 44px;font-size:18px;font-weight:700;border:none;border-radius:999px;cursor:pointer;background:linear-gradient(135deg,#f0932b,#eb4d4b);color:#fff" onclick="location.reload()">再来一次</button>';
+    ov.innerHTML = '<h1>💥 游戏结束</h1>...';
   }
 
   function start(){
