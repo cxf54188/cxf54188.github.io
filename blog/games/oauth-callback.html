@@ -14,62 +14,32 @@ a{color:#00f5a0}
 <div class="spinner"></div>
 <p id="msg">正在提交分数...</p>
 <script>
+const VERCEL_API = 'https://leaderboard-api-v2.vercel.app/api/oauth'; // ← 改成你的 Vercel 域名
+
 (async function(){
   const code = new URLSearchParams(location.search).get('code');
   const game = localStorage.getItem('pending_game') || 'snake';
   const score = localStorage.getItem('pending_score') || '0';
   const msg = document.getElementById('msg');
 
-  if (!code) { msg.textContent = '❌ 授权失败：没有收到 code'; return; }
-
-  // 用 code 换取 access token（需要你的 client_id 和 client_secret）
-  const CLIENT_ID = '你的ClientID';     // ← 改成你的
-  const CLIENT_SECRET = '你的ClientSecret'; // ← 改成你的
+  if (!code) {
+    msg.textContent = '❌ 授权失败：没有收到 code';
+    return;
+  }
 
   try {
-    // 1. 用 code 换 token
-    const tokenResp = await fetch('https://github.com/login/oauth/access_token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
-        code: code
-      })
-    });
-    const tokenData = await tokenResp.json();
-    const access_token = tokenData.access_token;
-    
-    if (!access_token) {
-      msg.textContent = '❌ Token 交换失败';
-      return;
-    }
-
-    // 2. 获取用户信息
-    const userResp = await fetch('https://api.github.com/user', {
-      headers: { 'Authorization': `Bearer ${access_token}` }
-    });
-    const user = await userResp.json();
-    const username = user.login;
-
-    // 3. 触发 GitHub Actions 工作流（不需要 Token）
-    const dispatchResp = await fetch('https://api.github.com/repos/cxf54188/cxf54188.github.io/dispatches', {
+    const resp = await fetch(VERCEL_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event_type: 'submit-score',
-        client_payload: {
-          game: game,
-          username: username,
-          score: String(score)
-        }
-      })
+      body: JSON.stringify({ code, game, score })
     });
 
-    if (dispatchResp.ok) {
-      msg.innerHTML = `✅ ${username}，分数已提交！<br><br><a href="index.html">返回游戏列表</a>`;
+    const data = await resp.json();
+
+    if (data.login) {
+      msg.innerHTML = `✅ ${data.login}，分数已提交！<br><br><a href="index.html">返回游戏列表</a>`;
     } else {
-      msg.textContent = '❌ 触发工作流失败';
+      msg.textContent = '❌ 提交失败：' + (data.error || '未知错误');
     }
   } catch(e) {
     msg.innerHTML = '❌ 提交失败：' + e.message + '<br><br><a href="index.html">返回游戏列表</a>';
