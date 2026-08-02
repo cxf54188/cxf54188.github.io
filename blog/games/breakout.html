@@ -2,107 +2,569 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>打砖块</title>
-<link rel="stylesheet" href="_common.css">
 <style>
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px}
-canvas{border-radius:12px;max-width:100%;touch-action:none}
-.hud{display:flex;gap:16px;margin:8px 0;font-size:14px;color:#94a3b8;flex-wrap:wrap;justify-content:center}
-.hud b{color:#4fc3f7}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%}
+body{background:#0f0c29;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:system-ui,sans-serif;overflow:hidden}
+#wrap{position:relative;width:400px;max-width:96vw;border-radius:14px;overflow:hidden;box-shadow:0 0 40px rgba(138,43,226,.5)}
+#bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(0,0,0,.7);color:#fff;font-size:13px;position:relative;z-index:10}
+#bar img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+#bar .sep{opacity:.5;margin:0 2px}
+#info{display:flex;justify-content:space-between;align-items:center;padding:6px 14px;color:#fff;font-size:14px;font-weight:700;background:rgba(0,0,0,.55);position:relative;z-index:10}
+#game-area{position:relative;width:100%;aspect-ratio:2/3}
+canvas{display:block;width:100%!important;height:100%!important;background:#0a0a1a;touch-action:none;cursor:none}
+#msg{position:absolute;top:8px;left:0;right:0;text-align:center;color:#ff0;font-size:14px;font-weight:700;z-index:50;pointer-events:none;opacity:0;transition:opacity .3s;text-shadow:0 0 8px rgba(255,255,0,.5)}
+#overlay{position:absolute;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);color:#fff;text-align:center;padding:20px}
+#overlay h1{font-size:26px;margin-bottom:6px}
+#overlay p{font-size:13px;opacity:.8;max-width:300px;line-height:1.5}
+#btn{margin-top:16px;padding:12px 44px;font-size:18px;font-weight:700;border:none;border-radius:999px;cursor:pointer;background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;box-shadow:0 6px 24px rgba(245,87,108,.4)}
+#btn:active{transform:scale(.95)}
+.legend{display:flex;gap:12px;margin-top:10px;font-size:11px;color:#ccc;flex-wrap:wrap;justify-content:center}
+.legend span{display:flex;align-items:center;gap:4px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
 </style>
 </head>
 <body>
-<a class="back-link" href="index.html">← 返回游戏列表</a>
-<div id="topbar"></div>
-<h1 style="font-size:22px;margin:6px 0;background:linear-gradient(90deg,#f43f5e,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">🧱 打砖块</h1>
-<div class="hud">
-  <span>分数：<b id="sc">0</b></span>
-  <span>生命：<b id="hp">3</b></span>
-  <span>最高分：<b id="hi">0</b></span>
+<div id="wrap">
+  <div id="bar">
+    <img src="https://cdn.luogu.com.cn/upload/image_hosting/v70j6st4.png" alt="cxf" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2216%22 fill=%22%236a5acd%22/%3E%3Ctext x=%2216%22 y=%2222%22 text-anchor=%22middle%22 font-size=%2218%22 fill=%22%23fff%22%3Ec%3C/text%3E%3C/svg%3E'">
+    <span>作者：cxf54188</span><span class="sep">|</span>
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2322c55e' stroke='%2316a34a' stroke-width='2'/%3E%3Cpath d='M20 35 Q32 42 46 33' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='22' cy='24' r='3.5' fill='%23fff'/%3E%3Ccircle cx='42' cy='24' r='3.5' fill='%23fff'/%3E%3Ccircle cx='22' cy='24' r='1.5' fill='%2316a34a'/%3E%3Ccircle cx='42' cy='24' r='1.5' fill='%2316a34a'/%3E%3C/svg%3E" alt="YB" style="background:#22c55e;">
+    <span>辅助：元宝AI</span>
+  </div>
+  <div id="info">
+    <span id="score">分数: 0</span>
+    <span id="lives">❤️❤️❤️</span>
+    <span id="mult">x1</span>
+  </div>
+  <div id="game-area">
+    <canvas id="c"></canvas>
+    <div id="msg"></div>
+    <div id="overlay">
+      <h1>🧱 打砖块</h1>
+      <p>← → 或鼠标移动挡板<br>打碎砖块得分，漏球扣命<br>打空一行 → 上方全下移 → 顶端补新行<br><br>特殊砖块外观与普砖一致<br>打碎后随机触发效果</p>
+      <div class="legend">
+        <span><i style="background:#ffd700"></i>3倍分</span>
+        <span><i style="background:#00d2ff"></i>宽挡板</span>
+        <span><i style="background:#ff6b81"></i>大球</span>
+        <span><i style="background:#ffd700"></i>多球×3</span>
+      </div>
+      <button id="btn">开始游戏</button>
+    </div>
+  </div>
 </div>
-<canvas id="c" width="480" height="320"></canvas>
-<button class="btn btn-sm btn-danger" id="restart" style="margin-top:10px">重新开始</button>
-<p style="color:#64748b;font-size:12px;margin-top:6px">← → / 鼠标拖动挡板</p>
 
-<script src="_common.js"></script>
 <script>
-const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
-const C=document.getElementById('c'),X=C.getContext('2d');
-const W=480,H=320;
-let paddle,ball,bricks,score=0,high=Store.get('bk_hi',0),lives=3,running=true;
+(function(){
+'use strict';
 
-function reset(){
-  paddle={x:W/2-40,y:H-24,w:80,h:12,vx:0};
-  ball={x:W/2,y:H/2,r:7,vx:3,vy:-3,speed:4};
-  bricks=[];score=0;lives=3;running=true;
-  for(let r=0;r<5;r++)for(let c=0;c<8;c++){
-    bricks.push({x:4+c*59,y:4+r*20,w:55,h:16,hp:3-r,alive:true});
-  }
-  updateHUD();
+// ===== 画布 =====
+var cvs = document.getElementById('c');
+var ctx = cvs.getContext('2d');
+var W = 400, H = 600;
+cvs.width = W;
+cvs.height = H;
+
+// ===== DOM =====
+var ov       = document.getElementById('overlay');
+var btn      = document.getElementById('btn');
+var scoreEl  = document.getElementById('score');
+var livesEl  = document.getElementById('lives');
+var multEl   = document.getElementById('mult');
+var msgEl    = document.getElementById('msg');
+
+// ===== 常量 =====
+var COLS = 8, BW = 44, BH = 18, GAP = 4, BTOP = 50;
+var PADDLE_Y = 555;
+var MAX_ROWS = 6;
+var ROW_COLORS = ['#ff4757','#ff6348','#ffa502','#2ed573','#1e90ff','#a29bfe'];
+
+var T_NORMAL=0, T_MULT=1, T_WIDE=2, T_BIG=3, T_MULTIBALL=4;
+var TYPE_RATE = 0.22;
+
+// ===== 核心数据结构 =====
+// grid: { rowNum: [brick x8] }
+// 行号 0=最顶端, 5=最底端
+// 永远保持有砖块可打，打空一行立即补
+
+var grid = {};
+
+// ===== 游戏状态 =====
+var balls = [], paddle = null;
+var score=0, lives=3, mult=1, running=false, animId=null;
+var mouseX=200, useMouse=false;
+var wideTimer=0, bigTimer=0, multiTimer=0;
+
+// ===== 工具 =====
+function showMsg(text, dur){
+  msgEl.textContent = text;
+  msgEl.style.opacity = '1';
+  clearTimeout(showMsg._t);
+  showMsg._t = setTimeout(function(){ msgEl.style.opacity = '0'; }, dur||1200);
 }
-function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('hp').textContent=lives;document.getElementById('hi').textContent=high}
-function normalizeBall(){
-  const sp=Math.hypot(ball.vx,ball.vy);
-  if(sp===0)return;
-  if(sp<2.5||sp>7){const target=Math.max(2.5,Math.min(7,ball.speed||4));ball.vx=ball.vx/sp*target;ball.vy=ball.vy/sp*target;return}
-  ball.vx=ball.vx/sp*ball.speed;ball.vy=ball.vy/sp*ball.speed;
+
+function randType(){
+  return (Math.random() < TYPE_RATE) ? (1 + Math.floor(Math.random()*4)) : 0;
 }
-function step(){
-  if(!running)return;
-  // 挡板
-  paddle.x+=paddle.vx;
-  paddle.x=Math.max(0,Math.min(W-paddle.w,paddle.x));
-  // 球
-  ball.x+=ball.vx;ball.y+=ball.vy;
-  // 墙
-  if(ball.x<ball.r){ball.x=ball.r;ball.vx*=-1}
-  if(ball.x>W-ball.r){ball.x=W-ball.r;ball.vx*=-1}
-  if(ball.y<ball.r){ball.y=ball.r;ball.vy*=-1}
-  // 挡板碰撞（仅下落时）
-  if(ball.vy>0&&ball.y+ball.r>=paddle.y&&ball.y-ball.r<=paddle.y+paddle.h&&ball.x>=paddle.x-4&&ball.x<=paddle.x+paddle.w+4){
-    ball.y=paddle.y-ball.r-0.5;ball.vy*=-1;
-    const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);
-    ball.vx=hit*ball.speed*0.9;normalizeBall();
-  }
-  // 砖块碰撞
-  for(const b of bricks){if(!b.alive)continue;
-    if(ball.x+ball.r>b.x&&ball.x-ball.r<b.x+b.w&&ball.y+ball.r>b.y&&ball.y-ball.r<b.y+b.h){
-      // 计算从哪边撞入
-      const ox=(ball.x-(b.x+b.w/2))/(b.w/2),oy=(ball.y-(b.y+b.h/2))/(b.h/2);
-      if(Math.abs(ox)>Math.abs(oy)){ball.vx*=-1;ball.x=ball.vx>0?b.x+b.w+ball.r+0.5:b.x-ball.r-0.5}
-      else{ball.vy*=-1;ball.y=ball.vy>0?b.y+b.h+ball.r+0.5:b.y-ball.r-0.5}
-      b.hp--;score+=10;if(b.hp<=0)b.alive=false;
-      normalizeBall();break;
+
+function rowToY(row){ return BTOP + row * (BH + GAP); }
+
+function forEachAlive(fn){
+  for(var k in grid){
+    var arr = grid[k];
+    for(var i=0;i<arr.length;i++){
+      if(arr[i].alive) fn(arr[i]);
     }
   }
-  // 出界
-  if(ball.y>H+10){lives--;if(lives<=0){running=false;alert('💀 游戏结束 得分:'+score)}else{resetBall()}}
-  if(score>high){high=score;Store.set('bk_hi',high)}
-  updateHUD();
 }
-function resetBall(){ball.x=W/2;ball.y=H/2;ball.vx=3*(Math.random()<0.5?-1:1);ball.vy=-3;ball.speed=4}
-function draw(){
-  X.fillStyle='#0f172a';X.fillRect(0,0,W,H);
-  // 砖块
-  for(const b of bricks){if(!b.alive)continue;
-    const colors=['#475569','#3b82f6','#a78bfa','#f43f5e','#f97316'];
-    X.fillStyle=colors[b.hp]||'#fff';X.shadowColor=X.fillStyle;X.shadowBlur=4;
-    X.fillRect(b.x,b.y,b.w,b.h);X.shadowBlur=0;
+
+function countAlive(row){
+  var arr = grid[row];
+  if(!arr) return 0;
+  var n = 0;
+  for(var i=0;i<arr.length;i++) if(arr[i].alive) n++;
+  return n;
+}
+
+function getAliveRows(){
+  var arr = [];
+  for(var k in grid){
+    if(countAlive(+k) > 0) arr.push(+k);
   }
-  // 挡板
-  X.fillStyle='#4fc3f7';X.shadowColor='#4fc3f7';X.shadowBlur=10;
-  X.fillRect(paddle.x,paddle.y,paddle.w,paddle.h);X.shadowBlur=0;
-  // 球
-  X.fillStyle='#facc15';X.shadowColor='#facc15';X.shadowBlur=8;
-  X.beginPath();X.arc(ball.x,ball.y,ball.r,0,Math.PI*2);X.fill();X.shadowBlur=0;
+  arr.sort(function(a,b){return a-b;});
+  return arr;
 }
-function loop(){step();draw();requestAnimationFrame(loop)}
-document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')paddle.vx=-6;if(e.key==='ArrowRight')paddle.vx=6;if(e.key===' '&&!running)reset()});
-document.addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight')paddle.vx=0});
-C.addEventListener('mousemove',e=>{const r=C.getBoundingClientRect();paddle.x=(e.clientX-r.left)/r.width*W-paddle.w/2});
-C.addEventListener('touchmove',e=>{e.preventDefault();const r=C.getBoundingClientRect(),t=e.touches[0];paddle.x=(t.clientX-r.left)/r.width*W-paddle.w/2},{passive:false});
-document.getElementById('restart').onclick=reset;
-reset();requestAnimationFrame(loop);
+
+function totalAlive(){
+  var n = 0;
+  forEachAlive(function(){ n++; });
+  return n;
+}
+
+// ===== 砖块 =====
+function makeBrick(col, row){
+  return {
+    x: 16 + col * (BW + GAP),
+    y: rowToY(row),
+    w: BW, h: BH,
+    row: row,
+    type: randType(),
+    alive: true
+  };
+}
+
+function fillRow(row){
+  var arr = [];
+  for(var c=0;c<COLS;c++) arr.push(makeBrick(c, row));
+  grid[row] = arr;
+}
+
+function initBricks(){
+  grid = {};
+  for(var r=0;r<MAX_ROWS;r++) fillRow(r);
+}
+
+// ===== 行下移 =====
+function shiftRowsDown(clearedRow){
+  // 从大到小处理，避免覆盖
+  var toShift = getAliveRows().filter(function(r){return r < clearedRow;});
+  toShift.sort(function(a,b){return b-a;});
+
+  for(var s=0;s<toShift.length;s++){
+    var oldR = toShift[s];
+    var newR = oldR + 1;
+    var arr = grid[oldR];
+    for(var j=0;j<arr.length;j++){
+      arr[j].row = newR;
+      arr[j].y = rowToY(newR);
+    }
+    grid[newR] = arr;
+    delete grid[oldR];
+  }
+}
+
+// ===== 确保顶端有行 =====
+function ensureTopRow(){
+  // 如果 row 0 有存活砖块，OK
+  if(grid[0] && grid[0].some(function(b){return b.alive;})) return;
+
+  var rows = getAliveRows();
+  if(rows.length === 0){
+    // 全空，重新填满 6 行
+    initBricks();
+    return;
+  }
+
+  var minR = rows[0];
+  if(minR > 0){
+    // 所有人下移 minR 格，使 minR=0
+    var oldG = grid; grid = {};
+    for(var k in oldG){
+      var nr = +k - minR;
+      var a = oldG[k];
+      for(var i=0;i<a.length;i++){
+        a[i].row = nr;
+        a[i].y = rowToY(nr);
+      }
+      grid[nr] = a;
+    }
+  }
+
+  // 现在 row 0 应该存在，如果没有存活砖块就填满
+  if(!grid[0] || !grid[0].some(function(b){return b.alive;})){
+    fillRow(0);
+  }
+}
+
+// ===== 行清空处理 =====
+function onRowCleared(clearedRow){
+  shiftRowsDown(clearedRow);
+  delete grid[clearedRow];
+  ensureTopRow();
+  showMsg('新行补充!', 1200);
+}
+
+// 砖块死亡检查（延迟到下一帧）
+function onBrickDestroyed(brick){
+  var row = brick.row;
+  setTimeout(function(){
+    if(countAlive(row) === 0) onRowCleared(row);
+  }, 0);
+}
+
+// ===== 球 =====
+function makeBall(x,y,dx,dy,r,big){
+  return {x:x,y:y,dx:dx,dy:dy,r:r,big:big};
+}
+
+function resetBalls(){
+  balls = [makeBall(200, 400, (Math.random()*2-1)*3, -3.5, 7, false)];
+  updateMultDisplay();
+  multiTimer = 0;
+}
+
+function addBall(){
+  if(balls.length >= 3) return;
+  var s = balls[0];
+  balls.push(makeBall(
+    s.x + (Math.random()*20-10),
+    s.y + (Math.random()*20-10),
+    -s.dx * (0.8+Math.random()*0.4),
+    -Math.abs(s.dy) * (0.8+Math.random()*0.4),
+    s.r, s.big
+  ));
+  updateMultDisplay();
+  showMsg('三倍火力!', 1200);
+}
+
+function updateMultDisplay(){
+  if(balls.length >= 3)       multEl.textContent = 'x3';
+  else if(mult === 3)         multEl.textContent = 'x3';
+  else if(paddle && paddle.w > 80) multEl.textContent = '宽';
+  else if(balls[0] && balls[0].big) multEl.textContent = '大';
+  else                        multEl.textContent = 'x1';
+}
+
+// ===== 挡板 =====
+function resetPaddle(){
+  paddle = {x:160, w:80, h:12, y:PADDLE_Y};
+  wideTimer = 0;
+}
+
+// ===== 重置 =====
+function reset(){
+  score = 0; lives = 3; mult = 1;
+  scoreEl.textContent = '分数: 0';
+  livesEl.textContent = '❤️❤️❤️';
+  initBricks();
+  resetBalls();
+  resetPaddle();
+  mouseX = 200; useMouse = false;
+}
+
+// ===== 更新 =====
+function update(){
+  // 计时器
+  if(wideTimer > 0){
+    wideTimer--;
+    if(wideTimer <= 0){ paddle.w = 80; showMsg('挡板恢复', 800); updateMultDisplay(); }
+  }
+  if(bigTimer > 0){
+    bigTimer--;
+    if(bigTimer <= 0){
+      for(var i=0;i<balls.length;i++){ balls[i].r=7; balls[i].big=false; }
+      showMsg('球恢复', 800); updateMultDisplay();
+    }
+  }
+  if(multiTimer > 0){
+    multiTimer--;
+    if(multiTimer <= 0 && balls.length > 1){
+      balls = [balls[0]];
+      updateMultDisplay();
+      showMsg('火力恢复', 800);
+    }
+  }
+
+  // 挡板跟随
+  if(useMouse){
+    var target = mouseX - paddle.w/2;
+    paddle.x += (target - paddle.x) * 0.25;
+  }
+  paddle.x = Math.max(0, Math.min(W - paddle.w, paddle.x));
+
+  // 更新球
+  for(var bi=0;bi<balls.length;bi++){
+    var ball = balls[bi];
+    if(ball.y > H + 30) continue;
+
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    // 左右墙
+    if(ball.x - ball.r < 0){ ball.x = ball.r; ball.dx = -ball.dx; }
+    if(ball.x + ball.r > W){ ball.x = W - ball.r; ball.dx = -ball.dx; }
+    // 上墙
+    if(ball.y - ball.r < 0){ ball.y = ball.r; ball.dy = -ball.dy; }
+
+    // 挡板碰撞
+    if(ball.dy > 0 &&
+       ball.y + ball.r >= paddle.y &&
+       ball.y + ball.r <= paddle.y + paddle.h + 8 &&
+       ball.x >= paddle.x - ball.r &&
+       ball.x <= paddle.x + paddle.w + ball.r){
+      var hit = (ball.x - (paddle.x + paddle.w/2)) / (paddle.w/2);
+      var spd = Math.sqrt(ball.dx*ball.dx + ball.dy*ball.dy);
+      ball.dx = hit * 4;
+      ball.dy = -Math.abs(spd * 0.9);
+      ball.y = paddle.y - ball.r - 0.5;
+    }
+
+    // 砖块碰撞
+    var hitFlag = false;
+    forEachAlive(function(b){
+      if(hitFlag) return;
+      if(ball.x+ball.r > b.x && ball.x-ball.r < b.x+b.w &&
+         ball.y+ball.r > b.y && ball.y-ball.r < b.y+b.h){
+
+        var oL = (ball.x + ball.r) - b.x;
+        var oR = (b.x + b.w) - (ball.x - ball.r);
+        var oT = (ball.y + ball.r) - b.y;
+        var oB = (b.y + b.h) - (ball.y - ball.r);
+        var mn = oL;
+        if(oR < mn) mn = oR;
+        if(oT < mn) mn = oT;
+        if(oB < mn) mn = oB;
+
+        if(mn === oL || mn === oR) ball.dx = -ball.dx;
+        else                        ball.dy = -ball.dy;
+
+        // 特殊效果
+        var t = b.type;
+        if(t === 1){ mult = 3; showMsg('3倍分数!', 1000); }
+        else if(t === 2){ paddle.w = 120; wideTimer = 600; showMsg('挡板加宽!', 1000); }
+        else if(t === 3){
+          for(var j=0;j<balls.length;j++){ balls[j].r=12; balls[j].big=true; }
+          bigTimer = 600; showMsg('大球!', 1000);
+        }
+        else if(t === 4){ addBall(); multiTimer = 600; }
+
+        b.alive = false;
+        score += 10 * mult;
+        scoreEl.textContent = '分数: ' + score;
+
+        onBrickDestroyed(b);
+        hitFlag = true;
+      }
+    });
+
+    // 速度钳制
+    var spd2 = Math.sqrt(ball.dx*ball.dx + ball.dy*ball.dy);
+    var minS = ball.big ? 3.5 : 3;
+    var maxS = ball.big ? 8 : 7;
+    if(spd2 < minS){ var k=minS/spd2; ball.dx*=k; ball.dy*=k; }
+    if(spd2 > maxS){ var k2=maxS/spd2; ball.dx*=k2; ball.dy*=k2; }
+  }
+
+  // 移除掉出屏幕的球
+  var alive = [];
+  for(var ai=0;ai<balls.length;ai++){
+    if(balls[ai].y <= H+20) alive.push(balls[ai]);
+  }
+  balls = alive;
+
+  // 所有球都掉了 → 扣命
+  if(balls.length === 0){
+    lives--;
+    var hs = '';
+    for(var li=0;li<Math.max(0,lives);li++) hs += '❤️';
+    livesEl.textContent = hs;
+    updateMultDisplay();
+    if(lives <= 0){ running = false; gameOver(); return; }
+    resetBalls();
+  }
+}
+
+// ===== 绘制 =====
+function draw(){
+  ctx.fillStyle = '#0a0a1a';
+  ctx.fillRect(0, 0, W, H);
+
+  // 砖块（按行号升序绘制，小的在下面=先画）
+  var rows = getAliveRows();
+  for(var ri=0;ri<rows.length;ri++){
+    var r = rows[ri];
+    var arr = grid[r];
+    var color = ROW_COLORS[r % ROW_COLORS.length];
+    for(var i=0;i<arr.length;i++){
+      var b = arr[i];
+      if(!b.alive) continue;
+      ctx.shadowColor = color; ctx.shadowBlur = 6;
+      ctx.fillStyle = color;
+      rr(ctx, b.x, b.y, b.w, b.h, 3);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fillRect(b.x+2, b.y+2, b.w-4, b.h/2-2);
+    }
+  }
+
+  // 球
+  for(var bi=0;bi<balls.length;bi++){
+    var ball = balls[bi];
+    ctx.shadowColor = ball.big ? '#ff6b81' : '#fff';
+    ctx.shadowBlur = ball.big ? 22 : 15;
+    ctx.fillStyle = ball.big ? '#ff6b81' : '#fff';
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // 挡板
+  ctx.shadowColor = '#f5576c'; ctx.shadowBlur = 20;
+  ctx.fillStyle = '#f5576c';
+  rr(ctx, paddle.x, paddle.y, paddle.w, paddle.h, 6);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.fillRect(paddle.x+4, paddle.y+2, paddle.w-8, 4);
+
+  // 计时条
+  var maxT = 600, t = 0;
+  if(wideTimer > t) t = wideTimer;
+  if(bigTimer > t) t = bigTimer;
+  if(multiTimer > t) t = multiTimer;
+  if(t > 0){
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.fillRect(10, H-8, W-20, 4);
+    var bc = '#ffd700';
+    if(wideTimer >= t) bc = '#00d2ff';
+    else if(bigTimer >= t) bc = '#ff6b81';
+    ctx.fillStyle = bc;
+    ctx.fillRect(10, H-8, (W-20)*(t/maxT), 4);
+  }
+}
+
+// 圆角矩形
+function rr(c, x, y, w, h, r){
+  if(r > w/2) r = w/2;
+  if(r > h/2) r = h/2;
+  c.beginPath();
+  c.moveTo(x+r, y);
+  c.lineTo(x+w-r, y);
+  c.quadraticCurveTo(x+w, y, x+w, y+r);
+  c.lineTo(x+w, y+h-r);
+  c.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  c.lineTo(x+r, y+h);
+  c.quadraticCurveTo(x, y+h, x, y+h-r);
+  c.lineTo(x, y+r);
+  c.quadraticCurveTo(x, y, x+r, y);
+  c.closePath();
+}
+
+// ===== 游戏结束 =====
+function gameOver(){
+  ov.style.display = 'flex';
+  ov.innerHTML = '<h1>游戏结束</h1><p>分数: '+score+'</p>' +
+    '<button id="btn" style="margin-top:16px;padding:12px 44px;font-size:18px;font-weight:700;border:none;border-radius:999px;cursor:pointer;background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff" onclick="location.reload()">再来一次</button>';
+}
+
+// ===== 主循环 =====
+function loop(){
+  if(!running) return;
+  update();
+  draw();
+  animId = requestAnimationFrame(loop);
+}
+
+function start(){
+  ov.style.display = 'none';
+  reset();
+  running = true;
+  if(animId) cancelAnimationFrame(animId);
+  animId = requestAnimationFrame(loop);
+}
+
+// ===== 事件 =====
+btn.addEventListener('click', start);
+
+cvs.addEventListener('mousemove', function(e){
+  var rect = cvs.getBoundingClientRect();
+  mouseX = (e.clientX - rect.left) * (W / rect.width);
+  useMouse = true;
+});
+cvs.addEventListener('mouseleave', function(){ useMouse = false; });
+
+cvs.addEventListener('touchmove', function(e){
+  e.preventDefault();
+  var rect = cvs.getBoundingClientRect();
+  mouseX = (e.touches[0].clientX - rect.left) * (W / rect.width);
+  useMouse = true;
+}, {passive:false});
+cvs.addEventListener('touchend', function(){ useMouse = false; });
+
+document.addEventListener('keydown', function(e){
+  if(!running) return;
+  if(e.key==='ArrowLeft'){ paddle.x=Math.max(0,paddle.x-18); useMouse=false; e.preventDefault(); }
+  if(e.key==='ArrowRight'){ paddle.x=Math.min(W-paddle.w,paddle.x+18); useMouse=false; e.preventDefault(); }
+});
+
+// ===== 初始绘制 =====
+reset();
+draw();
+
+})();
 </script>
-</body></html>
+<!-- 提交分数弹窗 -->
+<div class="score-dialog" id="scoreDialog">
+  <div class="box">
+    <h2>🏆 游戏结束</h2>
+    <p id="finalScore" style="color:#fff;font-size:14px"></p>
+    <button onclick="loginAndSubmit()" style="background:#24292e;color:#fff;border:1px solid #555">
+      🐙 用 GitHub 登录提交
+    </button>
+    <p class="status" id="submitStatus"></p>
+  </div>
+</div>
+
+<script>
+const GAME_KEY = 'breakout';
+const CLIENT_ID = 'Ov23liUtg4iRn8uimlnC';
+
+function showScoreDialog(score) {
+  window._lastScore = score;
+  document.getElementById('finalScore').textContent = '得分: ' + score;
+  document.getElementById('scoreDialog').classList.add('show');
+}
+
+function loginAndSubmit() {
+  localStorage.setItem('pending_game', GAME_KEY);
+  localStorage.setItem('pending_score', String(window._lastScore));
+  const redirect = encodeURIComponent('https://cxf54188.github.io/blog/games/oauth-callback.html');
+  location.href = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&scope=read:user`;
+}
+</script>
+</body>
+</html>

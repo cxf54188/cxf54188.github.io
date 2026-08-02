@@ -2,123 +2,174 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>扫雷</title>
-<link rel="stylesheet" href="_common.css">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>💣 扫雷</title>
 <style>
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:8px}
-#board{display:grid;gap:2px;padding:10px;background:rgba(255,255,255,.05);border-radius:12px;border:1px solid rgba(255,255,255,.1)}
-.cell{width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;border-radius:4px;cursor:pointer;background:rgba(255,255,255,.08);user-select:none;transition:.1s}
-.cell:hover{background:rgba(255,255,255,.15)}
-.cell.open{background:rgba(0,0,0,.3);cursor:default}
-.cell.mine{background:#f43f5e}
-.cell.flag::after{content:'🚩';font-size:12px}
-.hud{display:flex;gap:16px;margin:8px 0;font-size:14px;color:#94a3b8;flex-wrap:wrap;justify-content:center}
-.hud b{color:#4fc3f7}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0f0c29;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:system-ui,sans-serif;overflow:hidden}
+#wrap{position:relative;width:420px;max-width:96vw}
+#bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(0,0,0,.6);border-radius:14px 14px 0 0;color:#fff;font-size:13px}
+#bar img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+#bar .sep{opacity:.5;margin:0 2px}
+#info{display:flex;justify-content:space-between;padding:8px 14px;color:#ffeb3b;font-size:16px;font-weight:700;background:rgba(0,0,0,.4)}
+#board{display:grid;gap:1px;padding:6px;background:rgba(0,0,0,.3);user-select:none}
+.cell{display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;border-radius:3px;cursor:pointer;transition:background .1s}
+.cell.hidden{background:#5c7cb5}
+.cell.hidden:hover{background:#7b9bd6}
+.cell.revealed{background:#c0c0c0}
+.cell.mine{background:#e74c3c}
+.cell.flag{background:#f39c12}
+#overlay{position:absolute;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);border-radius:14px;color:#fff;text-align:center;padding:20px}
+#overlay h1{font-size:26px;margin-bottom:6px}
+#overlay p{font-size:13px;opacity:.8;max-width:280px;line-height:1.5}
+#btn{margin-top:16px;padding:12px 44px;font-size:18px;font-weight:700;border:none;border-radius:999px;cursor:pointer;background:linear-gradient(135deg,#f39c12,#e74c3c);color:#fff;box-shadow:0 6px 24px rgba(243,156,18,.4)}
+#btn:active{transform:scale(.95)}
+#diff{display:flex;gap:8px;margin-top:12px}
+#diff button{padding:6px 16px;font-size:14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer}
+#diff button.active{background:rgba(255,255,255,.3);font-weight:700}
 </style>
 </head>
 <body>
-<a class="back-link" href="index.html">← 返回游戏列表</a>
-<div id="topbar"></div>
-<h1 style="font-size:22px;margin:6px 0;background:linear-gradient(90deg,#34d399,#4fc3f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent">💣 扫雷</h1>
-<div class="hud">
-  <span>⏱️ <b id="tm">0</b>s</span>
-  <span>💣 <b id="mines">40</b></span>
-  <span>😊</span>
+<div id="wrap">
+<div id="bar">
+  <img src="https://cdn.luogu.com.cn/upload/image_hosting/v70j6st4.png" alt="cxf" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2216%22 fill=%22%236a5acd%22/%3E%3Ctext x=%2216%22 y=%2222%22 text-anchor=%22middle%22 font-size=%2218%22 fill=%22%23fff%22%3Ec%3C/text%3E%3C/svg%3E'">
+  <span>作者：cxf54188</span><span class="sep">|</span>
+  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2322c55e' stroke='%2316a34a' stroke-width='2'/%3E%3Cpath d='M20 35 Q32 42 46 33' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='22' cy='24' r='3.5' fill='%23fff'/%3E%3Ccircle cx='42' cy='24' r='3.5' fill='%23fff'/%3E%3Ccircle cx='22' cy='24' r='1.5' fill='%2316a34a'/%3E%3Ccircle cx='42' cy='24' r='1.5' fill='%2316a34a'/%3E%3C/svg%3E" alt="YB" style="background:#22c55e;">
+  <span>辅助：元宝AI</span>
 </div>
+<div id="info"><span id="mine-count">💣 0</span><span id="timer">⏱ 0</span><span id="status">😊</span></div>
 <div id="board"></div>
-<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center">
-  <button class="btn btn-sm" data-d="8,8,10">简单</button>
-  <button class="btn btn-sm" data-d="16,16,40">中级</button>
-  <button class="btn btn-sm btn-danger" data-d="24,24,99">专家</button>
+<div id="overlay">
+  <h1>💣 扫雷</h1>
+  <p>左键揭开格子，右键插旗标记地雷<br>数字表示周围 8 格的地雷数</p>
+  <div id="diff">
+    <button class="active" data-d="easy">简单 9×9</button>
+    <button data-d="medium">中等 16×16</button>
+    <button data-d="hard">困难 24×20</button>
+  </div>
+  <button id="btn">开始游戏</button>
 </div>
-<p style="color:#64748b;font-size:12px;margin-top:8px">左键揭开 · 右键插旗</p>
-
-<script src="_common.js"></script>
+</div>
 <script>
-const topbar=document.getElementById('topbar');topbar.innerHTML=makeTopbar();
-const board=document.getElementById('board');
-let W=16,H=16,MINES=40,grid=[],opened=0,flagged=0,timer=0,tick=null,gameOver=false;
+(function(){
+const boardEl=document.getElementById('board');
+const ov=document.getElementById('overlay'),btn=document.getElementById('btn');
+const mineEl=document.getElementById('mine-count'),timerEl=document.getElementById('timer'),statusEl=document.getElementById('status');
 
-function reset(w,h,m){
-  W=w;H=h;MINES=m;opened=0;flagged=0;timer=0;gameOver=false;
-  clearInterval(tick);tick=null;
-  document.getElementById('tm').textContent=0;
-  document.getElementById('mines').textContent=m;
-  board.style.gridTemplateColumns=`repeat(${W},28px)`;
-  grid=[];
-  for(let r=0;r<H;r++){grid[r]=[];for(let c=0;c<W;c++)grid[r][c]={mine:false,open:false,flag:false,count:0}}
-  const idx=[];for(let i=0;i<H*W;i++)idx.push(i);
-  shuffle(idx);
-  for(let i=0;i<m;i++){const r=Math.floor(idx[i]/W),c=idx[i]%W;grid[r][c].mine=true}
-  for(let r=0;r<H;r++)for(let c=0;c<W;c++){
-    if(grid[r][c].mine)continue;
-    let n=0;
-    for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
-      const nr=r+dr,nc=c+dc;
-      if(nr>=0&&nr<H&&nc>=0&&nc<W&&grid[nr][nc].mine)n++;
+const DIFFS={easy:{r:9,c:9,m:10},medium:{r:16,c:16,m:40},hard:{r:20,c:24,m:99}};
+let diff='easy',rows,cols,mines,grid,revealed,flags,running,timer,timeStart;
+
+function reset(){
+  const d=DIFFS[diff];rows=d.r;cols=d.c;mines=d.m;
+  boardEl.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+  const cellSize=Math.min(420/cols,420/rows,44);
+  boardEl.innerHTML='';
+  grid=[];revealed=[];flags=[];
+  for(let r=0;r<rows;r++){
+    grid[r]=[];revealed[r]=[];flags[r]=[];
+    for(let c=0;c<cols;c++){
+      grid[r][c]={mine:false,count:0,revealed:false,flagged:false};
+      revealed[r][c]=false;flags[r][c]=false;
+      const div=document.createElement('div');
+      div.className='cell hidden';
+      div.style.width=cellSize+'px';div.style.height=cellSize+'px';
+      div.dataset.r=r;div.dataset.c=c;
+      div.addEventListener('click',()=>onLeft(r,c));
+      div.addEventListener('contextmenu',e=>{e.preventDefault();onRight(r,c)});
+      boardEl.appendChild(div);
     }
-    grid[r][c].count=n;
   }
-  render();
+  // place mines (after first click)
+  mineEl.textContent='💣 '+mines;timerEl.textContent='⏱ 0';statusEl.textContent='😊';
+  running=false;clearInterval(timer);
 }
-
-function render(){
-  board.innerHTML='';
-  const colors=['#3b82f6','#34d399','#f43f5e','#a78bfa','#f97316','#06b6d4','#000','#666'];
-  for(let r=0;r<H;r++)for(let c=0;c<W;c++){
-    const div=document.createElement('div');
-    const cell=grid[r][c];
-    div.className='cell'+(cell.open?' open':'')+(cell.flag?' flag':'');
-    if(cell.open&&cell.mine)div.classList.add('mine');
-    if(cell.open&&!cell.mine&&cell.count>0){div.textContent=cell.count;div.style.color=colors[cell.count-1]}
-    div.onclick=()=>click(r,c);
-    div.oncontextmenu=e=>{e.preventDefault();flag(r,c)};
-    board.appendChild(div);
+function placeMines(skipR,skipC){
+  let placed=0;
+  while(placed<mines){
+    const r=Math.floor(Math.random()*rows),c=Math.floor(Math.random()*cols);
+    if(grid[r][c].mine)continue;
+    if(Math.abs(r-skipR)<=1&&Math.abs(c-skipC)<=1)continue;
+    grid[r][c].mine=true;placed++;
   }
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)
+    if(!grid[r][c].mine){let n=0;for(const[nr,nc]of neigh(r,c))if(grid[nr][nc].mine)n++;grid[r][c].count=n}
 }
-
-function click(r,c){
-  if(gameOver||grid[r][c].flag||grid[r][c].open)return;
-  if(!tick)startTimer();
-  if(grid[r][c].mine){
-    grid[r][c].open=true;gameOver=true;clearInterval(tick);
-    // 揭开所有雷
-    for(let i=0;i<H;i++)for(let j=0;j<W;j++)if(grid[i][j].mine)grid[i][j].open=true;
-    render();setTimeout(()=>alert('💥 BOOM!'),50);return;
-  }
-  openCell(r,c);
+function neigh(r,c){const out=[];for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const nr=r+dr,nc=c+dc;if(nr>=0&&nr<rows&&nc>=0&&nc<cols)out.push([nr,nc])}return out}
+function getCell(r,c){return boardEl.children[r*cols+c]}
+function onLeft(r,c){
+  if(!running){running=true;placeMines(r,c);timeStart=Date.now();timer=setInterval(()=>{timerEl.textContent='⏱ '+Math.floor((Date.now()-timeStart)/1000)},1000)}
+  const cell=grid[r][c];
+  if(cell.revealed||cell.flagged)return;
+  cell.revealed=true;
+  const el=getCell(r,c);el.className='cell revealed';
+  if(cell.mine){el.textContent='💣';el.classList.add('mine');return lose()}
+  if(cell.count){el.textContent=cell.count;el.style.color=['#1976d2','#388e3c','#d32f2f','#7b1fa2','#1565c0','#4e342e','#37474f','#212121'][cell.count-1]}
+  else{el.style.background='#d5d5d5';for(const[nr,nc]of neigh(r,c))if(!grid[nr][nc].revealed&&!grid[nr][nc].flagged)onLeft(nr,nc)}
   checkWin();
-  render();
 }
-
-function openCell(r,c){
-  if(r<0||r>=H||c<0||c>=W||grid[r][c].open||grid[r][c].flag)return;
-  grid[r][c].open=true;opened++;
-  if(grid[r][c].count===0){
-    for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++)if(dr||dc)openCell(r+dr,c+dc);
-  }
+function onRight(r,c){
+  if(!running)return;
+  const cell=grid[r][c];
+  if(cell.revealed)return;
+  cell.flagged=!cell.flagged;
+  const el=getCell(r,c);
+  el.className=cell.flagged?'cell flag':'cell hidden';
+  el.textContent=cell.flagged?'🚩':'';
+  let fc=0;for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(grid[r][c].flagged)fc++;
+  mineEl.textContent='💣 '+(mines-fc);
 }
-
-function flag(r,c){
-  if(gameOver||grid[r][c].open)return;
-  grid[r][c].flag=!grid[r][c].flag;
-  flagged+=grid[r][c].flag?1:-1;
-  document.getElementById('mines').textContent=MINES-flagged;
-  render();
-}
-
 function checkWin(){
-  if(opened===H*W-MINES){
-    gameOver=true;clearInterval(tick);
-    setTimeout(()=>alert('🎉 你赢了！时间：'+timer+'s'),50);
+  let ok=true;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(!grid[r][c].mine&&!grid[r][c].revealed){ok=false;break}
+  if(ok){running=false;clearInterval(timer);statusEl.textContent='😎';
+    ov.style.display='flex';ov.innerHTML='<h1>🎉 你赢了！</h1><p>用时: '+Math.floor((Date.now()-timeStart)/1000)+' 秒</p><button id="btn" style="margin-top:16px;padding:12px 44px;font-size:18px;font-weight:700;border:none;border-radius:999px;cursor:pointer;background:linear-gradient(135deg,#f39c12,#e74c3c);color:#fff" onclick="location.reload()">再来一次</button>';
   }
 }
-
-function startTimer(){tick=setInterval(()=>{timer++;document.getElementById('tm').textContent=timer},1000)}
-
-document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{const p=b.dataset.d.split(',');reset(+p[0],+p[1],+p[2])});
-
-reset(16,16,40);
+function lose(){
+  running=false;clearInterval(timer);statusEl.textContent='😵';
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(grid[r][c].mine){const el=getCell(r,c);el.textContent='💣';el.className='cell mine'}
+  ov.style.display='flex';ov.innerHTML='<h1>💥 游戏结束</h1><p>你踩到地雷了！</p><button id="btn" style="margin-top:16px;padding:12px 44px;font-size:18px;font-weight:700;border:none;border-radius:999px;cursor:pointer;background:linear-gradient(135deg,#f39c12,#e74c3c);color:#fff" onclick="location.reload()">再来一次</button>';
+}
+// difficulty
+document.querySelectorAll('#diff button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#diff button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');diff=b.dataset.d;
+  });
+});
+btn.addEventListener('click',()=>{ov.style.display='none';reset()});
+// default start
+reset();
+})();
 </script>
-</body></html>
+<!-- 提交分数弹窗 -->
+<div class="score-dialog" id="scoreDialog">
+  <div class="box">
+    <h2>🏆 游戏结束</h2>
+    <p id="finalScore" style="color:#fff;font-size:14px"></p>
+    <button onclick="loginAndSubmit()" style="background:#24292e;color:#fff;border:1px solid #555">
+      🐙 用 GitHub 登录提交
+    </button>
+    <p class="status" id="submitStatus"></p>
+  </div>
+</div>
+
+<script>
+const GAME_KEY = 'mine';
+const CLIENT_ID = 'Ov23liUtg4iRn8uimlnC';
+
+function showScoreDialog(score) {
+  window._lastScore = score;
+  document.getElementById('finalScore').textContent = '得分: ' + score;
+  document.getElementById('scoreDialog').classList.add('show');
+}
+
+function loginAndSubmit() {
+  localStorage.setItem('pending_game', GAME_KEY);
+  localStorage.setItem('pending_score', String(window._lastScore));
+  const redirect = encodeURIComponent('https://cxf54188.github.io/blog/games/oauth-callback.html');
+  location.href = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&scope=read:user`;
+}
+</script>
+</body>
+</html>

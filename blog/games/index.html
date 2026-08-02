@@ -2,165 +2,46 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>🎮 小游戏合集 — cxf54188 × 元宝AI</title>
-<link rel="icon" type="image/svg+xml" href="yb_avatar.svg">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--vh:1vh}
-body{min-height:100vh;min-height:calc(var(--vh)*100);background:linear-gradient(160deg,#0a0e1b,#111133 30%,#0d1b2a 60%,#1a0a2e);font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;overflow-x:hidden;color:#fff}
-
-/* 顶栏 */
-.topbar{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;background:rgba(0,0,0,.45);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:1000;flex-shrink:0;flex-wrap:wrap}
-.topbar .av{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.25)}
-.topbar .av-yb{width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin:0 3px;border:1.5px solid #00a86b;background:#00a86b;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
-.topbar .av-yb svg{width:13px;height:13px}
-.topbar .txt{color:rgba(255,255,255,.85);font-size:12px;font-weight:600;white-space:nowrap}
-.topbar .tag{font-weight:800}
-.topbar .sep{color:rgba(255,255,255,.3);font-size:11px;flex-shrink:0}
-.topbar .yb-label{color:rgba(255,255,255,.5);font-size:11px}
-@media(max-width:540px){.topbar{padding:6px 8px;gap:5px}.topbar .txt{font-size:10px}.topbar .av{width:22px;height:22px}.topbar .av-yb{width:20px;height:20px}}
-
-/* 背景粒子 */
-#bgp{position:fixed;inset:0;pointer-events:none;z-index:0}
-.bp{position:absolute;background:rgba(100,200,255,.4);border-radius:50%;animation:bf linear infinite}
-@keyframes bf{0%{transform:translateY(105vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) scale(1);opacity:0}}
-
-/* 主页 */
-#home{position:relative;z-index:1;padding:16px 10px 30px;text-align:center;overflow-y:auto;min-height:calc(100vh - 44px)}
-#home h1{font-size:clamp(22px,6vw,40px);font-weight:900;letter-spacing:2px;margin:8px 0 4px;background:linear-gradient(135deg,#00ff88,#00a8ff,#ff6b6b,#ffd93d,#aa44ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:hue 10s ease infinite}
-@keyframes hue{0%,100%{filter:hue-rotate(0)}50%{filter:hue-rotate(60deg)}}
-#home .sub{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:4px}
-#home .legend{font-size:10px;color:rgba(255,255,255,.25);margin-bottom:14px}
-
-/* 分类按钮 */
-.cats{display:flex;gap:6px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
-.cat-btn{padding:5px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#94a3b8;font-size:12px;cursor:pointer;transition:.2s;font-family:inherit}
-.cat-btn.active{background:linear-gradient(90deg,#4fc3f7,#a78bfa);color:#0a0e27;border-color:transparent;font-weight:600}
-.cat-btn:hover{background:rgba(255,255,255,.12)}
-
-/* 游戏网格 */
-.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;max-width:900px;margin:0 auto;padding:0 6px}
-
-.gcard{display:block;padding:16px 12px;border-radius:14px;cursor:pointer;background:rgba(255,255,255,.05);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);text-align:left;transition:all .35s cubic-bezier(.25,.8,.25,1);overflow:hidden;color:#fff;text-decoration:none;position:relative}
-.gcard::before{content:'';position:absolute;inset:0;background:var(--accent);opacity:0;transition:opacity .35s;border-radius:14px;z-index:0}
-.gcard:hover::before{opacity:.12}
-.gcard:hover{transform:translateY(-4px) scale(1.03);border-color:var(--ac);box-shadow:0 10px 25px var(--sh,transparent)}
-.gcard>*{position:relative;z-index:1}
-.gcard .ico{font-size:30px;display:block;margin-bottom:4px}
-.gcard .nm{font-size:14px;font-weight:800;margin-bottom:2px}
-.gcard .ds{font-size:9px;color:rgba(255,255,255,.5);line-height:1.4;margin-bottom:4px}
-.gcard .tags{display:flex;gap:3px;flex-wrap:wrap}
-.tag-s{padding:1px 6px;border-radius:8px;font-size:7px;font-weight:700;background:rgba(255,255,255,.08);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.08)}
-
-/* 主题色 */
-.c-snake{--accent:linear-gradient(#00ff88,#00a8ff);--ac:#00ff88;--sh:rgba(0,255,136,.25)}
-.c-tetris{--accent:linear-gradient(#00f0f0,#a000f0);--ac:#00f0f0;--sh:rgba(0,240,240,.25)}
-.c-mine{--accent:linear-gradient(#ffd700,#ff8c00);--ac:#ffd700;--sh:rgba(255,215,0,.25)}
-.c-2048{--accent:linear-gradient(#f0932b,#eb4d4b,#6ab04c);--ac:#f0932b;--sh:rgba(240,147,43,.25)}
-.c-mem{--accent:linear-gradient(#4cc9f0,#4895ef,#f72585);--ac:#4cc9f0;--sh:rgba(76,201,240,.25)}
-.c-fruit{--accent:linear-gradient(#ff4444,#ff8800,#88cc22);--ac:#ff4444;--sh:rgba(255,68,68,.25)}
-.c-pong{--accent:linear-gradient(#00f5ff,#ff3366);--ac:#00f5ff;--sh:rgba(0,245,255,.25)}
-.c-break{--accent:linear-gradient(#ff00ff,#33ccff);--ac:#ff00ff;--sh:rgba(255,0,255,.25)}
-.c-puzzle{--accent:linear-gradient(#55efc4,#00b894);--ac:#55efc4;--sh:rgba(85,239,196,.25)}
-.c-action{--accent:linear-gradient(#74b9ff,#0984e3);--ac:#74b9ff;--sh:rgba(116,185,255,.25)}
-
-/* 页脚 */
-.footer{text-align:center;padding:16px;font-size:10px;color:rgba(255,255,255,.2)}
-.footer a{color:rgba(100,168,255,.5);text-decoration:none}
-
-/* 回到顶部 */
-.back-top{position:fixed;bottom:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(100,100,255,.35);border:1px solid rgba(100,100,255,.5);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(6px);transition:all .3s;opacity:0;pointer-events:none}
-.back-top.show{opacity:1;pointer-events:auto}
-.back-top:hover{background:rgba(100,100,255,.6);transform:scale(1.1)}
+body{background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);min-height:100vh;font-family:system-ui,sans-serif;color:#fff}
+header{text-align:center;padding:24px 16px 12px}
+header h1{font-size:clamp(20px,5vw,34px);background:linear-gradient(90deg,#00f5a0,#a18cd1,#f093fb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+header p{font-size:13px;opacity:.6;margin-top:6px}
+.authors{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px;font-size:13px;flex-wrap:wrap}
+.authors img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;padding:16px;max-width:900px;margin:0 auto}
+.card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);text-decoration:none;color:#fff;transition:transform .2s,box-shadow .2s;cursor:pointer}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.card .icon{font-size:40px}
+.card .name{font-weight:700;font-size:15px}
+.card .desc{font-size:11px;opacity:.55;text-align:center;line-height:1.3}
+footer{text-align:center;padding:16px;font-size:11px;opacity:.3}
 </style>
 </head>
 <body>
-
-<div id="bgp"></div>
-
-<!-- 顶栏 -->
-<div class="topbar">
-  <img class="av" src="../img/avatar.png" alt="cxf54188" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2750%27 fill=%27%234a90d8%27/%3E%3Ctext x=%2750%27 y=%2758%27 text-anchor=%27middle%27 font-size=%2736%27 fill=%27white%27 font-family=%27sans-serif%27 font-weight=%27bold%27%3EC%3C/text%3E%3C/svg%3E'">
-  <span class="txt">作者：<span class="tag" style="color:#ffd93d">cxf54188</span></span>
-  <span class="sep">|</span>
-  <img class="av-yb" src="yb_avatar.svg" alt="元宝AI" onerror="this.outerHTML='<div class=&quot;av-yb&quot; style=&quot;background:#00a86b&quot;><svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;white&quot; stroke-width=&quot;2&quot;><path d=&quot;M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5&quot;/></svg></div>'">
-  <span class="txt">辅助：<span class="tag" style="color:#00a8ff">元宝AI</span></span>
-</div>
-
-<!-- 主页 -->
-<div id="home">
-  <h1>🎮 桌游合集</h1>
-  <p class="sub">8 款经典游戏 · 纯前端实现 · 即点即玩</p>
-  <p class="legend">全部与 AI 对战 · 无广告 · 无内购 · 支持手机/电脑</p>
-
-  <!-- 分类按钮 -->
-  <div class="cats" id="cats">
-    <button class="cat-btn active" data-cat="all">全部</button>
-    <button class="cat-btn" data-cat="puzzle">🧩 益智</button>
-    <button class="cat-btn" data-cat="action">⚡ 动作</button>
+<header>
+  <h1>🎮 小游戏合集</h1>
+  <p>8 款经典游戏 · 纯前端实现 · 即点即玩</p>
+  <div class="authors">
+    <img src="https://cdn.luogu.com.cn/upload/image_hosting/v70j6st4.png" alt="cxf" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2216%22 fill=%22%236a5acd%22/%3E%3Ctext x=%2216%22 y=%2222%22 text-anchor=%22middle%22 font-size=%2218%22 fill=%22%23fff%22%3Ec%3C/text%3E%3C/svg%3E'">
+    <span>作者：cxf54188</span>
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2322c55e' stroke='%2316a34a' stroke-width='2'/%3E%3Cpath d='M20 35 Q32 42 46 33' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='22' cy='24' r='3.5' fill='%23fff'/%3E%3Ccircle cx='42' cy='24' r='3.5' fill='%23fff'/%3E%3Ccircle cx='22' cy='24' r='1.5' fill='%2316a34a'/%3E%3Ccircle cx='42' cy='24' r='1.5' fill='%2316a34a'/%3E%3C/svg%3E" alt="YB" style="background:#22c55e;">
+    <span>辅助：元宝AI</span>
   </div>
-
-  <div class="games-grid" id="grid"></div>
-
-  <div class="footer">
-    © 2026 cxf54188 · 辅助：元宝AI · 所有游戏纯前端实现，无需联网<br>
-    灵感来源：game.hullqin.cn
-  </div>
-</div>
-
-<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-
-<script>
-// 视口高度修正
-function setVH(){document.documentElement.style.setProperty('--vh',`${window.innerHeight*0.01}px`)}
-setVH();window.addEventListener('resize',setVH);
-
-// 背景粒子
-(function(){
-  const c=document.getElementById('bgp');
-  for(let i=0;i<18;i++){const p=document.createElement('div');p.className='bp';p.style.left=Math.random()*100+'%';p.style.animationDuration=(Math.random()*8+5)+'s';p.style.animationDelay=(Math.random()*12)+'s';p.style.width=p.style.height=(Math.random()*2.5+1)+'px';c.appendChild(p);}
-})();
-
-// 游戏数据（仅保留 8 款）
-const GAMES = [
-  {id:'snake',name:'贪吃蛇',ico:'🐍',ds:'经典贪吃蛇+霓虹特效',cat:'puzzle',tags:['单人','休闲']},
-  {id:'tetris',name:'俄罗斯方块',ico:'🧩',ds:'七种方块旋转消除',cat:'puzzle',tags:['单人','经典']},
-  {id:'mine',name:'扫雷',ico:'💣',ds:'逻辑推理三档难度',cat:'puzzle',tags:['单人','逻辑']},
-  {id:'2048',name:'2048',ico:'🔢',ds:'数字合并滑动动画',cat:'puzzle',tags:['单人','策略']},
-  {id:'mem',name:'记忆翻牌',ico:'🎴',ds:'锻炼记忆力配对',cat:'puzzle',tags:['单人','记忆']},
-  {id:'fruit',name:'接水果',ico:'🍉',ds:'动感休闲连击系统',cat:'action',tags:['单人','反应']},
-  {id:'pong',name:'弹球对战',ico:'🏓',ds:'经典Pong挑战AI',cat:'action',tags:['2人','反应']},
-  {id:'breakout',name:'打砖块',ico:'🧱',ds:'弹球击碎砖块',cat:'action',tags:['单人','动作']},
-];
-
-// 渲染
-const grid = document.getElementById('grid');
-function render(cat){
-  grid.innerHTML = '';
-  const list = cat==='all' ? GAMES : GAMES.filter(g=>g.cat===cat);
-  for(const g of list){
-    const tags = g.tags.map(t=>`<span class="tag-s">${t}</span>`).join('');
-    const a = document.createElement('a');
-    a.className = `gcard c-${g.cat}`;
-    a.href = g.id + '.html';
-    a.innerHTML = `<span class="ico">${g.ico}</span><div class="nm">${g.name}</div><div class="ds">${g.ds}</div><div class="tags">${tags}</div>`;
-    grid.appendChild(a);
-  }
-}
-render('all');
-
-// 分类切换
-document.getElementById('cats').addEventListener('click', e=>{
-  if(!e.target.classList.contains('cat-btn')) return;
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
-  e.target.classList.add('active');
-  render(e.target.dataset.cat);
-});
-
-// 回到顶部
-const bt=document.getElementById('backTop');
-window.addEventListener('scroll',()=>{bt.classList.toggle('show',window.scrollY>300)});
-</script>
+</header>
+<main class="grid">
+  <a class="card" href="snake.html"><div class="icon">🐍</div><div class="name">贪吃蛇</div><div class="desc">经典贪吃蛇<br>吃食物变长</div></a>
+  <a class="card" href="tetris.html"><div class="icon">🧩</div><div class="name">俄罗斯方块</div><div class="desc">方块消除<br>满行得分</div></a>
+  <a class="card" href="mine.html"><div class="icon">💣</div><div class="name">扫雷</div><div class="desc">逻辑推理<br>标雷翻格</div></a>
+  <a class="card" href="2048.html"><div class="icon">🔢</div><div class="name">2048</div><div class="desc">数字合并<br>目标2048</div></a>
+  <a class="card" href="mem.html"><div class="icon">🎴</div><div class="name">记忆翻牌</div><div class="desc">配对翻牌<br>考验记忆</div></a>
+  <a class="card" href="fruit.html"><div class="icon">🍉</div><div class="name">接水果</div><div class="desc">移动接水果<br>连击得分</div></a>
+  <a class="card" href="pong.html"><div class="icon">🏓</div><div class="name">弹球对战</div><div class="desc">挡板击球<br>对战AI</div></a>
+  <a class="card" href="breakout.html"><div class="icon">🧱</div><div class="name">打砖块</div><div class="desc">弹球碎砖<br>补齐机制</div></a>
+</main>
+<footer>© cxf54188 × 元宝AI · 纯前端 · 无广告 · 无内购</footer>
 </body>
 </html>

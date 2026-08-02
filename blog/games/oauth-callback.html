@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>授权中...</title>
+<style>
+body{background:#0f0c29;color:#fff;font-family:system-ui,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;flex-direction:column;gap:16px;text-align:center}
+.spinner{width:40px;height:40px;border:4px solid rgba(255,255,255,.2);border-top-color:#00f5a0;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+a{color:#00f5a0}
+</style>
+</head>
+<body>
+<div class="spinner"></div>
+<p id="msg">正在获取你的 GitHub 身份...</p>
+<script>
+const VERCEL_URL = 'https://leaderboard-api-indol.vercel.app';
+
+(async function(){
+  const code = new URLSearchParams(location.search).get('code');
+  const game = localStorage.getItem('pending_game') || 'snake';
+  const score = localStorage.getItem('pending_score') || '0';
+  const msg = document.getElementById('msg');
+
+  if (!code) { msg.textContent = '❌ 授权失败：没有收到 code'; return; }
+
+  // 先直连 Vercel
+  try {
+    const resp = await fetch(`${VERCEL_URL}/api/oauth`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({code, game, score})
+    });
+    const data = await resp.json();
+    if (data.login) {
+      msg.innerHTML = `✅ ${data.login}，分数已提交！<br><br><a href="index.html">返回游戏列表</a>`;
+      return;
+    }
+  } catch(e) { /* 直连失败，走代理 */ }
+
+  // 走免费 CORS 代理
+  msg.textContent = '正在尝试备用通道...';
+  try {
+    const proxy = 'https://corsproxy.io/?';
+    const resp = await fetch(proxy + encodeURIComponent(`${VERCEL_URL}/api/oauth`), {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({code, game, score})
+    });
+    const data = await resp.json();
+    if (data.login) {
+      msg.innerHTML = `✅ ${data.login}，分数已提交！<br><br><a href="index.html">返回游戏列表</a>`;
+    } else {
+      msg.textContent = '❌ 提交失败：' + (data.error || '未知错误');
+    }
+  } catch(e) {
+    msg.innerHTML = '❌ 网络不通<br><br>建议：<br>1. 开手机热点重试<br>2. 或稍后再试<br><br><a href="index.html">返回游戏列表</a>';
+  }
+})();
+</script>
+</body>
+</html>
