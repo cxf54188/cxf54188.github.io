@@ -12,10 +12,8 @@ a{color:#00f5a0}
 </head>
 <body>
 <div class="spinner"></div>
-<p id="msg">正在获取你的 GitHub 身份...</p>
+<p id="msg">正在提交分数...</p>
 <script>
-const VERCEL_URL = 'https://leaderboard-api-indol.vercel.app';
-
 (async function(){
   const code = new URLSearchParams(location.search).get('code');
   const game = localStorage.getItem('pending_game') || 'snake';
@@ -24,37 +22,57 @@ const VERCEL_URL = 'https://leaderboard-api-indol.vercel.app';
 
   if (!code) { msg.textContent = '❌ 授权失败：没有收到 code'; return; }
 
-  // 先直连 Vercel
+  // 用 code 换取 access token（需要你的 client_id 和 client_secret）
+  const CLIENT_ID = '你的ClientID';     // ← 改成你的
+  const CLIENT_SECRET = '你的ClientSecret'; // ← 改成你的
+
   try {
-    const resp = await fetch(`${VERCEL_URL}/api/oauth`, {
+    // 1. 用 code 换 token
+    const tokenResp = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({code, game, score})
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        code: code
+      })
     });
-    const data = await resp.json();
-    if (data.login) {
-      msg.innerHTML = `✅ ${data.login}，分数已提交！<br><br><a href="index.html">返回游戏列表</a>`;
+    const tokenData = await tokenResp.json();
+    const access_token = tokenData.access_token;
+    
+    if (!access_token) {
+      msg.textContent = '❌ Token 交换失败';
       return;
     }
-  } catch(e) { /* 直连失败，走代理 */ }
 
-  // 走免费 CORS 代理
-  msg.textContent = '正在尝试备用通道...';
-  try {
-    const proxy = 'https://corsproxy.io/?';
-    const resp = await fetch(proxy + encodeURIComponent(`${VERCEL_URL}/api/oauth`), {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({code, game, score})
+    // 2. 获取用户信息
+    const userResp = await fetch('https://api.github.com/user', {
+      headers: { 'Authorization': `Bearer ${access_token}` }
     });
-    const data = await resp.json();
-    if (data.login) {
-      msg.innerHTML = `✅ ${data.login}，分数已提交！<br><br><a href="index.html">返回游戏列表</a>`;
+    const user = await userResp.json();
+    const username = user.login;
+
+    // 3. 触发 GitHub Actions 工作流（不需要 Token）
+    const dispatchResp = await fetch('https://api.github.com/repos/cxf54188/cxf54188.github.io/dispatches', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: 'submit-score',
+        client_payload: {
+          game: game,
+          username: username,
+          score: String(score)
+        }
+      })
+    });
+
+    if (dispatchResp.ok) {
+      msg.innerHTML = `✅ ${username}，分数已提交！<br><br><a href="index.html">返回游戏列表</a>`;
     } else {
-      msg.textContent = '❌ 提交失败：' + (data.error || '未知错误');
+      msg.textContent = '❌ 触发工作流失败';
     }
   } catch(e) {
-    msg.innerHTML = '❌ 网络不通<br><br>建议：<br>1. 开手机热点重试<br>2. 或稍后再试<br><br><a href="index.html">返回游戏列表</a>';
+    msg.innerHTML = '❌ 提交失败：' + e.message + '<br><br><a href="index.html">返回游戏列表</a>';
   }
 })();
 </script>
