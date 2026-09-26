@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog - cxf54188.github.io</title>
+<meta name="description" content="cxf54188 的博客与项目展示">
+<link rel="icon" type="image/svg+xml" href="../img/yb_avatar.svg">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+    --cyan: #00f0ff;
+    --cyan-dim: rgba(0, 240, 255, 0.6);
+    --magenta: #ff006e;
+    --purple: #7b2ff7;
+    --dark: #0a0a1a;
+    --darker: #050510;
+    --text: #e0e0ff;
+    --text-dim: rgba(200, 200, 255, 0.6);
+}
+
+body {
+    min-height: 100vh;
+    font-family: "JetBrains Mono", "Fira Code", "Consolas", "PingFang SC", "Microsoft YaHei", monospace;
+    background: var(--darker);
+    color: var(--text);
+    overflow-x: hidden;
+    position: relative;
+}
+
+.grid-bg {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background:
+        linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridMove 20s linear infinite;
+}
+@keyframes gridMove {
+    0% { background-position: 0 0, 0 0; }
+    100% { background-position: 60px 60px, 60px 60px; }
+}
+
+.scanline {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 9999;
+    background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px
+    );
+}
+
+.glow-orb {
+    position: fixed; border-radius: 50%;
+    filter: blur(80px); pointer-events: none; z-index: 0;
+}
+.glow-1 {
+    width: 400px; height: 400px; top: -100px; left: -100px;
+    background: radial-gradient(circle, rgba(0,240,255,0.1), transparent 70%);
+    animation: orbFloat 8s ease-in-out infinite;
+}
+.glow-2 {
+    width: 350px; height: 350px; bottom: -80px; right: -80px;
+    background: radial-gradient(circle, rgba(123,47,247,0.1), transparent 70%);
+    animation: orbFloat 10s ease-in-out infinite reverse;
+}
+@keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, -30px); }
+}
+
+/* 导航栏 */
+.navbar {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 40px;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.08);
+    backdrop-filter: blur(10px);
+    background: rgba(5, 5, 16, 0.6);
+}
+.nav-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 1rem; color: var(--cyan);
+    text-decoration: none; letter-spacing: 1px;
+}
+.nav-brand .avatar-mini {
+    width: 32px; height: 32px;
+    border-radius: 50%; border: 2px solid var(--cyan);
+    object-fit: cover;
+}
+.nav-links { display: flex; gap: 8px; }
+.nav-links a {
+    padding: 8px 18px; border-radius: 4px;
+    font-size: 0.85rem; color: var(--text-dim);
+    text-decoration: none; border: 1px solid transparent;
+    transition: all 0.3s ease; letter-spacing: 1px;
+}
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--cyan);
+    border-color: rgba(0, 240, 255, 0.3);
+    background: rgba(0, 240, 255, 0.05);
+}
+
+/* 页面头部 */
+.page-header {
+    position: relative; z-index: 10;
+    text-align: center; padding: 50px 20px 20px;
+}
+.page-header h1 {
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    font-weight: 700; margin-bottom: 10px; color: #fff;
+}
+.page-header p {
+    color: var(--text-dim); font-size: 0.95rem; letter-spacing: 1px;
+}
+
+/* 博客内容区 */
+.blog-container {
+    position: relative; z-index: 10;
+    max-width: 1100px; margin: 0 auto;
+    padding: 20px 30px 60px;
+}
+
+/* 板块 */
+.section-block {
+    background: rgba(10, 10, 30, 0.5);
+    border: 1px solid rgba(0, 240, 255, 0.08);
+    border-radius: 10px; padding: 28px 24px;
+    backdrop-filter: blur(6px);
+    margin-bottom: 24px;
+}
+.section-block h2 {
+    font-size: 1.2rem; color: #fff; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+}
+.section-block h2 .sec-icon { font-size: 1.3em; }
+
+/* 项目卡片网格 */
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+.project-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px; padding: 18px;
+    text-decoration: none; color: var(--text);
+    transition: all 0.3s ease;
+    display: flex; flex-direction: column; gap: 8px;
+}
+.project-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0, 240, 255, 0.2);
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+.project-card .proj-title {
+    font-size: 1rem; font-weight: 600; color: #fff;
+    display: flex; align-items: center; gap: 8px;
+}
+.project-card .proj-desc {
+    font-size: 0.82rem; color: var(--text-dim); line-height: 1.5;
+}
+.project-card .proj-tag {
+    display: inline-block;
+    font-size: 0.72rem; color: var(--cyan-dim);
+    background: rgba(0, 240, 255, 0.06);
+    border: 1px solid rgba(0, 240, 255, 0.15);
+    padding: 2px 8px; border-radius: 10px;
+    align-self: flex-start;
+}
+
+/* 文章列表 */
+.post-list { list-style: none; }
+.post-item {
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex; align-items: center; gap: 14px;
+}
+.post-item:last-child { border-bottom: none; }
+.post-date {
+    font-size: 0.78rem; color: var(--cyan-dim);
+    background: rgba(0, 240, 255, 0.06);
+    border: 1px solid rgba(0, 240, 255, 0.15);
+    padding: 3px 10px; border-radius: 4px;
+    white-space: nowrap; flex-shrink: 0;
+    letter-spacing: 0.5px;
+}
+.post-title {
+    font-size: 0.92rem; color: var(--text);
+    text-decoration: none; transition: color 0.3s;
+}
+.post-title:hover { color: var(--cyan); }
+
+/* 页脚 */
+.footer {
+    position: relative; z-index: 10;
+    text-align: center; padding: 24px;
+    border-top: 1px solid rgba(0, 240, 255, 0.06);
+    font-size: 0.78rem; color: rgba(200, 200, 255, 0.25);
+    letter-spacing: 1px;
+}
+
+@media (max-width: 640px) {
+    .navbar { padding: 10px 16px; }
+    .nav-links a { padding: 6px 12px; font-size: 0.8rem; }
+    .blog-container { padding: 10px 16px 40px; }
+    .project-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="glow-orb glow-1"></div>
+<div class="glow-orb glow-2"></div>
+<div class="scanline"></div>
+
+<nav class="navbar">
+    <a class="nav-brand" href="../">
+        <img class="avatar-mini" src="../img/avatar.png" alt="avatar">
+        <span>cxf54188@github.io</span>
+    </a>
+    <div class="nav-links">
+        <a href="../">首页</a>
+        <a href="./" class="active">博客</a>
+        <a href="./games/">游戏</a>
+        <a href="../links/">友链</a>
+    </div>
+</nav>
+
+<div class="page-header">
+    <h1>📝 Blog</h1>
+    <p>cxf54188 的项目展示与技术笔记</p>
+</div>
+
+<div class="blog-container">
+
+    <!-- 项目/作品板块 -->
+    <div class="section-block">
+        <h2><span class="sec-icon">🎮</span> 我的项目</h2>
+        <div class="project-grid">
+            <a class="project-card" href="./games/">
+                <div class="proj-title">🎯 网页小游戏合集</div>
+                <div class="proj-desc">8 款纯前端小游戏，即点即玩。包含 2048、贪吃蛇、俄罗斯方块、扫雷等经典游戏。</div>
+                <span class="proj-tag">HTML5 / JavaScript</span>
+            </a>
+            <a class="project-card" href="https://github.com/cxf54188" target="_blank" rel="noopener">
+                <div class="proj-title">🐙 GitHub 主页</div>
+                <div class="proj-desc">我的开源项目和代码仓库，持续更新中。</div>
+                <span class="proj-tag">Open Source</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 文章/更新日志板块 -->
+    <div class="section-block">
+        <h2><span class="sec-icon">📋</span> 更新日志</h2>
+        <ul class="post-list">
+            <li class="post-item">
+                <span class="post-date">2024-09-26</span>
+                <a class="post-title" href="#">站点重构：游戏移入 blog/games/，统一目录结构</a>
+            </li>
+            <li class="post-item">
+                <span class="post-date">2024-09-25</span>
+                <a class="post-title" href="#">修复博客页面乱码问题，全站统一 UTF-8 编码</a>
+            </li>
+            <li class="post-item">
+                <span class="post-date">2024-09-20</span>
+                <a class="post-title" href="#">新增 8 款网页小游戏 + 排行榜功能</a>
+            </li>
+            <li class="post-item">
+                <span class="post-date">2024-09-15</span>
+                <a class="post-title" href="#">站点上线，赛博朋克风格主题</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 关于板块 -->
+    <div class="section-block">
+        <h2><span class="sec-icon">👋</span> 关于这个博客</h2>
+        <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.8;">
+            这里是 <strong style="color:#fff;">cxf54188</strong> 的个人站点，用来存放我的项目作品、技术笔记和日常记录。<br>
+            站内所有游戏均为纯前端实现，无需后端即可运行。<br>
+            如果有问题或建议，欢迎通过 <a href="../links/" style="color:var(--cyan);">友链页面</a> 联系我。
+        </p>
+    </div>
+
+</div>
+
+<div class="footer">
+    © 2024 cxf54188 &nbsp;|&nbsp; Powered by GitHub Pages &nbsp;|&nbsp; <span id="clock"></span>
+</div>
+
+<script>
+    const clock = document.getElementById("clock");
+    function tick() {
+        clock.textContent = new Date().toLocaleString("zh-CN", {
+            year: "numeric", month: "2-digit", day: "2-digit",
+            hour: "2-digit", minute: "2-digit", second: "2-digit"
+        });
+    }
+    tick(); setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
