@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游戏合集 - cxf54188.github.io</title>
+<meta name="description" content="cxf54188 的网页小游戏合集">
+<link rel="icon" type="image/svg+xml" href="../../img/yb_avatar.svg">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+    --cyan: #00f0ff;
+    --cyan-dim: rgba(0, 240, 255, 0.6);
+    --magenta: #ff006e;
+    --purple: #7b2ff7;
+    --dark: #0a0a1a;
+    --darker: #050510;
+    --text: #e0e0ff;
+    --text-dim: rgba(200, 200, 255, 0.6);
+}
+
+body {
+    min-height: 100vh;
+    font-family: "JetBrains Mono", "Fira Code", "Consolas", "PingFang SC", "Microsoft YaHei", monospace;
+    background: var(--darker);
+    color: var(--text);
+    overflow-x: hidden;
+    position: relative;
+}
+
+.grid-bg {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background:
+        linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridMove 20s linear infinite;
+}
+@keyframes gridMove {
+    0% { background-position: 0 0, 0 0; }
+    100% { background-position: 60px 60px, 60px 60px; }
+}
+
+.scanline {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 9999;
+    background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px
+    );
+}
+
+.glow-orb {
+    position: fixed; border-radius: 50%;
+    filter: blur(80px); pointer-events: none; z-index: 0;
+}
+.glow-1 {
+    width: 400px; height: 400px; top: -100px; left: -100px;
+    background: radial-gradient(circle, rgba(0,240,255,0.1), transparent 70%);
+    animation: orbFloat 8s ease-in-out infinite;
+}
+.glow-2 {
+    width: 350px; height: 350px; bottom: -80px; right: -80px;
+    background: radial-gradient(circle, rgba(123,47,247,0.1), transparent 70%);
+    animation: orbFloat 10s ease-in-out infinite reverse;
+}
+@keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, -30px); }
+}
+
+/* 导航栏 */
+.navbar {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 40px;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.08);
+    backdrop-filter: blur(10px);
+    background: rgba(5, 5, 16, 0.6);
+}
+.nav-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 1rem; color: var(--cyan);
+    text-decoration: none; letter-spacing: 1px;
+}
+.nav-brand .avatar-mini {
+    width: 32px; height: 32px;
+    border-radius: 50%; border: 2px solid var(--cyan);
+    object-fit: cover;
+}
+.nav-links { display: flex; gap: 8px; }
+.nav-links a {
+    padding: 8px 18px; border-radius: 4px;
+    font-size: 0.85rem; color: var(--text-dim);
+    text-decoration: none; border: 1px solid transparent;
+    transition: all 0.3s ease; letter-spacing: 1px;
+}
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--cyan);
+    border-color: rgba(0, 240, 255, 0.3);
+    background: rgba(0, 240, 255, 0.05);
+}
+
+/* 页面头部 */
+.page-header {
+    position: relative; z-index: 10;
+    text-align: center; padding: 50px 20px 20px;
+}
+.page-header h1 {
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    font-weight: 700; margin-bottom: 10px; color: #fff;
+}
+.page-header p {
+    color: var(--text-dim); font-size: 0.95rem; letter-spacing: 1px;
+}
+
+/* 游戏网格 */
+.games-container {
+    position: relative; z-index: 10;
+    max-width: 1200px; margin: 0 auto;
+    padding: 20px 30px 60px;
+}
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+/* 游戏卡片 */
+.game-card {
+    background: rgba(10, 10, 30, 0.5);
+    border: 1px solid rgba(0, 240, 255, 0.08);
+    border-radius: 10px; padding: 24px;
+    backdrop-filter: blur(6px);
+    transition: all 0.3s ease;
+    text-decoration: none; color: var(--text);
+    display: flex; flex-direction: column; gap: 12px;
+    position: relative; overflow: hidden;
+}
+.game-card::before {
+    content: ''; position: absolute; top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.04), transparent);
+    transition: left 0.5s ease;
+}
+.game-card:hover::before { left: 100%; }
+.game-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 240, 255, 0.25);
+    box-shadow: 0 8px 30px rgba(0, 240, 255, 0.1);
+}
+.game-icon {
+    font-size: 2.5rem; text-align: center;
+    filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.3));
+}
+.game-name {
+    font-size: 1.1rem; font-weight: 600; color: #fff;
+    text-align: center;
+}
+.game-desc {
+    font-size: 0.82rem; color: var(--text-dim);
+    text-align: center; line-height: 1.5;
+}
+.game-play-btn {
+    margin-top: auto;
+    padding: 10px 20px;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 6px;
+    color: var(--cyan);
+    font-size: 0.85rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+.game-card:hover .game-play-btn {
+    background: rgba(0, 240, 255, 0.15);
+    border-color: rgba(0, 240, 255, 0.4);
+}
+
+/* 页脚 */
+.footer {
+    position: relative; z-index: 10;
+    text-align: center; padding: 24px;
+    border-top: 1px solid rgba(0, 240, 255, 0.06);
+    font-size: 0.78rem; color: rgba(200, 200, 255, 0.25);
+    letter-spacing: 1px;
+}
+
+@media (max-width: 640px) {
+    .navbar { padding: 10px 16px; }
+    .nav-links a { padding: 6px 12px; font-size: 0.8rem; }
+    .games-container { padding: 10px 16px 40px; }
+    .games-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="glow-orb glow-1"></div>
+<div class="glow-orb glow-2"></div>
+<div class="scanline"></div>
+
+<nav class="navbar">
+    <a class="nav-brand" href="../../">
+        <img class="avatar-mini" src="../../img/avatar.png" alt="avatar">
+        <span>cxf54188@github.io</span>
+    </a>
+    <div class="nav-links">
+        <a href="../../">首页</a>
+        <a href="./">游戏</a>
+        <a href="../../links/">友链</a>
+    </div>
+</nav>
+
+<div class="page-header">
+    <h1>🎮 游戏合集</h1>
+    <p>8 款纯前端小游戏，即点即玩</p>
+</div>
+
+<div class="games-container">
+    <div class="games-grid">
+
+        <a class="game-card" href="2048.html">
+            <div class="game-icon">🔢</div>
+            <div class="game-name">2048</div>
+            <div class="game-desc">合并数字方块，挑战 2048</div>
+            <div class="game-play-btn">▶ 开始游戏</div>
+        </a>
+
+        <a class="game-card" href="breakout.html">
+            <div class="game-icon">🧱</div>
+            <div class="game-name">打砖块</div>
+            <div class="game-desc">弹球消除所有砖块</div>
+            <div class="game-play-btn">▶ 开始游戏</div>
+        </a>
+
+        <a class="game-card" href="fruit.html">
+            <div class="game-icon">🍎</div>
+            <div class="game-name">接水果</div>
+            <div class="game-desc">接住掉落的水果，别漏掉</div>
+            <div class="game-play-btn">▶ 开始游戏</div>
+        </a>
+
+        <a class="game-card" href="mem.html">
+            <div class="game-icon">🃏</div>
+            <div class="game-name">记忆翻牌</div>
+            <div class="game-desc">翻牌配对，考验记忆力</div>
+            <div class="game-play-btn">▶ 开始游戏</div>
+        </a>
+
+        <a class="game-card" href="mine.html">
+            <div class="game-icon">💣</div>
+            <div class="game-name">扫雷</div>
+            <div class="game-desc">经典扫雷，推理排除地雷</div>
+            <div class="game-play-btn">▶ 开始游戏</div>
+        </a>
+
+        <a class="game-card" href="pong.html">
+            <div class="game-icon">🏓</div>
+            <div class="game-name">乒乓球</div>
+            <div class="game-desc">双人对战乒乓球</div>
+            <div class="game-play-btn">▶ 开始游戏</div>
+        </a>
+
+        <a class="game-card" href="snake.html">
+            <div class="game-icon">🐍</div>
+            <div class="game-name">贪吃蛇</div>
+            <div class="game-desc">操控蛇吃食物，越长越长</div>
+            <div class="game-play-btn">▶ 开始游戏</div>
+        </a>
+
+        <a class="game-card" href="tetris.html">
+            <div class="game-icon">🟦</div>
+            <div class="game-name">俄罗斯方块</div>
+            <div class="game-desc">经典方块消除游戏</div>
+            <div class="game-play-btn">▶ 开始游戏</div>
+        </a>
+
+    </div>
+</div>
+
+<div class="footer">
+    © 2024 cxf54188 &nbsp;|&nbsp; Powered by GitHub Pages &nbsp;|&nbsp; <span id="clock"></span>
+</div>
+
+<script>
+    const clock = document.getElementById("clock");
+    function tick() {
+        clock.textContent = new Date().toLocaleString("zh-CN", {
+            year: "numeric", month: "2-digit", day: "2-digit",
+            hour: "2-digit", minute: "2-digit", second: "2-digit"
+        });
+    }
+    tick(); setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
