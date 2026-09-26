@@ -429,7 +429,7 @@ body {
 
 <!-- 页脚 -->
 <div class="footer">
-    © 2024 cxf54188 &nbsp;|&nbsp; Powered by GitHub Pages &nbsp;|&nbsp; <span id="clock"></span>
+    © <span id="year"></span> cxf54188 &nbsp;|&nbsp; Powered by GitHub Pages &nbsp;|&nbsp; <span id="clock"></span>
 </div>
 
 <script>
@@ -441,6 +441,7 @@ body {
         });
     }
     tick(); setInterval(tick, 1000);
+    document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 
 </body>
