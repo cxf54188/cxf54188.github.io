@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>收画 · 下载</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f0e8;
+    --card: #fffdf9;
+    --ink: #2b2b2b;
+    --muted: #8a8378;
+    --accent: #e8734a;
+    --accent2: #f0a35e;
+    --line: #e8e0d4;
+    --shadow: 0 8px 30px rgba(120,90,50,0.10);
+  }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 16px;
+    background-image: radial-gradient(circle at 20% 20%, #fbe9d9 0%, transparent 40%),
+                      radial-gradient(circle at 80% 80%, #e9efe6 0%, transparent 40%);
+  }
+  header {
+    max-width: 760px;
+    margin: 0 auto 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo { font-size: 34px; }
+  h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+  .sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .status {
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--ok);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); animation: blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  .empty {
+    background: var(--card);
+    border-radius: 22px;
+    padding: 60px 30px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .empty .ic { font-size: 60px; margin-bottom: 14px; }
+  .empty h2 { font-size: 19px; margin-bottom: 8px; }
+  .empty p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+  .list { display: flex; flex-direction: column; gap: 12px; }
+  .item {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--shadow);
+    animation: pop .35s ease;
+  }
+  @keyframes pop { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+  .item .thumb {
+    width: 56px; height: 56px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: #f0e9dd;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+  }
+  .item .meta { flex: 1; min-width: 0; }
+  .item .name {
+    font-size: 15px; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .item .info { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .item .dl {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .new {
+    display: inline-block;
+    background: #ffe9d6;
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 6px;
+  }
+  .clear {
+    max-width: 760px;
+    margin: 20px auto 0;
+    text-align: center;
+  }
+  .clear button {
+    background: none; border: none; color: var(--muted);
+    font-size: 13px; cursor: pointer; text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="logo">🖼️</div>
+    <div>
+      <h1>收画台</h1>
+      <div class="sub">对方一上传，这里就自动出现</div>
+    </div>
+    <div class="status"><span class="dot"></span>实时监听中</div>
+  </header>
+
+  <div class="wrap" id="wrap">
+    <div class="empty" id="empty">
+      <div class="ic">📭</div>
+      <h2>还没有收到画</h2>
+      <p>等对方上传后，会实时显示在这里<br>也可以点下面手动刷新</p>
+    </div>
+  </div>
+
+  <div class="clear">
+    <button onclick="loadList(true)">🔄 手动刷新</button>
+  </div>
+
+<script>
+async function loadList(manual) {
+  try {
+    const r = await fetch('/api/files');
+    const data = await r.json();
+    render(data.files || []);
+  } catch(e) {
+    if (manual) alert('刷新失败，稍后再试');
+  }
+}
+
+function render(files) {
+  const wrap = document.getElementById('wrap');
+  const empty = document.getElementById('empty');
+  if (files.length === 0) {
+    wrap.innerHTML = '';
+    wrap.appendChild(empty);
+    return;
+  }
+  let html = '<div class="list">';
+  files.slice().reverse().forEach(f => {
+    const date = new Date(f.time);
+    const t = `${date.getMonth()+1}月${date.getDate()}日 ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+    const isImg = (f.type || '').startsWith('image/');
+    const thumb = isImg
+      ? `<img class="thumb" src="/api/file/${encodeURIComponent(f.id)}" style="width:56px;height:56px;object-fit:cover">`
+      : `<div class="thumb">📄</div>`;
+    html += `
+      <div class="item">
+        ${thumb}
+        <div class="meta">
+          <div class="name">${esc(f.name)}<span class="new">新</span></div>
+          <div class="info">${f.sender ? esc(f.sender) + ' · ' : ''}${fmt(f.size)} · ${t}</div>
+        </div>
+        <a class="dl" href="/api/file/${encodeURIComponent(f.id)}" download="${esc(f.name)}">下载</a>
+      </div>`;
+  });
+  html += '</div>';
+  wrap.innerHTML = html;
+}
+
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmt(n) {
+  if (n < 1024) return n + ' B';
+  if (n < 1048576) return (n/1024).toFixed(1) + ' KB';
+  return (n/1048576).toFixed(1) + ' MB';
+}
+
+loadList();
+setInterval(() => loadList(), 3000);
+</script>
+</body>
+</html>

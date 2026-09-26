@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>传画 · 上传</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f0e8;
+    --card: #fffdf9;
+    --ink: #2b2b2b;
+    --muted: #8a8378;
+    --accent: #e8734a;
+    --accent2: #f0a35e;
+    --line: #e8e0d4;
+    --ok: #4caf50;
+    --shadow: 0 8px 30px rgba(120,90,50,0.10);
+  }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-image: radial-gradient(circle at 20% 20%, #fbe9d9 0%, transparent 40%),
+                      radial-gradient(circle at 80% 80%, #e9efe6 0%, transparent 40%);
+  }
+  .card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 36px 30px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .logo {
+    font-size: 44px;
+    margin-bottom: 6px;
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 26px;
+  }
+  .drop {
+    border: 2.5px dashed var(--line);
+    border-radius: 18px;
+    padding: 40px 20px;
+    background: #fdfbf7;
+    cursor: pointer;
+    transition: all .25s;
+    position: relative;
+  }
+  .drop.dragover {
+    border-color: var(--accent);
+    background: #fff4ec;
+    transform: scale(1.02);
+  }
+  .drop .ic { font-size: 52px; margin-bottom: 12px; }
+  .drop .t1 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .drop .t2 { font-size: 13px; color: var(--muted); }
+  .drop .browse {
+    color: var(--accent);
+    text-decoration: underline;
+    font-weight: 600;
+  }
+  input[type=file] { display: none; }
+  .preview {
+    display: none;
+    margin-top: 20px;
+    text-align: left;
+  }
+  .preview.show { display: block; }
+  .file-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fdfbf7;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .file-row .thumb {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: #eee;
+    flex-shrink: 0;
+  }
+  .file-row .meta { flex: 1; min-width: 0; }
+  .file-row .name {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .file-row .size { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .file-row .del {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px;
+  }
+  .name-input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    margin-bottom: 10px;
+    background: #fff;
+    color: var(--ink);
+  }
+  .name-input:focus { outline: none; border-color: var(--accent); }
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform .15s, opacity .2s;
+    margin-top: 6px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .tip {
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .progress {
+    display: none;
+    margin-top: 20px;
+  }
+  .progress.show { display: block; }
+  .bar {
+    height: 8px;
+    background: var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .bar > i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width .2s;
+  }
+  .pct { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .done {
+    display: none;
+    padding: 30px 20px;
+    text-align: center;
+  }
+  .done.show { display: block; }
+  .done .chk {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--ok);
+    color: #fff;
+    font-size: 34px;
+    line-height: 64px;
+    margin: 0 auto 16px;
+  }
+  .done h2 { font-size: 20px; margin-bottom: 8px; }
+  .done p { color: var(--muted); font-size: 14px; }
+  .again {
+    margin-top: 20px;
+    background: none;
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">🎨</div>
+    <h1>传画</h1>
+    <p class="sub">把画好的图发过去<br>对方能直接下载，不用微信</p>
+
+    <div id="formArea">
+      <div class="drop" id="drop">
+        <div class="ic">📤</div>
+        <div class="t1">点击选择图片，或直接拖进来</div>
+        <div class="t2">支持 PNG / JPG / PSD / 工程文件，单个最大 <span id="maxLabel">100MB</span></div>
+        <input type="file" id="file" multiple accept="image/*,.psd,.clip,.procreate,.sai">
+      </div>
+
+      <div class="preview" id="preview"></div>
+
+      <input class="name-input" id="sender" placeholder="你的名字（可选，方便对方辨认）" maxlength="20">
+
+      <button class="btn" id="sendBtn" disabled>发 送</button>
+
+      <div class="progress" id="progress">
+        <div class="bar"><i id="barIn"></i></div>
+        <div class="pct" id="pct">0%</div>
+      </div>
+
+      <p class="tip">💡 上传完成后，对方会在他的下载页实时收到通知</p>
+    </div>
+
+    <div class="done" id="done">
+      <div class="chk">✓</div>
+      <h2>发送成功！</h2>
+      <p id="doneText">对方已经可以下载了</p>
+      <button class="again" id="again">再传一张</button>
+    </div>
+  </div>
+
+<script>
+const MAX = 100 * 1024 * 1024;
+document.getElementById('maxLabel').textContent = '100MB';
+
+const drop = document.getElementById('drop');
+const fileInput = document.getElementById('file');
+const preview = document.getElementById('preview');
+const sendBtn = document.getElementById('sendBtn');
+let files = [];
+
+drop.addEventListener('click', () => fileInput.click());
+['dragenter','dragover'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.add('dragover'); }));
+['dragleave','drop'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.remove('dragover'); }));
+drop.addEventListener('drop', ev => addFiles(ev.dataTransfer.files));
+fileInput.addEventListener('change', () => addFiles(fileInput.files));
+
+function fmt(n) {
+  if (n < 1024) return n + ' B';
+  if (n < 1048576) return (n/1024).toFixed(1) + ' KB';
+  return (n/1048576).toFixed(1) + ' MB';
+}
+
+function addFiles(list) {
+  for (const f of list) {
+    if (f.size > MAX) { alert(`「${f.name}」超过 100MB 了，传不了`); continue; }
+    if (!files.find(x => x.name===f.name && x.size===f.size)) files.push(f);
+  }
+  render();
+}
+
+function render() {
+  preview.innerHTML = '';
+  files.forEach((f, i) => {
+    const row = document.createElement('div');
+    row.className = 'file-row';
+    let thumb = '<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:22px;background:#f0e9dd">🖼️</div>';
+    if (f.type.startsWith('image/')) {
+      const u = URL.createObjectURL(f);
+      thumb = `<img class="thumb" src="${u}">`;
+    }
+    row.innerHTML = `${thumb}<div class="meta"><div class="name"></div><div class="size">${fmt(f.size)}</div></div><button class="del">×</button>`;
+    row.querySelector('.name').textContent = f.name;
+    row.querySelector('.del').onclick = () => { files.splice(i,1); render(); };
+    preview.appendChild(row);
+  });
+  preview.classList.toggle('show', files.length > 0);
+  sendBtn.disabled = files.length === 0;
+}
+
+sendBtn.onclick = async () => {
+  const sender = document.getElementById('sender').value.trim();
+  sendBtn.disabled = true;
+  document.getElementById('progress').classList.add('show');
+
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    await uploadOne(f, sender, i+1, files.length);
+  }
+
+  document.getElementById('formArea').style.display = 'none';
+  document.getElementById('done').classList.add('show');
+};
+
+function uploadOne(f, sender, idx, total) {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    const fd = new FormData();
+    fd.append('file', f);
+    fd.append('sender', sender);
+
+    xhr.upload.onprogress = (e) => {
+      if (!e.lengthComputable) return;
+      const pct = Math.round((e.loaded / e.total) * 100);
+      document.getElementById('barIn').style.width = pct + '%';
+      const label = total > 1 ? `(${idx}/${total}) ${pct}%` : pct + '%';
+      document.getElementById('pct').textContent = label;
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 413) { alert('文件太大了，服务端限制 100MB'); }
+      resolve();
+    };
+    xhr.onerror = () => { alert('上传失败，检查一下网络'); resolve(); };
+
+    xhr.open('POST', '/api/upload');
+    xhr.send(fd);
+  });
+}
+
+document.getElementById('again').onclick = () => {
+  files = []; render();
+  document.getElementById('done').classList.remove('show');
+  document.getElementById('formArea').style.display = 'block';
+  document.getElementById('progress').classList.remove('show');
+  document.getElementById('barIn').style.width = '0%';
+  document.getElementById('pct').textContent = '0%';
+  fileInput.value = '';
+};
+</script>
+</body>
+</html>
