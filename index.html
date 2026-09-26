@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>cxf54188.github.io</title>
-    <meta name="description" content="cxf54188 鐨勪釜浜虹綉绔?- 绉戞妧鏀瑰彉鏈潵">
+    <meta name="description" content="cxf54188 的个人网站 - 科技改变未来">
     <link rel="icon" type="image/svg+xml" href="img/yb_avatar.svg">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -33,7 +33,7 @@
             color: var(--text);
         }
 
-        /* ========== 鐭╅樀闆?========== */
+        /* ========== 矩阵雨 ========== */
         #matrix-canvas {
             position: fixed; top:0; left:0;
             width:100%; height:100%;
@@ -41,7 +41,7 @@
             opacity:0.12;
         }
 
-        /* ========== 缃戞牸鑳屾櫙 ========== */
+        /* ========== 网格背景 ========== */
         .grid-bg {
             position: fixed; top:0; left:0;
             width:100%; height:100%;
@@ -57,7 +57,7 @@
             100% { background-position: 60px 60px, 60px 60px; }
         }
 
-        /* ========== 鍏夋檿 ========== */
+        /* ========== 光晕 ========== */
         .glow-orb {
             position: fixed; border-radius:50%;
             filter: blur(80px); pointer-events:none; z-index:0;
@@ -88,7 +88,7 @@
             50%     { opacity:1;   transform:translate(-50%,-50%) scale(1.2); }
         }
 
-        /* ========== 鎵弿绾?========== */
+        /* ========== 扫描线 ========== */
         .scanline {
             position: fixed; top:0; left:0;
             width:100%; height:100%;
@@ -98,14 +98,14 @@
                 rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
         }
 
-        /* ========== 涓诲鍣?========== */
+        /* ========== 主容器 ========== */
         .container {
             position: relative; z-index:10;
             text-align:center; padding:60px 40px;
             max-width:720px;
         }
 
-        /* ========== 澶村儚 ========== */
+        /* ========== 头像 ========== */
         @property --angle {
             syntax:'<angle>'; initial-value:0deg; inherits:false;
         }
@@ -146,7 +146,7 @@
         .corner-deco.bl { bottom:-8px; left:-8px;  border-bottom-width:2px; border-left-width:2px; }
         .corner-deco.br { bottom:-8px; right:-8px; border-bottom-width:2px; border-right-width:2px; }
 
-        /* ========== 缁堢娆㈣繋鏉?========== */
+        /* ========== 终端欢迎条 ========== */
         .terminal-bar {
             display:inline-flex; align-items:center; gap:8px;
             background:rgba(0,240,255,0.06);
@@ -163,7 +163,7 @@
         @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
         .terminal-bar span { font-size:0.85rem; color:var(--cyan-dim); letter-spacing:2px; }
 
-        /* ========== 鏍囬 ========== */
+        /* ========== 标题 ========== */
         h1.title {
             font-size:clamp(1.5rem, 3.5vw, 2.2rem);
             font-weight:600; margin-bottom:8px;
@@ -177,7 +177,7 @@
         }
         @keyframes blink { 50% { opacity:0; } }
 
-        /* ========== 鎵撳瓧鏈哄壇鏍囬 ========== */
+        /* ========== 打字机副标题 ========== */
         .subtitle {
             font-size:1rem; color:var(--text-dim);
             margin-bottom:40px; min-height:1.6em;
@@ -190,7 +190,7 @@
             margin-left:3px; animation: blink 1s step-end infinite;
         }
 
-        /* ========== 鎶€鑳芥爣绛?========== */
+        /* ========== 技能标签 ========== */
         .tech-tags {
             display:flex; gap:10px; justify-content:center;
             flex-wrap:wrap; margin-bottom:36px;
@@ -210,7 +210,7 @@
             transform:translateY(-2px);
         }
 
-        /* ========== 鎸夐挳 ========== */
+        /* ========== 按钮 ========== */
         .links {
             display:flex; gap:16px; justify-content:center;
             flex-wrap:wrap;
@@ -248,7 +248,7 @@
             box-shadow:0 0 30px rgba(0,240,255,0.3);
         }
 
-        /* ========== 搴曢儴鐘舵€佹爮 ========== */
+        /* ========== 底部状态栏 ========== */
         .status-bar {
             margin-top:50px; display:flex;
             align-items:center; justify-content:center; gap:16px;
@@ -265,13 +265,13 @@
         }
         .status-divider { width:1px; height:14px; background:rgba(255,255,255,0.1); }
 
-        /* ========== 閫氱敤鍔ㄧ敾 ========== */
+        /* ========== 通用动画 ========== */
         @keyframes fadeUp {
             from { opacity:0; transform:translateY(24px); }
             to   { opacity:1; transform:translateY(0); }
         }
 
-        /* ========== 鍝嶅簲寮?========== */
+        /* ========== 响应式 ========== */
         @media (max-width:480px) {
             .container { padding:40px 20px; }
             .links { flex-direction:column; align-items:center; }
@@ -283,7 +283,7 @@
 </head>
 <body>
 
-<!-- 鑳屾櫙灞?-->
+<!-- 背景层 -->
 <div class="grid-bg"></div>
 <canvas id="matrix-canvas"></canvas>
 <div class="glow-orb glow-1"></div>
@@ -291,10 +291,10 @@
 <div class="glow-orb glow-3"></div>
 <div class="scanline"></div>
 
-<!-- 涓诲唴瀹?-->
+<!-- 主内容 -->
 <div class="container">
 
-    <!-- 澶村儚 -->
+    <!-- 头像 -->
     <div class="avatar-wrapper">
         <span class="corner-deco tl"></span>
         <span class="corner-deco tr"></span>
@@ -303,39 +303,39 @@
         <img class="avatar" src="img/avatar.png" alt="avatar">
     </div>
 
-    <!-- 缁堢椋庢牸娆㈣繋鏉?-->
+    <!-- 终端风格欢迎条 -->
     <div class="terminal-bar">
         <span class="terminal-dot"></span>
-        <span>绯荤粺灏辩华</span>
+        <span>系统就绪</span>
     </div>
 
-    <!-- 鏍囬 -->
+    <!-- 标题 -->
     <h1 class="title">
-        娆㈣繋璁块棶 cxf54188.github.io<span class="cursor"></span>
+        欢迎访问 cxf54188.github.io<span class="cursor"></span>
     </h1>
 
-    <!-- 鎵撳瓧鏈哄壇鏍囬 -->
+    <!-- 打字机副标题 -->
     <p class="subtitle" id="typewriter"></p>
 
-    <!-- 鎶€鑳芥爣绛?-->
+    <!-- 技能标签 -->
     <div class="tech-tags">
-        <span class="tech-tag">&lt;/&gt; 鍓嶇寮€鍙?/span>
-        <span class="tech-tag">{ } 缂栫▼浠ｇ爜</span>
-        <span class="tech-tag">鈿?鎶€鏈帰绱?/span>
-        <span class="tech-tag">馃殌 鏈潵鍙湡</span>
+        <span class="tech-tag">&lt;/&gt; 前端开发</span>
+        <span class="tech-tag">{ } 编程代码</span>
+        <span class="tech-tag">⚡ 技术探索</span>
+        <span class="tech-tag">🚀 未来可期</span>
     </div>
 
-    <!-- 鎸夐挳 -->
+    <!-- 按钮 -->
     <div class="links">
         <a class="btn primary" href="blog/">
-            <span>馃摑</span> Blog
+            <span>📝</span> Blog
         </a>
         <a class="btn" href="links/">
-            <span>馃敆</span> 鍙嬫儏閾炬帴
+            <span>🔗</span> 友情链接
         </a>
     </div>
 
-    <!-- 搴曢儴鐘舵€佹爮 -->
+    <!-- 底部状态栏 -->
     <div class="status-bar">
         <div class="status-item">
             <span class="status-dot"></span>
@@ -343,26 +343,26 @@
         </div>
         <div class="status-divider"></div>
         <div class="status-item">
-            <span style="color:var(--cyan)">鈼?/span>
-            <span>鍦ㄧ嚎</span>
+            <span style="color:var(--cyan)">●</span>
+            <span>在线</span>
         </div>
         <div class="status-divider"></div>
         <div class="status-item">
-            <span style="color:var(--purple)">鈿?/span>
-            <span>鐢?GITHUB PAGES 椹卞姩</span>
+            <span style="color:var(--purple)">⚙</span>
+            <span>由 GITHUB PAGES 驱动</span>
         </div>
     </div>
 
 </div>
 
 <script>
-    /* ========== 鐭╅樀闆?========== */
+    /* ========== 矩阵雨 ========== */
     const canvas = document.getElementById('matrix-canvas');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
     resizeCanvas(); window.addEventListener('resize', resizeCanvas);
 
-    const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz闆朵竴浜屼笁鍥涗簲鍏竷鍏節鍗佺櫨鍗冧竾浜跨鎶€鏈潵缃戠粶鏁版嵁浠ｇ爜缂栫▼鏅鸿兘浜戠璁＄畻瀹夊叏榛戝绯荤粺鏋舵瀯鍖哄潡閾句汉宸ユ櫤鑳芥満鍣ㄥ涔犳繁搴﹀涔?;
+    const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz零一二三四五六七八九十百千万亿科技未来网络数据代码编程智能云端计算安全黑客系统架构区块链人工智能机器学习深度学习';
     const fontSize = 14;
     let columns = Math.floor(canvas.width / fontSize);
     let drops = Array(columns).fill(0).map(() => Math.random() * -100);
@@ -388,12 +388,12 @@
         drops = Array(columns).fill(0).map(() => Math.random() * -100);
     });
 
-    /* ========== 鎵撳瓧鏈?========== */
+    /* ========== 打字机 ========== */
     const lines = [
-        "姝ｅ湪鍒濆鍖栫郴缁?.. 瀹屾垚 鉁?,
-        "姝ｅ湪鍔犺浇鐢ㄦ埛璧勬枡... cxf54188",
-        "杩欓噷鏄垜鐨勪釜浜虹┖闂达紝娆㈣繋鎺㈢储 馃殌",
-        "鐑埍缂栫▼锛岀儹鐖辩敓娲伙紝鎸佺画瀛︿範 馃捇"
+        "正在初始化系统... 完成 ✅",
+        "正在加载用户资料... cxf54188",
+        "这里是我的个人空间，欢迎探索 🚀",
+        "热爱编程，热爱生活，持续学习 💻"
     ];
     let lineIdx = 0, charIdx = 0;
     const target = document.getElementById("typewriter");
@@ -407,10 +407,10 @@
     }
     setTimeout(type, 1000);
 
-    /* ========== 鏃堕挓 ========== */
+    /* ========== 时钟 ========== */
     const clock = document.getElementById("clock");
     function tick() {
-        clock.textContent = "鈴?" + new Date().toLocaleString("zh-CN", {
+        clock.textContent = "⏰ " + new Date().toLocaleString("zh-CN", {
             year:"numeric", month:"2-digit", day:"2-digit",
             hour:"2-digit", minute:"2-digit", second:"2-digit"
         });
