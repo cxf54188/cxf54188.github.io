@@ -1,0 +1,21 @@
+name: Guestbook
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  auto-reply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto reply to new issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.BLOG_NEWS_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '✅ 留言已收到！感谢你的参与！'
+            });
