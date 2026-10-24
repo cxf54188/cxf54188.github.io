@@ -1409,6 +1409,7 @@ function drawAxis() {
 }
 
 function draw(time) {
+  requestAnimationFrame(draw);            // 循环必须先续上，否则首帧 return 后画面再也不刷新
   if (!L || !st) return;
   var now = time || performance.now();
   ctx.clearRect(0, 0, cv.width, cv.height);
@@ -1436,7 +1437,6 @@ function draw(time) {
 
   drawPreview();
   drawPlayer(now);
-  requestAnimationFrame(draw);
 }
 
 /* ================= 预览 ================= */
