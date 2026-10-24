@@ -21,6 +21,59 @@ header.hero{background:linear-gradient(135deg,#4f46e5,#7c3aed 50%,#db2777);
 header.hero:after{content:"";position:absolute;right:-60px;top:-70px;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,.10)}
 header.hero h1{margin:0;font-size:26px;letter-spacing:.5px}
 header.hero p{margin:8px 0 0;font-size:13.5px;opacity:.92;line-height:1.7}
+.lockbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding:9px 12px;
+  border-radius:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);position:relative;z-index:2}
+.lockbar.lock{background:rgba(225,29,72,.16);border-color:rgba(255,255,255,.28)}
+.lockbar input[type=password],.lockbar input[type=text]{padding:5px 9px;border-radius:8px;border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.9);color:#1e2439;font-size:12.5px;width:150px;outline:none}
+.lockbar .lb-btn{padding:5px 12px;border-radius:8px;border:none;background:#1e2439;color:#fff;font-size:12.5px;
+  font-weight:700;cursor:pointer}
+.lockbar .lb-btn.ghost{background:rgba(255,255,255,.22);color:#fff}
+.lockbar .lb-txt{font-size:12px;opacity:.95}
+.lockbar select{padding:5px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.9);color:#1e2439;font-size:12.5px;outline:none}
+.lockbar .lb-err{color:#fee2e2;font-size:12px;font-weight:700}
+.namelock{margin-top:14px}
+.namelock .nl-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.namelock input{padding:7px 10px;border-radius:9px;border:1px solid var(--line);font-size:13px;outline:none}
+
+
+
+
+
+
+
+.qzin:focus{border-color:var(--brand)}
+
+
+
+
+
+
+
+.gatmask{position:fixed;inset:0;z-index:9800;display:flex;align-items:center;justify-content:center;
+  padding:18px;background:linear-gradient(160deg,#1e1b4b,#312e81 45%,#4c1d95);overflow:auto}
+.gatmask[hidden]{display:none}
+.gatbox{background:#fff;border-radius:18px;max-width:440px;width:100%;padding:24px 24px 20px;
+  box-shadow:0 26px 70px rgba(0,0,0,.45)}
+.gatlogo{font-size:34px;text-align:center;margin-bottom:6px}
+.gatbox h2{margin:0 0 4px;font-size:19px;text-align:center}
+.gatsub{margin:0 0 16px;font-size:12.5px;color:#7c859e;line-height:1.75;text-align:center}
+.gatbox .qzitem{margin-bottom:12px}
+.gatbox .qzq{font-size:13.5px;font-weight:600;color:#1e2439;line-height:1.6;margin-bottom:6px;display:flex;gap:7px}
+.gatbox .qzn{flex:0 0 19px;height:19px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;
+  font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:800}
+.gatbox .qzin{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:13px;outline:none;box-sizing:border-box}
+.gatbox .qzin:focus{border-color:var(--brand)}
+.gatbox .qzerr{color:#e11d48;font-size:12.5px;min-height:18px;font-weight:600;text-align:center}
+.gatbox .qzbtns{display:flex;gap:9px;margin-top:4px}
+.gatbox .qzbtns .btn{flex:1}
+.gatbox .qzrm{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;font-size:12.5px;color:#7c859e;cursor:pointer}
+.gatfail{text-align:center;color:#fff;max-width:400px}
+.gatfail .gatem{font-size:50px;margin-bottom:6px}
+.gatfail h2{margin:0 0 10px;font-size:21px;color:#fff}
+.gatfail p{font-size:13px;color:#c7cbe0;line-height:1.85;margin:0 0 14px}
+.gatfail .gatinfo{font-size:12.5px;color:#9aa2c0;margin-bottom:16px}
 .hitrow{display:flex;align-items:center;gap:10px;margin-top:12px;position:relative;z-index:2;flex-wrap:wrap}
 .hitlab{font-size:11.5px;opacity:.92}
 .hitimg{height:26px;width:auto;image-rendering:pixelated;border-radius:5px;background:rgba(255,255,255,.14);padding:2px 4px}
@@ -191,6 +244,23 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 .tool b{font-size:13.5px;display:block}
 .vs{font-weight:900;color:#e11d48}
 /* 大富翁 */
+.mpstatus{margin:8px 0 2px;padding:8px 12px;border-radius:10px;background:#f6f7fb;border:1px solid var(--line);
+  font-size:12.5px;color:#5b6178;line-height:1.7}
+.mpstatus b{color:#1e2439}
+.mpcell.goal::after{content:'';position:absolute;inset:-3px;border-radius:11px;border:2px dashed #f59e0b;opacity:.75;
+  animation:goalpulse 1.8s ease-in-out infinite}
+@keyframes goalpulse{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:.9;transform:scale(1.04)}}
+.mpcell.stepping{animation:mps .28s ease}
+@keyframes mps{0%{transform:scale(1)}45%{transform:scale(1.22);filter:brightness(1.25)}100%{transform:scale(1)}}
+.mpcell{transition:transform .18s ease, box-shadow .18s ease}
+.mpinfo{margin:8px 0 4px;padding:8px 12px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;
+  font-size:12px;color:#78350f;line-height:1.85}
+.mpinfo .gi{color:#047857;font-weight:700}
+.mpinfo .bi{color:#be123c;font-weight:700}
+.mpinfo .ni{color:#4338ca;font-weight:700}
+.mpcell.landed{outline:3px solid #f59e0b;outline-offset:3px;z-index:3;
+  animation:landpulse .75s ease-in-out}
+@keyframes landpulse{0%{transform:scale(1)}30%{transform:scale(1.3);filter:brightness(1.3)}100%{transform:scale(1.08)}}
 .mpgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin:10px 0}
 @media(max-width:640px){.mpgrid{grid-template-columns:repeat(6,1fr)}}
 .mpcell{position:relative;aspect-ratio:1/1;border-radius:9px;display:flex;align-items:center;justify-content:center;
@@ -354,11 +424,12 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
 </style>
 </head>
 <body>
+<div id="gateMask" class="gatmask"></div>
 <div class="wrap">
   <header class="hero">
     <h1>课堂违纪互动看板</h1>
     <div class="ai-tag">✨ 本界面由元宝AI分析生成</div>
-    <p>八周追踪 × 十三学科双维度 · 五个分析板块 + 一个趣味实验室（22 个玩法）</p>
+    <p>八周追踪 × 十三学科双维度 · 五个分析板块 + 一个趣味实验室（27 个玩法）</p>
     <div class="hero-badges">
       <span id="b1">—</span><span id="b2">—</span><span id="b3">—</span><span id="b4">—</span>
       <span id="b5">—</span>
@@ -366,6 +437,14 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
     <div class="hitrow">
       <span class="hitlab">👀 访问计数</span>
       <img class="hitimg" src="https://count.getloli.com/@cxf54188?name=cxf54188&amp;theme=3d-num&amp;padding=7&amp;offset=0&amp;align=top&amp;scale=1&amp;pixelated=1&amp;darkmode=auto" alt="访问计数器" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+    </div>
+    <div class="lockbar lock" id="lockbar">
+      <span id="lockIcon">🔒</span>
+      <span class="lb-txt" id="lockText">姓名已加密 · 需答对随机抽出的 3 道题才会显示</span>
+      
+      <button class="lb-btn" id="lockBtn">开始验证</button>
+      
+      
     </div>
   </header>
 
@@ -422,7 +501,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
         </div>
         <div class="card">
           <h3>本周班级气象台</h3>
-          <div class="desc">按最近一周（第八周）的违纪强度换算成天气，纯属娱乐，别当真。</div>
+          <div class="desc">按最近一周（第八周）的违纪强度换算成天气，方便直观感受班级纪律状况。</div>
           <div id="wxBox"></div>
         </div>
       </div>
@@ -517,7 +596,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
     <!-- 趣味实验室 -->
     <div class="panel" id="lab">
       <div class="labintro">
-        <b>22 个玩法，一次展开一个</b>
+        <b>27 个玩法，一次展开一个</b>
         <span>点下面的按钮展开对应玩法，再点一次收起；展开新的会自动收起上一个。上次展开的会记在本机，下次打开自动恢复。</span>
         <div class="ctrl" style="margin:10px 0 0">
           <button class="btn ghost" id="labNone">收起当前</button>
@@ -527,7 +606,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
 
       <div class="sec"><span class="sec-i">🏆</span><b>颁奖与称号</b><em>奖项、徽章、荣誉、段位与班级成就，全部由数据自动生成</em></div>
       <div class="playbtns">
-        <button class="pbtn" data-play="awards"><i>🏆 </i><b>🏆 八周违纪奥斯卡</b><em>奖项由数据自动生成，纯属娱乐向的班级梗，颁奖词可自由口播。点「逐项揭…</em></button>
+        <button class="pbtn" data-play="awards"><i>🏆 </i><b>🏆 八周违纪奥斯卡</b><em>奖项由数据自动生成，颁奖词可自由口播。点「逐项揭晓」有开奖动画，点卡片看当事人档案…</em></button>
         <button class="pbtn" data-play="badges"><i>🎖️</i><b>🎖️ 徽章墙</b><em>每位违纪同学按数据特征自动生成的称号，鼠标悬停可看说明，点击看档案。</em></button>
         <button class="pbtn" data-play="honor"><i>🥇 </i><b>🥇 荣誉墙 · 零违纪同学</b><em>八周内一次都没上榜的同学，稳如泰山。</em></button>
         <button class="pbtn" data-play="duanwei"><i>🏅 </i><b>🏅 段位赛</b><em>按违纪次数给全班定段位 —— 这里的「王者」是零违纪那位。</em></button>
@@ -536,7 +615,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
       <div class="playzone">
         <div class="play" id="play-awards" data-fn="renderAwards" style="display:none"><div class="card">
         <h3>🏆 八周违纪奥斯卡<button class="fold" data-fold="awards" title="收起">✕</button></h3>
-        <div class="desc">奖项由数据自动生成，纯属娱乐向的班级梗，颁奖词可自由口播。点「逐项揭晓」有开奖动画，点卡片看当事人档案。</div>
+        <div class="desc">奖项与颁奖词由数据自动生成，可直接口播。点「逐项揭晓」有开奖动画，点卡片看当事人档案。</div>
         <div class="ctrl">
           <button class="btn" id="revealBtn">🎉 逐项揭晓</button>
           <button class="btn ghost" id="showAllBtn">全部展开</button>
@@ -565,10 +644,12 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
       </div></div>
       </div>
 
-      <div class="sec"><span class="sec-i">🎡</span><b>抽签与随机</b><em>随机点名、抽人、排座、排值日、配对，全部基于本班名单</em></div>
+      <div class="sec"><span class="sec-i">🎡</span><b>抽签与随机</b><em>转盘点名、全班排序、随机抽人、两两配对，全部基于本班名单</em></div>
       <div class="playbtns">
         <button class="pbtn" data-play="wheel"><i>🎡 </i><b>🎡 幸运转盘</b><em>名单来源可切换，抽过的名字会被划掉。适合随机点名、抽人答题、抽本周重…</em></button>
-        <button class="pbtn" data-play="tools"><i>🎲 </i><b>🎲 其他小工具</b><em>随机抽人、排座、排值日、配对，点一下就出结果，全部基于本班名单。</em></button>
+        <button class="pbtn" data-play="shuffle"><i>🔀 </i><b>🔀 全班随机排序</b><em>打乱全班顺序，适合排发言顺序、排值日、抽签。违纪同学标红、零违纪标绿…</em></button>
+        <button class="pbtn" data-play="pick"><i>🎯 </i><b>🎯 随机抽 N 人</b><em>指定人数随机抽人，抽中者附「累计次数 · 主战场学科」，适合抽人上台或答题…</em></button>
+        <button class="pbtn" data-play="pair"><i>🤝 </i><b>🤝 随机两两配对</b><em>同桌 / 讨论搭档 / 互评对子，人数为奇数时最后一组三人。</em></button>
       </div>
       <div class="playzone">
         <div class="play" id="play-wheel" data-fn="renderWheelStat" style="display:none"><div class="card">
@@ -609,66 +690,31 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
           </div>
         </div>
       </div></div>
-        <div class="play" id="play-tools" data-fn="toolsInit" style="display:none"><div class="card">
-        <h3>🎲 其他小工具<button class="fold" data-fold="tools" title="收起">✕</button></h3>
-        <div class="desc">随机抽人、排座、排值日、配对，点一下就出结果，全部基于本班名单。</div>
-        <div class="grid3" style="gap:12px">
-
-          <div class="tool">
-            <b>🔀 全班随机排序</b>
-            <div class="th">打乱顺序，适合排发言、排值日、抽签。</div>
-            <div class="ctrl" style="margin:8px 0 0">
-              <button class="btn" id="tShuffle">排一次</button>
-            </div>
-            <div class="tout" id="tShuffleOut"></div>
-          </div>
-
-          <div class="tool">
-            <b>🎯 随机抽 N 人</b>
-            <div class="th">抽若干人上台 / 答题 / 搬东西。</div>
-            <div class="ctrl" style="margin:8px 0 0">
-              <input type="number" id="tPickN" value="5" min="1" max="52" style="width:68px">
-              <button class="btn" id="tPickBtn">抽取</button>
-            </div>
-            <div class="tout" id="tPickOut"></div>
-          </div>
-
-          <div class="tool">
-            <b>💺 随机座位表</b>
-            <div class="th">按列数自动排座，空位留白。</div>
-            <div class="ctrl" style="margin:8px 0 0">
-              <input type="number" id="tSeatCol" value="6" min="2" max="10" style="width:68px">
-              <span style="font-size:12px;color:#7c859e">列</span>
-              <button class="btn" id="tSeatBtn">生成</button>
-            </div>
-            <div class="tout" id="tSeatOut"></div>
-          </div>
-
-          <div class="tool">
-            <b>🧹 一周值日表</b>
-            <div class="th">把全班随机分成 5 组，对应周一至周五。</div>
-            <div class="ctrl" style="margin:8px 0 0">
-              <button class="btn" id="tDutyBtn">排值日</button>
-            </div>
-            <div class="tout" id="tDutyOut"></div>
-          </div>
-
-          <div class="tool">
-            <b>🤝 随机两两配对</b>
-            <div class="th">同桌 / 讨论搭档 / 互评对子，奇数时最后一组三人。</div>
-            <div class="ctrl" style="margin:8px 0 0">
-              <button class="btn" id="tPairBtn">配对</button>
-            </div>
-            <div class="tout" id="tPairOut"></div>
-          </div>
-
-          
-
-          
-
-          
-
+        <div class="play" id="play-shuffle" data-fn="shuffleInit" style="display:none"><div class="card">
+        <h3>🔀 全班随机排序<button class="fold" data-fold="shuffle" title="收起">✕</button></h3>
+        <div class="desc">打乱全班顺序，适合排发言顺序、排值日、抽签。有违纪记录的同学标红，零违纪的同学标绿。</div>
+        <div class="ctrl">
+          <button class="btn" id="tShuffle">排一次</button>
         </div>
+        <div class="tout" id="tShuffleOut" style="max-height:none;overflow:visible"></div>
+      </div></div>
+        <div class="play" id="play-pick" data-fn="pickInit" style="display:none"><div class="card">
+        <h3>🎯 随机抽 N 人<button class="fold" data-fold="pick" title="收起">✕</button></h3>
+        <div class="desc">指定人数随机抽人，抽中者会附上「累计次数 · 主战场学科」。适合抽人上台、答题、搬东西。</div>
+        <div class="ctrl">
+          <input type="number" id="tPickN" value="5" min="1" max="52" style="width:68px">
+          <span style="font-size:12px;color:#7c859e">人</span>
+          <button class="btn" id="tPickBtn">抽取</button>
+        </div>
+        <div class="tout" id="tPickOut" style="max-height:none;overflow:visible"></div>
+      </div></div>
+        <div class="play" id="play-pair" data-fn="pairInit" style="display:none"><div class="card">
+        <h3>🤝 随机两两配对<button class="fold" data-fold="pair" title="收起">✕</button></h3>
+        <div class="desc">同桌 / 讨论搭档 / 互评对子，一键随机分组。人数为奇数时，最后一组会是三人。</div>
+        <div class="ctrl">
+          <button class="btn" id="tPairBtn">配对</button>
+        </div>
+        <div class="tout" id="tPairOut" style="max-height:none;overflow:visible"></div>
       </div></div>
       </div>
 
@@ -681,7 +727,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
       <div class="playzone">
         <div class="play" id="play-forecast" data-fn="renderForecast" style="display:none"><div class="card">
         <h3>🔮 违纪预测<button class="fold" data-fold="forecast" title="收起">✕</button></h3>
-        <div class="desc">两种玩法：① 你猜下周全班违纪总次数，系统对照历史给出参考区间；② 系统按风险模型预测下周最可能上榜的同学。含随机扰动，仅供娱乐。</div>
+        <div class="desc">两种玩法：① 你猜下周全班违纪总次数，系统对照历史给出参考区间；② 系统按风险模型（近期活跃、稳定性、恶化趋势、学科广度）预测下周最可能上榜的同学。</div>
         <div class="grid2b" style="gap:12px">
           <div class="tool">
             <b>① 猜下周总次数</b>
@@ -723,9 +769,9 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
       </div></div>
       </div>
 
-      <div class="sec"><span class="sec-i">🎲</span><b>游戏场</b><em>大富翁、侦探、刮刮卡、老虎机、宾果、战力对决</em></div>
+      <div class="sec"><span class="sec-i">🎲</span><b>游戏场</b><em>大富翁、侦探、刮刮卡、老虎机、宾果、战力对决、广播台</em></div>
       <div class="playbtns">
-        <button class="pbtn" data-play="monopoly"><i>🎲 </i><b>🎲 违纪大富翁</b><em>掷骰子走格子，踩到什么全看运气。走到终点算「刑满释放」，中途被抓回起…</em></button>
+        <button class="pbtn" data-play="monopoly"><i>🎲 </i><b>🎲 违纪大富翁</b><em>棋盘按这位同学的违纪记录定制：零违纪好格子多、走得快，违纪多则坏格子成群。走完先停一下再结算…</em></button>
         <button class="pbtn" data-play="detective"><i>🔍 </i><b>🔍 违纪侦探（计分版）</b><em>系统悄悄锁定一位违纪同学，逐条放出线索。用的线索越少得分越高，还带连…</em></button>
         <button class="pbtn" data-play="scratch"><i>🎫 </i><b>🎫 违纪刮刮卡</b><em>九张卡，每张背后是一次真实发生的违纪记录。点一下刮开，看看手气。</em></button>
         <button class="pbtn" data-play="slot"><i>🎰 </i><b>🎰 违纪老虎机</b><em>三列分别是周次、学科、同学。摇出「时间 × 地点 × 人物」，看看能…</em></button>
@@ -736,15 +782,16 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
       <div class="playzone">
         <div class="play" id="play-monopoly" data-fn="mpStart" style="display:none"><div class="card">
         <h3>🎲 违纪大富翁<button class="fold" data-fold="monopoly" title="收起">✕</button></h3>
-        <div class="desc">掷骰子走格子，踩到什么全看运气。走到终点算「刑满释放」，中途被抓回起点也不意外。</div>
+        <div class="desc">棋盘<b>按这位同学的违纪记录定制</b>：零违纪的同学好格子多、前进步子大，很容易走到终点；违纪越多，坏格子越多、后退越狠，路就越长。掷骰子后会<b>一格一格走</b>，走完先停一下再结算奖惩。</div>
         <div class="ctrl">
           <select id="mpWho" style="width:140px"></select>
           <button class="btn" id="mpRoll">🎲 掷骰子</button>
           <button class="btn ghost" id="mpReset">重新开始</button>
           <span id="mpDice" style="font-size:30px;line-height:1"></span>
         </div>
+        <div class="mpstatus" id="mpStatus">—</div>
         <div id="mpBoard"></div>
-        <div class="tout" id="mpLog" style="max-height:150px"></div>
+        <div class="tout" id="mpLog" style="max-height:180px"></div>
       </div></div>
         <div class="play" id="play-detective" data-fn="dtNewCase" style="display:none"><div class="card">
         <h3>🔍 违纪侦探（计分版）<button class="fold" data-fold="detective" title="收起">✕</button></h3>
@@ -814,22 +861,53 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
         </div></div>
       </div>
 
-      <div class="sec"><span class="sec-i">🎭</span><b>单人剧场</b><em>选一个人，用四种文体生成专属文案</em></div>
+      <div class="sec"><span class="sec-i">🎭</span><b>单人剧场</b><em>选一位同学，用四种文体生成专属文案</em></div>
       <div class="playbtns">
-        <button class="pbtn" data-play="theatre"><i>🎭 </i><b>🎭 单人剧场 · 四种文体</b><em>选一位同学，切换四种文体看他/她的「专属文案」。事实全部来自真实数据…</em></button>
+        <button class="pbtn" data-play="tk"><i>🧾 </i><b>🧾 违纪罚单</b><em>生成一张「课堂违纪现场处罚决定书」，当事人信息、违法事实全部来自真实登记数据…</em></button>
+        <button class="pbtn" data-play="mom"><i>📱 </i><b>📱 朋友圈</b><em>模拟这位同学发了一条朋友圈，附上同学们的评论与点赞数…</em></button>
+        <button class="pbtn" data-play="yr"><i>🎬 </i><b>🎬 年度回忆</b><em>生成一份年度违纪报告：年度关键词、高光时刻、与全班对比、年度评语…</em></button>
+        <button class="pbtn" data-play="dg"><i>📜 </i><b>📜 诊断书</b><em>把违纪数据写成一份「病历」：主诉、症状、诊断、判词与处方…</em></button>
       </div>
       <div class="playzone">
-        <div class="play" id="play-theatre" data-fn="renderTheatre" style="display:none"><div class="card">
-        <h3>🎭 单人剧场 · 四种文体<button class="fold" data-fold="theatre" title="收起">✕</button></h3>
-        <div class="desc">选一位同学，切换四种文体看他/她的「专属文案」。事实全部来自真实数据，文体纯属虚构。</div>
+        <div class="play" id="play-tk" data-fn="renderTicketPlay" style="display:none"><div class="card">
+        <h3>🧾 违纪罚单<button class="fold" data-fold="tk" title="收起">✕</button></h3>
+        <div class="desc">选一位同学，生成一张「课堂违纪现场处罚决定书」。当事人信息、违法事实、所属班级等均来自真实登记数据。</div>
         <div class="ctrl">
-          <select id="thWho" style="width:170px"></select>
-          <span class="chip on" data-th="tk">🧾 违纪罚单</span>
-          <span class="chip" data-th="mom">📱 朋友圈</span>
-          <span class="chip" data-th="yr">🎬 年度回忆</span>
-          <span class="chip" data-th="dg">📜 诊断书</span>
+          <select id="tkWho" style="width:170px"></select>
+          <button class="btn" id="tkGo">生成罚单</button>
+          <button class="btn ghost" id="tkRand">换一个</button>
         </div>
-        <div class="tout" id="thOut" style="max-height:none;overflow:visible"></div>
+        <div class="tout" id="tkOut" style="max-height:none;overflow:visible"></div>
+      </div></div>
+        <div class="play" id="play-mom" data-fn="renderMomentPlay" style="display:none"><div class="card">
+        <h3>📱 朋友圈<button class="fold" data-fold="mom" title="收起">✕</button></h3>
+        <div class="desc">模拟这位同学发了一条朋友圈，系统会配上其他同学的评论与点赞数。文案风格按违纪次数分档。</div>
+        <div class="ctrl">
+          <select id="momWho" style="width:170px"></select>
+          <button class="btn" id="momGo">生成朋友圈</button>
+          <button class="btn ghost" id="momRand">换一个</button>
+        </div>
+        <div class="tout" id="momOut" style="max-height:none;overflow:visible"></div>
+      </div></div>
+        <div class="play" id="play-yr" data-fn="renderYearPlay" style="display:none"><div class="card">
+        <h3>🎬 年度回忆<button class="fold" data-fold="yr" title="收起">✕</button></h3>
+        <div class="desc">生成这位同学的年度违纪报告：年度关键词、核心数据、高光时刻、与全班对比、年度评语。</div>
+        <div class="ctrl">
+          <select id="yrWho" style="width:170px"></select>
+          <button class="btn" id="yrGo">生成年报</button>
+          <button class="btn ghost" id="yrRand">换一个</button>
+        </div>
+        <div class="tout" id="yrOut" style="max-height:none;overflow:visible"></div>
+      </div></div>
+        <div class="play" id="play-dg" data-fn="renderDiagPlay" style="display:none"><div class="card">
+        <h3>📜 诊断书<button class="fold" data-fold="dg" title="收起">✕</button></h3>
+        <div class="desc">把违纪数据写成一份「病历」：就诊人、科室、主诉、既往史、症状、诊断、判词与处方。</div>
+        <div class="ctrl">
+          <select id="dgWho" style="width:170px"></select>
+          <button class="btn" id="dgGo">生成诊断书</button>
+          <button class="btn ghost" id="dgRand">换一个</button>
+        </div>
+        <div class="tout" id="dgOut" style="max-height:none;overflow:visible"></div>
       </div></div>
       </div>
 
@@ -837,8 +915,8 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
       <div class="playbtns">
         <button class="pbtn" data-play="evo"><i>🧬 </i><b>🧬 违纪进化链</b><em>按累计次数看一个人「进化」到了哪个阶段，以及离下一阶段还差几次。</em></button>
         <button class="pbtn" data-play="co"><i>🤝 </i><b>🤝 共犯雷达</b><em>谁和谁在同一周、同一科一起上过榜？关联越强，越像「同桌连坐」。点击名…</em></button>
-        <button class="pbtn" data-play="calc"><i>🧮 </i><b>🧮 违纪换算器</b><em>把累计违纪次数换算成别的单位，纯属娱乐。</em></button>
-        <button class="pbtn" data-play="quiz"><i>🎭 </i><b>🎭 你是哪种违纪类型</b><em>四道小题，测出你的违纪画像，结果仅供娱乐。</em></button>
+        <button class="pbtn" data-play="calc"><i>🧮 </i><b>🧮 违纪换算器</b><em>把累计违纪次数换算成跑步圈数、作业页数等别的单位，换个角度看数据…</em></button>
+        <button class="pbtn" data-play="quiz"><i>🎭 </i><b>🎭 你是哪种违纪类型</b><em>四道小题，测出你的违纪画像，并给出对应的建议…</em></button>
       </div>
       <div class="playzone">
         <div class="play" id="play-evo" data-fn="renderEvo" style="display:none"><div class="card">
@@ -859,7 +937,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
       </div></div>
         <div class="play" id="play-calc" data-fn="calcInit" style="display:none"><div class="card">
           <h3>🧮 违纪换算器<button class="fold" data-fold="calc" title="收起">✕</button></h3>
-          <div class="desc">把累计违纪次数换算成别的单位，纯属娱乐。</div>
+          <div class="desc">把累计违纪次数换算成跑步圈数、作业页数、奶茶杯数等别的单位，换个角度看数据。</div>
           <div class="ctrl">
             <label style="font-size:12.5px;color:#7c859e">每次违纪按</label>
             <input type="number" id="perMin" value="2" min="1" max="30" style="width:70px">
@@ -870,7 +948,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
         </div></div>
         <div class="play" id="play-quiz" data-fn="renderQuiz" style="display:none"><div class="card">
           <h3>🎭 你是哪种违纪类型<button class="fold" data-fold="quiz" title="收起">✕</button></h3>
-          <div class="desc">四道小题，测出你的违纪画像，结果仅供娱乐。</div>
+          <div class="desc">四道小题，测出你的违纪画像，并给出对应的改进建议。</div>
           <div id="quiz"></div>
           <button class="btn" id="quizBtn" style="margin-top:10px">看看结果</button>
           <div id="quizOut"></div>
@@ -887,12 +965,30 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
         <div class="ctrl">
           <button class="btn" id="exportCsv">导出 CSV</button>
           <button class="btn ghost" id="exportJson">导出 JSON 存档</button>
-          <button class="btn ghost" id="importJson">导入 JSON 存档</button>
           <button class="btn ghost" id="print">打印 / 存为 PDF</button>
           <button class="btn warn" id="hardReset">清空存档并恢复原始表格</button>
         </div>
         <div id="saveState" class="ok" style="margin-top:6px">—</div>
-        <input type="file" id="fileInput" accept=".json" style="display:none">
+      </div>
+      <div class="card">
+        <h3>🔒 姓名加密与显示</h3>
+        <div class="desc">姓名以 AES-256 加密后写在页面里，页面源码中<b>不含明文姓名，也不含任何答案</b>。答对随机抽出的 3 道班级题，答案拼起来才是解密密钥 —— 答对才显示姓名。</div>
+        <div class="warn" style="margin-top:8px">验证通过前，榜单里的名字统一显示为「同学01…同学52」占位；验证通过后固定以<b>标准脱敏</b>形式（姓氏 + 缩写）显示。</div>
+        <div class="statgrid">
+          <div class="stat"><b id="nmState">—</b><span>当前状态</span></div>
+          <div class="stat"><b>标准脱敏</b><span>姓名显示方式（固定）</span></div>
+        </div>
+        <div class="namelock">
+          <div class="nl-row">
+            <button class="btn" id="nmLock">立即锁定</button>
+          </div>
+          <div class="warn" style="margin-top:10px">
+            · GitHub Pages 是纯静态托管，没有服务端，因此验证只能在浏览器里做；<b>这层加密用于防止随手翻阅与源码搜姓名，不是绝对防护。</b>拿到页面的人若懂得调试，理论上仍有办法绕过。<br>
+            · 题库共 6 题、每次随机抽 3 题，共 20 种组合，每种组合单独加密一份，所以不存在"记住一组答案就能解开全部"的万能密钥。<br>
+            · 「记住本机」会把姓名存在这台电脑的浏览器里；<b>公共电脑请不要勾选</b>。<br>
+            · 答错时会先尝试自动关闭页面；浏览器通常不允许脚本关闭用户打开的标签页，此时会用全屏遮罩挡住全部内容，点「重新答题」换一批题重来。
+          </div>
+        </div>
       </div>
       <div class="card">
         <h3>📊 访问计数</h3>
@@ -943,110 +1039,434 @@ const NW = 8, NS = 13;
 const L = 7, L2 = 6, L3 = 5;   /* 最后一周 / 倒数第二 / 倒数第三 */
 const HALF = 4;                 /* 前半程周数：W1–W4 */
 function sumW(a,s,e){ var t=0; for(var i=s;i<e;i++) t+=(a[i]||0); return t; }
+/* ============ 纯 JS 解密库：SHA-256 / HMAC / PBKDF2 / AES-256-CBC ============
+   不依赖 crypto.subtle，https 与 file:// 下行为一致 */
+(function(global){
+'use strict';
+var K256=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+function rotr(x,n){return (x>>>n)|(x<<(32-n));}
+function sha256(msg){
+  var H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  var ml=msg.length, with1=ml+9, blocks=Math.ceil(with1/64)*64;
+  var buf=new Uint8Array(blocks), i;
+  for(i=0;i<ml;i++) buf[i]=msg[i];
+  buf[ml]=0x80;
+  var bitLen=ml*8;
+  var dv=new DataView(buf.buffer);
+  dv.setUint32(blocks-4, bitLen>>>0, false);
+  dv.setUint32(blocks-8, Math.floor(bitLen/4294967296), false);
+  var w=new Uint32Array(64);
+  for(i=0;i<blocks;i+=64){
+    var t;
+    for(t=0;t<16;t++) w[t]=dv.getUint32(i+t*4,false);
+    for(t=16;t<64;t++){
+      var s0=rotr(w[t-15],7)^rotr(w[t-15],18)^(w[t-15]>>>3);
+      var s1=rotr(w[t-2],17)^rotr(w[t-2],19)^(w[t-2]>>>10);
+      w[t]=(w[t-16]+s0+w[t-7]+s1)>>>0;
+    }
+    var a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+    for(t=0;t<64;t++){
+      var S1=rotr(e,6)^rotr(e,11)^rotr(e,25);
+      var ch=(e&f)^((~e)&g);
+      var t1=(h+S1+ch+K256[t]+w[t])>>>0;
+      var S0=rotr(a,2)^rotr(a,13)^rotr(a,22);
+      var mj=(a&b)^(a&c)^(b&c);
+      var t2=(S0+mj)>>>0;
+      h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0;
+    }
+    H[0]=(H[0]+a)>>>0;H[1]=(H[1]+b)>>>0;H[2]=(H[2]+c)>>>0;H[3]=(H[3]+d)>>>0;
+    H[4]=(H[4]+e)>>>0;H[5]=(H[5]+f)>>>0;H[6]=(H[6]+g)>>>0;H[7]=(H[7]+h)>>>0;
+  }
+  var out=new Uint8Array(32), ov=new DataView(out.buffer);
+  for(i=0;i<8;i++) ov.setUint32(i*4, H[i], false);
+  return out;
+}
+function hmacSha256(key, msg){
+  var BLK=64, i;
+  if(key.length>BLK) key=Array.prototype.slice.call(sha256(key));
+  var ik=new Uint8Array(BLK), ok=new Uint8Array(BLK);
+  for(i=0;i<BLK;i++){ ik[i]=key[i]||0; ok[i]=key[i]||0; }
+  for(i=0;i<BLK;i++){ ik[i]^=0x36; ok[i]^=0x5c; }
+  var inner=new Uint8Array(BLK+msg.length);
+  inner.set(ik,0); inner.set(msg,BLK);
+  var ih=sha256(inner);
+  var outer=new Uint8Array(BLK+32);
+  outer.set(ok,0); outer.set(ih,BLK);
+  return sha256(outer);
+}
+function pbkdf2(pw, salt, iter, dkLen){
+  pw = typeof pw==='string' ? utf8(pw) : pw;
+  var hLen=32, blocks=Math.ceil(dkLen/hLen), out=new Uint8Array(blocks*hLen), b, i, j, k;
+  for(b=1;b<=blocks;b++){
+    var input=new Uint8Array(salt.length+4);
+    input.set(salt,0);
+    new DataView(input.buffer).setUint32(salt.length, b, false);
+    var u=hmacSha256(pw, input), t=new Uint8Array(u);
+    for(i=1;i<iter;i++){
+      u=hmacSha256(pw, u);
+      for(k=0;k<hLen;k++) t[k]^=u[k];
+    }
+    for(j=0;j<hLen;j++) out[(b-1)*hLen+j]=t[j];
+  }
+  return out.slice(0,dkLen);
+}
+function utf8(s){
+  var out=[], i, c;
+  for(i=0;i<s.length;i++){
+    c=s.charCodeAt(i);
+    if(c<0x80) out.push(c);
+    else if(c<0x800){ out.push(0xc0|(c>>6), 0x80|(c&63)); }
+    else if(c<0xd800||c>=0xe000){ out.push(0xe0|(c>>12), 0x80|((c>>6)&63), 0x80|(c&63)); }
+    else{ i++; var c2=s.charCodeAt(i); var cp=0x10000+(((c&0x3ff)<<10)|(c2&0x3ff));
+      out.push(0xf0|(cp>>18), 0x80|((cp>>12)&63), 0x80|((cp>>6)&63), 0x80|(cp&63)); }
+  }
+  return new Uint8Array(out);
+}
+/* ---- AES-256 解密（CBC） ---- */
+var SBOX=new Uint8Array(256), INV=new Uint8Array(256);
+(function(){
+  var p=1,q=1,i;
+  var sbox=[];
+  for(i=0;i<256;i++) sbox[i]=0;
+  do{
+    p = p ^ ((p<<1)&0xff) ^ (p&0x80 ? 0x1b : 0);
+    q ^= q<<1; q ^= q<<2; q ^= q<<4;
+    if(q&0x80) q^=0x09;
+    q &= 0xff;
+    var x = q ^ ((q<<1)|(q>>7)) ^ ((q<<2)|(q>>6)) ^ ((q<<3)|(q>>5)) ^ ((q<<4)|(q>>4));
+    x &= 0xff;
+    sbox[p] = (x ^ 0x63) & 0xff;
+  }while(p!==1);
+  sbox[0]=0x63;
+  for(i=0;i<256;i++){ SBOX[i]=sbox[i]; INV[sbox[i]]=i; }
+})();
+function xt(a){ return ((a<<1)^((a&0x80)?0x1b:0))&0xff; }
+function mul(a,b){
+  var r=0,i;
+  for(i=0;i<8;i++){ if(b&1) r^=a; a=xt(a); b>>=1; }
+  return r&0xff;
+}
+function keyExp(key){
+  var Nk=8, Nr=14, w=[], i, temp;
+  for(i=0;i<Nk;i++) w.push([key[4*i],key[4*i+1],key[4*i+2],key[4*i+3]]);
+  for(i=Nk;i<4*(Nr+1);i++){
+    temp=w[i-1].slice();
+    if(i%Nk===0){
+      var t=temp[0]; temp[0]=temp[1]; temp[1]=temp[2]; temp[2]=temp[3]; temp[3]=t;
+      for(var j=0;j<4;j++) temp[j]=SBOX[temp[j]];
+      temp[0]^= (((1<<((i/Nk)-1))&0xff));
+    }else if(i%Nk===4){ for(var j2=0;j2<4;j2++) temp[j2]=SBOX[temp[j2]]; }
+    w.push([w[i-Nk][0]^temp[0], w[i-Nk][1]^temp[1], w[i-Nk][2]^temp[2], w[i-Nk][3]^temp[3]]);
+  }
+  return w;
+}
+function aesDecBlock(blk, w){
+  var Nr=14, st=new Uint8Array(16), i, r, c;
+  for(i=0;i<16;i++) st[i]=blk[i];
+  var addR=function(round){
+    for(var k=0;k<16;k++) st[k]^=w[round*4+(k>>2)][k&3];
+  };
+  addR(Nr);
+  for(r=Nr-1;r>=0;r--){
+    /* InvShiftRows */
+    var tmp=new Uint8Array(16);
+    for(i=0;i<16;i++) tmp[i]=st[(i&3)+4*(((i>>2)-(i&3)+4)%4)];
+    for(i=0;i<16;i++) st[i]=tmp[i];
+    /* InvSubBytes */
+    for(i=0;i<16;i++) st[i]=INV[st[i]];
+    addR(r);
+    if(r>0){
+      /* InvMixColumns */
+      var o=new Uint8Array(16);
+      for(c=0;c<4;c++){
+        var a0=st[c*4],a1=st[c*4+1],a2=st[c*4+2],a3=st[c*4+3];
+        o[c*4]  =mul(a0,14)^mul(a1,11)^mul(a2,13)^mul(a3,9);
+        o[c*4+1]=mul(a0,9)^mul(a1,14)^mul(a2,11)^mul(a3,13);
+        o[c*4+2]=mul(a0,13)^mul(a1,9)^mul(a2,14)^mul(a3,11);
+        o[c*4+3]=mul(a0,11)^mul(a1,13)^mul(a2,9)^mul(a3,14);
+      }
+      for(i=0;i<16;i++) st[i]=o[i];
+    }
+  }
+  return st;
+}
+function b64dec(s){
+  var bin=atob(s), out=new Uint8Array(bin.length), i;
+  for(i=0;i<bin.length;i++) out[i]=bin.charCodeAt(i);
+  return out;
+}
+function b64enc(u8){
+  var s='', i;
+  for(i=0;i<u8.length;i++) s+=String.fromCharCode(u8[i]);
+  return btoa(s);
+}
+function utf8dec(u8){
+  var s='', i=0;
+  while(i<u8.length){
+    var b=u8[i];
+    if(b<0x80){ s+=String.fromCharCode(b); i+=1; }
+    else if(b<0xe0){ s+=String.fromCharCode(((b&31)<<6)|(u8[i+1]&63)); i+=2; }
+    else if(b<0xf0){ s+=String.fromCharCode(((b&15)<<12)|((u8[i+1]&63)<<6)|(u8[i+2]&63)); i+=3; }
+    else{ var cp=((b&7)<<18)|((u8[i+1]&63)<<12)|((u8[i+2]&63)<<6)|(u8[i+3]&63);
+      s+=String.fromCharCode(0xd800+(((cp-0x10000)>>10)&0x3ff), 0xdc00+((cp-0x10000)&0x3ff)); i+=4; }
+  }
+  return s;
+}
+
+/* ===== 答案标准化（Node 与浏览器共用同一份，保证密文与输入一致） ===== */
+var CN_DIGIT = {'零':0,'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9};
+var WEEK_MAP = {'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'日':7,'天':7};
+var TITLES = ['老师','先生','女士','同学','班主任','老','哥','姐','班','sir','Sir'];
+var FILLERS = '和与跟及还有到至第共有个名位人节周星期礼拜堂课,，、/\\-~～.。 ';
+function cnNumToArabic(s){
+  if(s === '十') return '10';
+  if(s.length === 1) return String(CN_DIGIT[s]);
+  var m1 = s.match(/^十([一二三四五六七八九])$/);
+  if(m1) return '1' + CN_DIGIT[m1[1]];
+  var m2 = s.match(/^([二三四五六七八九])十$/);
+  if(m2) return String(CN_DIGIT[m2[1]] * 10);
+  var m3 = s.match(/^([二三四五六七八九])十([一二三四五六七八九])$/);
+  if(m3) return String(CN_DIGIT[m3[1]] * 10 + CN_DIGIT[m3[2]]);
+  return null;
+}
+function canon(s){
+  s = String(s == null ? '' : s).replace(/\s+/g, '');
+  if(!s) return '';
+  /* 1. 星期：≥2 个「周X」→ 数字串（升序） */
+  var wk = [], re = /周\s*([一二三四五六日天])/g, m;
+  while((m = re.exec(s)) !== null) wk.push(WEEK_MAP[m[1]]);
+  if(wk.length >= 2){ wk.sort(function(a,b){return a-b;}); return wk.join(''); }
+  /* 2. 单个字母 + 数字（教室号之类）→ 字母转大写 */
+  var rm = s.match(/^([A-Za-z])\s*[-‐-―]?\s*(\d+)$/);
+  if(rm) return (rm[1] + rm[2]).toUpperCase();
+  /* 3. 纯中文数字 → 阿拉伯 */
+  if(/^[零一二三四五六七八九十]+$/.test(s)){ var d = cnNumToArabic(s); if(d) return d; }
+  /* 4. 纯数字 */
+  if(/^\d+$/.test(s)) return s;
+  /* 5. 汉字+数字混合：剥离连接词后只剩数字则取数字 */
+  if(/\d/.test(s)){
+    var digits = s.replace(/[^\d]/g, '');
+    var rest = s.replace(/[\d]/g, '');
+    var allFiller = true;
+    for(var i=0;i<rest.length;i++){ if(FILLERS.indexOf(rest.charAt(i)) < 0){ allFiller = false; break; } }
+    if(allFiller && digits) return digits;
+  }
+  /* 6. 剥离称谓后缀（姓氏 → 姓氏+老师） */
+  for(var t=0;t<TITLES.length;t++){
+    var suf = TITLES[t];
+    if(s.length > suf.length && s.slice(-suf.length) === suf){
+      var core = s.slice(0, s.length - suf.length);
+      if(core.length >= 1 && core.length <= 2) return core;
+    }
+  }
+  return s;
+}
+
+/* 解密：返回 Uint8Array 明文；口令错误返回 null */
+function aesCbcDecrypt(ct, key, iv){
+  if(ct.length===0 || ct.length%16!==0) return null;
+  var w=keyExp(key), out=new Uint8Array(ct.length), prev=new Uint8Array(iv), i, j;
+  for(i=0;i<ct.length;i+=16){
+    var blk=new Uint8Array(16);
+    for(j=0;j<16;j++) blk[j]=ct[i+j];
+    var d=aesDecBlock(blk, w);
+    for(j=0;j<16;j++) out[i+j]=d[j]^prev[j];
+    prev=blk;
+  }
+  /* PKCS#7 去填充 */
+  var pad=out[out.length-1];
+  if(pad<1||pad>16) return null;
+  for(i=out.length-pad;i<out.length;i++) if(out[i]!==pad) return null;
+  return out.slice(0, out.length-pad);
+}
+/* 高层：用口令解出姓名数组 */
+function decryptNames(pw, enc){
+  if(!enc || !pw) return null;
+  try{
+    var salt=b64dec(enc.salt), key=pbkdf2(pw, salt, enc.iter||100000, 32);
+    var vf=aesCbcDecrypt(b64dec(enc.verify), key, b64dec(enc.iv2));
+    if(!vf) return null;
+    if(utf8dec(vf)!=='KB-VERIFY-OK') return null;
+    var pt=aesCbcDecrypt(b64dec(enc.data), key, b64dec(enc.iv));
+    if(!pt) return null;
+    var arr=JSON.parse(utf8dec(pt));
+    return Array.isArray(arr) ? arr : null;
+  }catch(e){ return null; }
+}
+/* 高层：用口令重新加密（用于改口令，产出新的 enc 对象） */
+function encryptNames(pw, names, iter){
+  iter = iter||100000;
+  var salt=new Uint8Array(16), iv=new Uint8Array(16), iv2=new Uint8Array(16), i;
+  var cr=(global.crypto&&global.crypto.getRandomValues)?global.crypto:null;
+  if(cr) cr.getRandomValues(salt), cr.getRandomValues(iv), cr.getRandomValues(iv2);
+  else for(i=0;i<16;i++){ salt[i]=Math.floor(Math.random()*256); iv[i]=Math.floor(Math.random()*256); iv2[i]=Math.floor(Math.random()*256); }
+  var key=pbkdf2(pw, salt, iter, 32);
+  var data=aesCbcEncrypt(utf8(JSON.stringify(names)), key, iv);
+  var verify=aesCbcEncrypt(utf8('KB-VERIFY-OK'), key, iv2);
+  return {v:1, iter:iter, salt:b64enc(salt), iv:b64enc(iv), data:b64enc(data),
+          iv2:b64enc(iv2), verify:b64enc(verify)};
+}
+function aesCbcEncrypt(pt, key, iv){
+  var i,j, pad=16-(pt.length%16);
+  var p=new Uint8Array(pt.length+pad);
+  p.set(pt,0); for(i=pt.length;i<p.length;i++) p[i]=pad;
+  var w=keyExp(key), out=new Uint8Array(p.length), prev=new Uint8Array(iv);
+  for(i=0;i<p.length;i+=16){
+    var blk=new Uint8Array(16);
+    for(j=0;j<16;j++) blk[j]=p[i+j]^prev[j];
+    var e=aesEncBlock(blk, w);
+    for(j=0;j<16;j++) out[i+j]=e[j];
+    prev=e;
+  }
+  return out;
+}
+function aesEncBlock(blk, w){
+  var Nr=14, st=new Uint8Array(16), i, r, c;
+  for(i=0;i<16;i++) st[i]=blk[i];
+  var addR=function(round){ for(var k=0;k<16;k++) st[k]^=w[round*4+(k>>2)][k&3]; };
+  addR(0);
+  for(r=1;r<=Nr;r++){
+    for(i=0;i<16;i++) st[i]=SBOX[st[i]];
+    var tmp=new Uint8Array(16);
+    for(i=0;i<16;i++) tmp[i]=st[(i&3)+4*(((i>>2)+(i&3))%4)];
+    for(i=0;i<16;i++) st[i]=tmp[i];
+    if(r<Nr){
+      var o=new Uint8Array(16);
+      for(c=0;c<4;c++){
+        var a0=st[c*4],a1=st[c*4+1],a2=st[c*4+2],a3=st[c*4+3];
+        o[c*4]  =mul(a0,2)^mul(a1,3)^a2^a3;
+        o[c*4+1]=a0^mul(a1,2)^mul(a2,3)^a3;
+        o[c*4+2]=a0^a1^mul(a2,2)^mul(a3,3);
+        o[c*4+3]=mul(a0,3)^a1^a2^mul(a3,2);
+      }
+      for(i=0;i<16;i++) st[i]=o[i];
+    }
+    addR(r);
+  }
+  return st;
+}
+global.KB = { sha256:sha256, pbkdf2:pbkdf2, decryptNames:decryptNames, canon:canon,
+              encryptNames:encryptNames, utf8:utf8, b64enc:b64enc, b64dec:b64dec };
+})(typeof window!=='undefined'?window:globalThis);
+
+
+/* ===== 密保题库 =====
+   页面里只有题目和密文，没有答案。答对的 3 个答案拼起来才是解密密钥。 */
+const QUIZ = [{"q": "我们亲爱的班主任姓啥？（一个汉字回答）"}, {"q": "我们每周几会跑步？（周一答 1；周一和周二答 12，从小到大）"}, {"q": "数学课代表有几个？（一个数字回答）"}, {"q": "我们是几班？（一个数字回答）"}, {"q": "新学期我们有几个新同学？（一个数字回答）"}, {"q": "我们的教室在哪里？（如：A402）"}];
+/* 每种 3 题组合各一份密文（C(6,3)=20）。密钥 = 该组合三题答案按题目顺序用 | 连接 */
+const QBANK = { iter: 100000, list: [{"q": [0, 1, 2], "salt": "0STBKQnG7TjIU2J4lVNihA==", "iv": "IdsJgB6VdOwNixuqcA+VMg==", "data": "9mIz5xMXNdvif/RUzKAgp8wedp66c/FDY3Gse4NpIkZZSDV3TkOluWlReLjLMn8izSgH/5Zw3H+eWYu2GY8UX1P7bGnIdDqPHEnbvDCcpla+BL7jpfwpZkWa0DjoT5xJjlzFLxNdvGFoGtXZMJebcYiTyYLfQ7hSw8u11FedAPJnPFZkr6rFxGYWO+oUaScu6qELeNHwATop8u4nbDfKmCeEFBecIIstu+e2UrF31IvsdYsUKJm08cWOWMl2F6Ie3EMiAXSz+1q0FR/+BPCeaVnbdMoMWL7B1z+mIMxFIUJ07pw5h+epTTcD3a96U+CVUPktFBO7Q2n8XCywOICI6Ql4l1ajyL6aSXNZavmWbnxJnpTqzbIdjqNU0LvgTL2xkFOFXozQZneCeZ+fQw5MvAPpbe0NDsI4ry+gFUNzUgzfaqz/2QF/yb5hPK6gsnXirgGnLegVCZNJmJ/ckWWIDNcCA70srfOhhtNkRWg8fdoac9/LjcJnOaL6d0jEEB594wPxF2qveDxdrkTpVH9AVHyqkUHLkIZuzl8Yd9pXlYE=", "iv2": "Nh49BYL7jfbkSGRctRdXRw==", "verify": "KA+npIGmS2EejD5FQqqwrA=="}, {"q": [0, 1, 3], "salt": "Trs0I2kc1vStOL3d0xUHrQ==", "iv": "oo/PBy7S97F2ZSPUACy2eg==", "data": "f9xaOC4FlDOx5Wtu+yYoJXy2YJ7pUxC8HIt5c9KNGMj4aJ71QfpCGrREE6198hNooXkRFduZQLM3jpCDLaZ+z6XUer97HVUOT8NbxiZzdqQ/0F5Q0cLy+eQNLl2YSfk06FJSXOMbcNXMBH44cf4yRBRlqTr1SaA5pfmoUdMYll5+DRUhrd9dwnFIts9vVFGQw1hHXZ8w/Wa/7fAMQTGz1MCz33YYSfzLDe22r262yyvqhmTepk6tx2nb1eFpYRLHxGp5JvM2FSrkt3xcgmkYFi+b1TtfvfIXDBhX1SHcPJm/tMPEm70vzIIr1X+2BTgYwGTIHsvJunJHP4VVnYJf03Cz0tbOsR4qKv8c3ufrn1++M0taguv4kv4tCTIZ/RrxC9/YX+kVJr+2wm98AB2zlF9ipR+ASX2Iuun5dEn8B/gEsG8tVfdKxZE/SwW8wSWGpMRLoQ49HMKKZPt2nv5yenAtAHOGA1cWz0FEoMI7PuhBXNqksEFZbrOY37wrDgXGKImgF5hB3n972SbWVohWfRYxJLJ/wYEj3U++v4gRKsw=", "iv2": "37hESk+TKM5a5CQqGMpySg==", "verify": "LSwsdnFacxI49PGPuQcflw=="}, {"q": [0, 1, 4], "salt": "MpAJGT6l9y530CmXVR6X8g==", "iv": "+RwcimTwKfSPI+WQw0df6w==", "data": "HqiB6dAnmiAgLP80L6DvoYJ8GnmbfVe7OZWCJCQ6I99rhfCDm42cH5MPm3M+JwgrIXap7kJmd5HV59UeXmlBvKeVysXrzkwxbWwGqAmbRDVQXa2o/kAHWwItysal0Y02LsmwCwhsKoop4T4Bp1fBtderxdVBhFSDem7BSz1d5by6kF+G/LclbeoUKD+h6oyx/r38KiNWFliXMZA5/cjcs4CKjkmXHcB+MvjDL+DsYYquDgUEBwvtfHa62c1dhDV66vIOrbvzO5SOshd2DfdNUOdBjuAC94REKLb/GKRy/KX9wEvjoRK5okNEl7VHuSlCEocCOVQdC3k69jGqBp4nLRMfOLNs/ozGYJmlevaYL5p2qwFaENaZbQr6dfH/3g4Ut+7cLKZcfbTijzScQTkARemtipHpDfpjfY5FYOPCncuINEpqxdmFucFL69v4bziXndHAPs8WIkzfYCdg9H8tYr8J1Zh24oSTyhybpjWjidiY6CP/xmocC9W7VQIzNUqcWlmh2jDD4lpyP/mnvP9TYFuibNxeup/Gj9LCmCRNolw=", "iv2": "VXQHHMaz4mCfMB0X/+pPTQ==", "verify": "88lfKUxwUNKCmwuxkoporQ=="}, {"q": [0, 1, 5], "salt": "EqO5Z8KdJ4KepC6XyWxFfw==", "iv": "0xKRdCbj8QIaKRas4eJs6w==", "data": "n9seZMDy2gZf3bLKSODy8U+FarpqmotOvWEbuxDa35DLiVIT7zDt03oK2dWdIlanulRFAZc4BiNyC8ClN9RMShqBZIVhGjlegp1j/mjnWGW8b2zf5kpm3EJvq/3Mj7gLyV+csWyb/N3cCIKjp9ZVtNOKl98B2LiyjDTaYYiA41w6fxsmkhm02nFNhApK5J33IdO4yp5G+cJY0y/gtyJmQdN6h8/WNVTX9RgecvFAH+PUTBEPHeN9HJUA1oP201PPyDZhoBZt0idb1LdiTC0cToeZgepLRR1E4NZVAR6Q3KLkI3FNXw13BMGMV9lAVbsXY1GZdTVbiOC62pdlOWRfR4EF37TkXkfiMOy5z23YozF/4DNOxf5JUKFEhZeEXvpDr/ObMFb8gelVxdx1XKlRsocIK6mVqAaTKGWQcYGXTAx1rmA89llwczZ4PB+9SpIrTL/M8bLlAsUFfeBlMY9L4RkJ3XXU8vMoFOshPQGqZBX5QEjNhDLT7QNhYle7oWxg0LyW4nj4SjPxPhDETHmKqgN+u0U/zKAqVhcWaXlCP/c=", "iv2": "Oelgan2+JOOEJ7Ogkb5eig==", "verify": "gvDFNZSHBMEGiY5qdcJZmg=="}, {"q": [0, 2, 3], "salt": "h57EM1mqrHE/N3DeGtSKmQ==", "iv": "LQGsVz+/I+mwC9WX0l4UOA==", "data": "Gt3+DFiZuQ3Yr14YQzQpzJO4vcPgPlFlIgqFYLTvyCKl5lGte8J9S0hNm7+LnnRnHmtdM2XNBLLTkGOgGyJLE1w+3fENqFvvfjt5cUobnqOQ4H6B1GTO7uchr9TehbxDJ3tUCY03VA4/LnWuT2ZDc2o2S32M4dthXXw0W4bISTlsCpKQoWdLyG+Uc1pTF4CQQg7WKGpKRiPla/L6P23QgusWg5CfU30/UUN6EKLXQtqlaahkrAWFfgx48Rn6pGYlFDNZgnUhISDZQXRbctRWulJSuthSelNth8qcBTB2EhqsKDq5iuATegk72FAbe0V2A5E0C2qyFm5H5rGBbkNIORGoq6WXWoUDrsPG15bM4oTZjt2Ku7vlWQsEkdirNHDSeXXBGwnx+sH7KsV+sn4lvk/RgYMB9xAECL8l/InrGDuvYrLSvFdQY6R13ZuPS6yq+W6/an0Pz2eBt3pIam4E2Qnw66+Gz7vLWfCPcK/nbMEVV89gnKdMeDNUbOpsufUQsqIZzSgQs//dXzQJWbB/X4j6vlLsyUkyUegbCB9v5Z0=", "iv2": "4m+yYjhS+9n8HhTJGnLRxA==", "verify": "jr39JP8Fs4k8Ub+rseocpA=="}, {"q": [0, 2, 4], "salt": "cCfSwsmo6rveaTx7YjYV0w==", "iv": "aFa+Vu/EKVZFK8ZJuF+S1A==", "data": "FzHz3mX2r55Br+N7gdoXOywicsJOvT0pVScE1HnOx88xtZoaKLoubQ01axEPW5FIaSwEKRJVGOU/w8VJy08xYdqgiRxI5jPL2U3hG4lTYW4+LAetSxCX51etROrwPjQSlH5s7ZvmYxyZyWeE5el8Z/b1bpLaNFsFOMLgcMx6UHJ6KJcHnpTXBmeZsaNi86DtfMRk+Zy7ez2Old4fw03sCB37W+JdgV2y0+O9ZdAIySPFqCkK9H08cL37qyj0DUHm0USND5UtVdmnaxJY/T9EOp5aYCdZC1M76YQiWaFRJntqYP2nAh9lYGWJzRqcK83q5SjF2sxY3PwLffKUYFprrvrj+dOSB4Qsa3njupvZDwAgpuHWYkxFz9zJuUnero6BwFBcMSQ7EF77gtstn/vz2Xr0Ib7Xm4ZGSNLDAQZ1EkJmPbaRq0BhC4yzdk1E0KNLnaAGLZZ9HyDHqQU2Qkvrl/PrFzK8CXPh4+HadpZTzfCVSiFvmteqCFH9uMW7VqY0mFCtQUs/V9ZgtVMDJAp5zRSKIkv1z2xuqgRtYKQlYOA=", "iv2": "PY+fqRJgoynA/GGRi6CjPA==", "verify": "hRt3D1yveuMcXMxuLuPZEg=="}, {"q": [0, 2, 5], "salt": "+UPBOXweTYd9x5nFpYKsiQ==", "iv": "4OeNA1zOYn9ZImpALf5Grw==", "data": "kgVESan50WGypH+iU/O1OW0P47MOJKfxdOHi7l6r2BrUKfAPK2POLO4QO7Cwh9kc+vJ+VRnV3A49vJDXpen5dIxC2Kc11W2tZorb+taf2bOywS1lPp+DJPWjtLOwqV5luEB3snNrClhxzlA2f4QafxpQpt8a0XidF+qPgMxcOU9B1c3/wOA2XoWmjH5I08ocjbkoSMnAZ/d479EiZpy6qSqQ6UQ03l+4w890PwK1cQ4XLU3ETbdZQb0kGdfeaVX/O7MY/337tS4iX7LRxm3DkolqmUKGeHKlkvqU5IP3ZZbwVEUj8ZcrD3kThE2ZOexw7yXYd+Dh8YasysMa9R22Ojb7cbtmGgNPmtcL6Dsa7IbKHUd9bjWN25fYnjBa6DHV/1ViCOg44/+Q1CSFZMJZul8P8/N+8njX2pGv6Gv0jhaXfzx99M1IcEs1J7YNdrasBBX3DPF1Y/smSHMK7bzU+RXzR9VE4it872ZQLW5x2DIOim5LeUqLhi59hom0P2gkr+4Uzv52t6GK6bTI2342bmvH6emmQBOJnYi/2dbH7S0=", "iv2": "Kvcpvc5UPu6uCM34Bgw3yA==", "verify": "AhZGfJ6wQ6zlrxOgDiPpTQ=="}, {"q": [0, 3, 4], "salt": "Kr8wB74dg56E3Sn8QbHd4Q==", "iv": "lF03dUa6hAuj+RKIK5skcw==", "data": "GCsh39i0cU+rXrPz0Eu1kmMm/AiMw3J7Cl9Vu214q4XaMp6B92AIWzZf5wv0duFUsNKo0h4Tpz1uQ8MjJyDI2UTkUCEHbWC6F0M1qUp5kwDnBL5CeDTeFe7LFrOPx93OH55qYDZtuBbdUuN7ZQc48gTPN/iF/auFLBPnThgEIMid21+ZYOiiCrsbV+jKixqj4ZK/fK+Zjy7ovXHcvRKH7T5IZSw+NdddStAQpJ3pBUHhGjFptwE8mgvWXkbdexNyAr0hjDufFc2+ij7afdJ6YL41fiMwcYnY4XoVadzRqIHDIii3IxamAhwu2ON42zRltKWiV3+0/3DgcCSIJqVD6ceit0sCQA/MaqbYHU+UbWIdvFuZQETFe/lG0JAUWCcY4YwF/nO1dz8391ZXE5ytaBG2TclJgtgQonYNoNF4LLANxaCighayKNw2c7OaGihoyGJ17VZCYfCtR+qOlNRRInom2OtFHfunUaqfQkEou5PUeFW9vSKa96K+n5zKbhAt+3r9vwrNWd5lUTV6z9X+KsGM9RLV8rwpjNtwa+nzxBI=", "iv2": "bFyRoJGPRCZLHz5AtkNk9A==", "verify": "CQWU0ITeuipTsnvAo5yqsw=="}, {"q": [0, 3, 5], "salt": "YGnVk9ga/af/M8kGL14sNA==", "iv": "b4ggg2vBdDr6oqRhzlRSTQ==", "data": "PHY9bsdvE6Gam6P5Wn7wnFQpHP5hJURZD+nXqxCErqCxqFAsJViIsrlG715FFjMvX7Rh5eFdXUx2gmXrGtVHVMOcc5H5TfgjyGqkvQVQbTLHXIsviGa3153mn7sPneDjv0+cvXSXZrryul20RlTQzt4UmGPDzfsAJ6jbXPk4KxNpEI9KO+3DyezI1VLSG+n3Whxl6BBnmQgu6IgdzFaRe9yeHx7FuK9Hc5A0p0Cc11t870jpaAsfUP+k0MDGvq9ezmUwhyRwtzXxfiBNMLx8HLp9F/FgdpZlE66FPiC7unnXOzQ6kEb0otwltTHwdmMu3Wp+JBmo6QERbp4kHHpv72G/k7FjxZ6N5nEe0gzIhLjaohz7yVr0gamGTQ8T9vJzKfMbN7I0Djp8J/4ovKxBfRXLUKaDkSt4LWAhMX8B0LKz0QwarenkW3Om8xvXAKvfCzX5BrAQHkinxZEJXIDrmc5nXtZhzhAtTu62DVfdolzsCJx4YDflywl6bCHVHXMRT/YboDIQ4U5mqZHve1hszbi8V7FGN8Cm9ccKdps5fbg=", "iv2": "Eq0H6Q82xUlhX9cMTfukww==", "verify": "Cd29lK+4s498Ew0mI7yoGQ=="}, {"q": [0, 4, 5], "salt": "vo77/sIyAJYjXf2Cbr9L4Q==", "iv": "tFl2VNja5mcPhgqi1j18mQ==", "data": "3JL37lsO2ORaQYgymXuaiV6VHmT2Wt6nZn1V9okewsBuwh6xrpNmDFBCCohm+EIjZOOPIe4/FFfW9h5embovb7+nTLbzv6+H5jJxCZB/QmpM5aWMRfWC2vnsD2oJuABRwITVG2BnI6TltJCO9fdvbiwB0Zehg0RNBzTiCbxLZ3ECx9UQNeXhKFEqYnT5Bgn5kVfMoL8F9Vu5hSJr1UuYvlpX4X9vKKJVcqGEcgIhq74g5QD+h19yRSVWkSRKo+ZA58vDtvYx1NVO/dUqbURM27Dxtx6+sEFwOdmacAzN7ynRP7AhspDT2FV7SdAYa4+UifjEpoSb8cHRC/4r29QEJHdTwIC8AUqtALl7uwLmdclLB2xg2ijjH+a3jwb5I4HZO0FW2ve6QgyxqpYmNnUPP1q9yoHoWTaA1n2Pz3xZ6aGiDSfseeaCXTGNI3nNeWoYjzuOvkYqPdh8owQAzDCKFCdqIjqFYaSDWThPgNnK09o2RCXpuz46Q/IqWtheMjQXln+zH1kXbsc6tb6cThaP8PRPdWJPUvmnQgd2XHpebc8=", "iv2": "y1uj7yWP8HosyLLeL27BBA==", "verify": "sqZu05uwlAWcJt26/kXdgg=="}, {"q": [1, 2, 3], "salt": "9/ePkRXSnmZ/GicdJusCzg==", "iv": "plxJkdsy+S2nfE7GhPRiTA==", "data": "O+CWzfy3jT95fFfxmflvqTxSthn2ZfMZk3QnDxQnxYN968cTvb2QzWF1G45UR4LXpYv6T0OsB3ZaPxMpD5xGCuMGwqb3qeLy5jhAvwfdy5JD+6A6wjsPztgi6H96xQivjqCI9XBk1Q4Fph/2YO+Qdof3IfUk93laCwsHdNaEUZh6prWuHqttPm1bVK+updU3oSXg/kiIxkjNj0Jl3AhCuTQ8En37J8EoE1Cy1eV2flqTAwqYN1iKYVuKBbWpSj6kJ3M8wtqCpV6hVUTZLoqNaL9XxzK2mhA22zKGAf9+CoUUQdAnVlxv7+CQywDfJkeDjiLK6kiBsZD2BEtD1kKswr5JUDsazocnjEMLVJR7vLXw3hRFLDfCJte0J+rbv0reOf+W0LiwU/39TOvhDOQ1Nlw9RuVJ0gDfCqb2B/Lth9Ct4qtuZTN303WsAqxbSnb2U0mWjlTqYuo4E/JYFWWwCPPDWsuf6sjzpNTDKS67TUKZvUgGBknip42IQs3mRhBPAMqig7bVgHkm2Gv38Hj8mJWdTRwU05sqoIrozeYrnDg=", "iv2": "POJtQS8w83oIf91TbELoJg==", "verify": "KC2uJHLhlez4IS9hFtDN3g=="}, {"q": [1, 2, 4], "salt": "zkmm9ltRfR/yvrGL790wDQ==", "iv": "fjiW7M1zhsHFzZ++QXU1oA==", "data": "RRFnxp94VM7CKTv92O/SjRqOkN0Mi5J3xOnkdbLFF6RFEb8t45NQSn6JIxNvu426aphL4e6Zh/rgYUzMyIm/lCMMVnnPaP0eKdA4C4xD7h1MIc2i8NgDUM5VPM1Yv/EpAS7xgZ1SnWUnECyR2cy4U8qRX4mxRPhqteiG3vkKnTbmjyaWQsilyYZaDDnQdgfw2pve44MwAcDyg1GWVknA8wxX3ubL8GeSLve0lc/NO0OejHDziZqgKSuH/XXszMvOEbX44rSoWyvqGbd4LrY3anW81AdVT8WLbVjhdTLT/IrNjl2K1mxM2CQ4m1Zri3GIZpaWmsKjPv9r+IMCAliGV0DzPjyjtMa0ZMCdrZUjIkYHYEPTj+PVXrrrovxRYkl+NqqypLLrxsuCu7UBU6afLLBTYNSYqJV42sVuaFoIuhDRaejgUGHSTIFlPy2kEFFx9GTlDb2+377F7CRMhD8AORhrZ7k1bjZxOp6UUwU+ikuWo8sNzbeKft6tLXFWs2X++LkQpDqgAn2PscouO+aJazGhuzioqnoIpk1SrdLk9Wo=", "iv2": "1QCx+9jEqR8TE0RBi1mWIw==", "verify": "yYa8av2AbWdijNm1yjqXgw=="}, {"q": [1, 2, 5], "salt": "r7D+7MpXgsxlqAbcaraeyA==", "iv": "R5HDFBUHnixJEdKHU75xOA==", "data": "ZSGPPZJPuAi9nW8c756+TVuJhcR7K3BpSwlXh0t6rx8hcad77NK4BMoGB8RHsqzYStT0diwckix7nFwFldkgL5/5b0Ro9C6FjNz8beciktH6TCiiOxwwaqU8x5jwDfF/OZxLwjLElaWJnufEBI6IUVb6L14dUET78pTzHOlCLTTsAy5bzQZ7lRjStI/SP4GbAy9QGqlRuDUT5t1k3AAe+xb7yrJhr7w9WiN4fpluxwaElDO80jHlxQU0Y366luS2vt/FY+c6JrS9cTlMNUS65NK8ySw/GaKlJGqsPFEjWQPnw0COsMwARpz7h29FMA4XxwAZni/DwzZeiALwhfs1Mvd07jKKObEucz2Obo4+E1nNZW1gJ/KfujcgDF+6sjNAz+ZR3fEbQOZJLO3yNWv9xD4rxdF0yI8dw3oQSY+NAOLsWWXeBEsQKTEgaXyVm+Esi1V14GswoanyvUfQnH9PNdxr7/xdROT1NGZNp0e91uj/1QfPKWjD33AD1uMcQPgZtzzbHtiuWGTVEY7oOnW0Fgs4WA1EHFFdy0+KPTGvxd0=", "iv2": "iVicMA78KNPzpnNr/CdzFQ==", "verify": "ziZKKewNmdZ9RToGv2MkDQ=="}, {"q": [1, 3, 4], "salt": "/EDD083oayJbgWarsiHMCQ==", "iv": "RLQHIvhBcUeuv+EeYlyRCA==", "data": "fMtwLyOktfS7XWB4V3CXd+0/z8xIgqEhANSLdoEPRcx4BLS8vPlsk9mDt/hJVnzn/3pl0ncelvnd1AkGi1+Up7+gHuacrrig7aTHWvo8DL1T9dS9yb5xyCOBpOLFQkeJGMITWKZDZAKP/0Hpp234GxR76bv27HVEJbTIJj8DOpVAq5S7ps0qk8sM2hdNmTOH+YfJMIhpQt9vATHQPDe02LioBVryjgrvRRov8Snqm9wSCAR1YXS3OglwXLtsAbcZhK1LZrJSHbPkKbdr4cukQxAIOUdAizKYKrJsUXTT0HieTbIAlgCY2njmv6d963knhkUml48dcEiHoy7jANVjAnJToOpKtUCDmMPwzc2Ww8Ka2EEH4FghwD8ZfoBq7C7FveH9SOvFaGa3rj38vnZ5Xl76BwokGSRrFhxDEXsErpPAHVjgifoeBH11+QyawpqjizvNUFUjLpYmSvbOwZTIH+iVIOGBIoGkcScXJ0zxFGv9j+H0QWFk601kPgAV0saySa56IY+kIWHWDilS6iHdZkYrRTGCewYopB5olnGBjzU=", "iv2": "lgSjx/LnAQdvuMzKB+pgkg==", "verify": "5SlwBbYQ61PIWR6RKjJmnA=="}, {"q": [1, 3, 5], "salt": "yklJW23OEHDfDqhuFEd8bw==", "iv": "atCkjsh4AOQRL7p43+aa6w==", "data": "/SBKWyTCcxy/e7cNueZ7/FBYNPVxybF+JobDW98XXVlMl/ViXJOQPVI6zsv2RMkJNoLVv5pUw2uG3W9UcS/cPl6Zrw0l8zEcYLzQC3xWEW74Q8l0EGFF9+0dVIXT9+HbP0GDCpqRnDZ/i+ETSK4gvGGC1RI5mbePIIRAR6R/Iii+BNxDJXGWpbcsjep3GxYFeSJKWtlvjJIlnUCJBLKwlZgSONoTD6KrZbymgHSshv+qVD2sKNZoLs96zJGguwvq3XM7S9lLJaSp+b2GZtwgFlRHbuASfzESmGCr5WeiB8hL8XaU5iLdmQUZhBTHFdyBhBMWSEIZKI8f+vxVr9dxoqU9PesIWcA3TAxPwyBQzh4KPisiYfQu+XceBikTcagc6VuAqW2r8ThZ2KlMsGZSZRSqtu6OtPR63K27G5shm1pedR7T2BVVTaKlgcocd3TAMU9cM9uOEE1SnDsgbgO35YSqTyz7ZXZaws1O7L/vQhBzIDVpVBdnBgxzWvqre1nLpYqhbFN8zJb1Brlyj1cHzk+Sb9+jckYw4skAx575p1Q=", "iv2": "PBCbe9A3UzbzB5VTyPkolQ==", "verify": "i3IKmbfu3rGIjm6bCl/yKA=="}, {"q": [1, 4, 5], "salt": "YYsSPUwQiRiTVMtdPIDqCw==", "iv": "s9V4UQuWZBewjFTZKbBqkw==", "data": "bnBJW6bWg/GbuHF74Ydx9NGkiW4U7kv9NZ/mtu0YvjN3f7eWGVIskiP5xqE5jjM0oqKQ50c9fDCAXZGAPLWmrgV3v5T+Bz9X/rL6FPLy0otFjM/6atpiU+xfDOetYRzWKy5Sb2w4AJuCQ2aioFjG+9XuUQEx9O4p2mUI+F1jHcUH3egCKRujif6VSND33077fjqIbC2XExy4RGnVRpdjANrKRnvnmQ2R+sFxKoqLrZfZaSD43ddNjJPSc01K7rV9Gxj+HKCvMXxnZb9EWo34dcLAtj1nrix+LG3jwJgvgSmZ3jB7iog23DlFTXQjZATmsRrC3IVwtvMcmZxMZ0ZvvSQ4p3Rjg+sSamR1lvXB9WE53ukonRRVGIIhHzkXPdjCcd5xuLoeXvYTQapuH5DbcdWPym8BjlGhCI9Hqmh3sIc4hl3o4mYk+a7mLFRNy29kAuuxjx6WHuo81t5d43kfXKfPOV+uOOK07oytryPht4j31gi3dWJ871JrrQsDI//eaAoeKtIoTKf79iD+rknwqkukOymhUWMuqPEeXtNS9jg=", "iv2": "BciMAgM11U7Qlu77MX38Ug==", "verify": "fmvh5aXpe1Mpv9nDSLKsXQ=="}, {"q": [2, 3, 4], "salt": "W3XYRxqPfmFUbCTauFQbaA==", "iv": "Gna8W+QB+rhmklhqPxIGRA==", "data": "GzfyjkfFG9uv8QCUdnz/dmqvT/jnWCyeoiW6OfwDQFCBvODbruhIin+/jbOgIkBQ1mq72aiMtzV91gPinUPArEClkcPEepNEyUXShlpUQKJ+N0AE++ZNraN+qU2RLofSrCHqVYgtUNOC4UJnJTMNswgeqhjAH6Jph/J0hRYHjixKlwbUawrmrsSMM/EGN6I/csmCcI6bpaTKgeImYBxa+CC/RSdqEgPv9ZZH5Gw53CFiE/o063LhtBqb9E2ZTjnFa/heXlxi0u3Wfqhq4OOTsxyNrOFgtUjg1yuilZgnrf4bSmC6bLPa9RRv4F98kOc8dIuUPrSnrsN/t+AKxNoubOkO56SEXNEb43zBWT1fx5qbnh/TiGzsOoSLnkkfcPBIW0z84Pvv7dDAssJFMgpQOEnOy+DusOOZ47IxZaQDM0oQB7VQ3wmp00GjY6aJ23DP8Y3dtV12hepxb30ApOf41WdujR7hXps/c1R4n3PCGkjWRQ/drrydARLg533cT6Vk8hQfhEZTUgjnW9lJ32BFLuy6ndy65q9GsEvKmwZmWBM=", "iv2": "3UPyl/XAZ6EB3tdJlvHCCg==", "verify": "HFOYLliicE5l7rD4E2cYFQ=="}, {"q": [2, 3, 5], "salt": "NDAnQ6QO37JT+DopAzHISw==", "iv": "vQ75ZWEWh4UkwqllwjET/Q==", "data": "k3k3hA+XDBGgny9DgHBxRui+M7NTTmgYofl4HuMS2MW8KlKpeT9193vRhSnpH9Nf9sA95UfZ7e46TZC+kvTctpT2ZIbxPsmsOb+NJZTIitOyWOqmhMXYy6v+A3Gzu31e92Q8GOIpiQ8vk7Ca1d8KANQjoab4m10VWqMLCLUzjv402khlAwG++hKTSyeTu63fYOZ4yeeUlPr5H7Iahozsb7HwSDURaQf9osJhMWQpradfJK1uR5blaZp2V9wXhN3hpkPoja+ottIIyT1UVDNKQMWBcWsuM7uk/S0oOY4tXRWWAUZ+BScQVGoy4JO8RQXwVnUtH7fN6YHBnaAHsGQI/D5hW2Iz2EYKEexwAztSLPYRivhId98n86Bxr3JWxx12D2aLzcZvYdNfSWxmr2Wx9+re34hgCnuY5NiqzpId3BEeyQVpWaeFcC9EoGz48rXJCJtt6wSCSg7LNDomjekue5xiO0Oxab6lTkwegxONfEpew4iK8CZd/q1CVYFwmhboe6V1sMYzlIJZ3T4ziHO5yq+QBRZDdpb+ciRD4AhokEQ=", "iv2": "xoSyg8k31dSXCDA2frxKHA==", "verify": "Km7Tsze/P2FC5q2hRhJm0A=="}, {"q": [2, 4, 5], "salt": "CyqRGPZIZ6s5NcsHkhLLpg==", "iv": "bQno0sIfWRwvYIGJzujEuw==", "data": "smn/6/RIrStD4fZgW0om7JhG0MHqP75rAEfgnP/fwhtsfKoYFXUtZ6tMjz5hvXLe2qjkK+AgXyTn5WWjNQLp21B839Sdch/0DcHVcy+6P9rYnhugBComzxdC8e3iv9Yt35fRkICa8PLg3ueL6/OL437ZF56OUvaPK9S+N+snW15KTry9wWsOLVAPFKHM9b1fKZXRZx1eFn7iF36X3e8k3wspVR/OwaVAx8vWjwv1BHGlzbkJBlYNmFg9ocoFR506ffPJjWSADutI0LaEwssMFnXTPo6MPgcNfk9wDwzu4VvkEsbQc2du+rZOYEIssmLHv4lWXkpDsC2GKB2bMHVURf0oKxonGS4R1UdEg+thRcagaV2Tux5SG6NGKmDi0+TspqYzz6Dc8+zISpja4NoUQ3NuuiVjNsc+9NekM0xr7d/qL1YJTfcN1rnTj8W+2WON0yDYykzttW1ACp5Z7TFy2HakqOKBo34+adYo0Ay22BSsJMslpnczCgL4txOv1HZYIJvggHrzSJMZOJHppjTkV9BzIufHqtk2tv4E3zWQbFY=", "iv2": "+iORi1SpA58SOoPlYACUwg==", "verify": "zn0BwqKXhDRazllj7Q9emw=="}, {"q": [3, 4, 5], "salt": "dTOMIXT4FW/nepdCum6qgQ==", "iv": "eW86kjMEqKfVHVGpldceog==", "data": "IZnBZV+EJesa30f6SntX99AFzzflK1v4Zo57o0ScjHTvK+FPrZPhl48O+5zbbIOJpqtkVMGGNHCj9Lzx6Qc+9YUrkIoXJ505hMy92/cHzCGNkRPTBQyBZrH4nunEzqLIlZSV2D/22pIx5yECE9llqs09ua0ENbSxjjvIzXG8mV+6CIkSOWUlTfLVXSLaIioHN5VpwBWMXojLmgMZ4oFBKIQT4v/ucTpS/aoj3qFHmNb/Gi9uzKBWoZBIYQv+eBbMudJDIAAW3ZxMuCh1LZWMGS/uvoohvZ0kKD+wNpRWvvmgsgzRS9vsHuqQ3/68UmUfmJlpQ6weaZaLvUiM2k7B/3oC9hI24ddqNAi4c1Q2chv7NgC3O6YDWprw+J/36uY1xVKzM1adZood/Vqjl7aw8GDYnOEkfLX43hBiFZ/lUzKWUG4Xk8ITFYF5Hu1fglNyghjAFxuqchkknH/yrRgyOoaA1lCU3n0Ncofe/Xi8N2EwhBsTl6aaNrZvY1YIBM5TwlBzrN3fuYiDfg2kh+3eLc/6TiuilNNapqW8fy9WeQg=", "iv2": "5z2ePSAjyENzZaGI+Rb62g==", "verify": "PkjSqUakjV/Pf4FL55hl0A=="}] };
+
 const RAW = [
-["艾XY",[1,2,2,4,0,1,2,3],
+["",[1,2,2,4,0,1,2,3],
 [1,2,0,2,3,1,0,1,0,3,1,0,1]],
-["敖JS",[0,0,0,2,0,0,0,0],
+["",[0,0,0,2,0,0,0,0],
 [0,0,0,0,1,0,0,1,0,0,0,0,0]],
-["曾YC",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["陈BS",[0,0,2,0,0,0,1,0],
+["",[0,0,2,0,0,0,1,0],
 [0,0,0,0,0,1,0,0,0,1,1,0,0]],
-["陈CX",[0,0,0,0,1,0,0,0],
+["",[0,0,0,0,1,0,0,0],
 [0,0,0,0,1,0,0,0,0,0,0,0,0]],
-["陈XF",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["陈YM",[0,1,0,1,0,0,0,1],
+["",[0,1,0,1,0,0,0,1],
 [0,1,0,0,1,0,0,0,0,0,1,0,0]],
-["陈ZY",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["杜YT",[1,0,0,0,1,0,0,0],
+["",[1,0,0,0,1,0,0,0],
 [2,0,0,0,0,0,0,0,0,0,0,0,0]],
-["段PY",[0,0,0,2,2,1,1,0],
+["",[0,0,0,2,2,1,1,0],
 [1,0,0,3,0,0,1,1,0,0,0,0,0]],
-["付JY",[2,2,1,4,1,1,0,0],
+["",[2,2,1,4,1,1,0,0],
 [1,2,0,1,4,0,0,1,1,0,1,0,0]],
-["葛YT",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["郭SR",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["韩CX",[0,1,0,0,0,0,0,0],
+["",[0,1,0,0,0,0,0,0],
 [0,0,0,1,0,0,0,0,0,0,0,0,0]],
-["何YM",[1,1,2,5,1,1,2,0],
+["",[1,1,2,5,1,1,2,0],
 [0,3,0,1,3,0,1,2,0,2,1,0,0]],
-["何ZQ",[0,0,3,2,1,0,2,4],
+["",[0,0,3,2,1,0,2,4],
 [2,1,0,2,2,1,0,2,0,1,1,0,0]],
-["黄KC",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["黄SQ",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["惠CY",[0,0,0,1,0,0,0,0],
+["",[0,0,0,1,0,0,0,0],
 [0,0,0,0,0,0,1,0,0,0,0,0,0]],
-["江KY",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["蒋HY",[0,0,0,0,0,0,0,1],
+["",[0,0,0,0,0,0,0,1],
 [0,0,0,0,0,0,0,0,0,0,1,0,0]],
-["李H",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["李KX",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["李PL",[0,0,1,0,0,1,0,0],
+["",[0,0,1,0,0,1,0,0],
 [0,0,0,0,0,0,0,0,1,1,0,0,0]],
-["梁BL",[1,1,1,2,0,0,2,1],
+["",[1,1,1,2,0,0,2,1],
 [1,3,0,0,0,0,0,0,0,2,1,0,1]],
-["刘RX",[0,0,0,0,0,0,1,0],
+["",[0,0,0,0,0,0,1,0],
 [0,0,0,1,0,0,0,0,0,0,0,0,0]],
-["刘XY",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["刘YX",[1,0,0,1,0,1,1,0],
+["",[1,0,0,1,0,1,1,0],
 [0,1,0,0,1,0,1,1,0,0,0,0,0]],
-["罗YX",[0,1,1,2,0,0,0,1],
+["",[0,1,1,2,0,0,0,1],
 [0,1,0,0,0,0,0,1,0,2,0,0,1]],
-["牟HR",[0,0,1,1,0,0,0,1],
+["",[0,0,1,1,0,0,0,1],
 [0,1,0,1,0,0,0,1,0,0,0,0,0]],
-["穆XH",[0,0,3,5,1,0,0,2],
+["",[0,0,3,5,1,0,0,2],
 [0,2,0,1,4,0,0,0,0,2,2,0,0]],
-["秦WM",[0,0,1,3,0,0,0,2],
+["",[0,0,1,3,0,0,0,2],
 [1,2,0,0,1,0,0,0,0,2,0,0,0]],
-["邱YL",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["任YL",[1,0,0,0,1,0,0,0],
+["",[1,0,0,0,1,0,0,0],
 [0,0,0,0,2,0,0,0,0,0,0,0,0]],
-["舒T",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["汤HY",[0,0,0,2,0,0,1,2],
+["",[0,0,0,2,0,0,1,2],
 [1,1,0,0,1,0,0,1,0,1,0,0,0]],
-["唐K",[0,0,0,0,0,2,0,0],
+["",[0,0,0,0,0,2,0,0],
 [0,1,0,0,0,0,0,0,0,1,0,0,0]],
-["田YC",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["王W",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["王YH",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["王ZY",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["韦ZX",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["杨YR",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["张JC",[0,0,0,1,1,0,0,1],
+["",[0,0,0,1,1,0,0,1],
 [0,0,0,0,2,0,0,0,0,0,1,0,0]],
-["张JR",[0,0,0,1,0,0,0,0],
+["",[0,0,0,1,0,0,0,0],
 [0,0,0,0,0,0,1,0,0,0,0,0,0]],
-["张JY",[0,0,0,0,0,0,0,0],
+["",[0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["张YH",[0,0,0,1,0,0,0,0],
+["",[0,0,0,1,0,0,0,0],
 [0,1,0,0,0,0,0,0,0,0,0,0,0]],
-["张ZT",[1,0,0,0,0,0,0,0],
+["",[1,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,1,0,0,0,0]],
-["张ZY",[0,1,2,0,0,2,1,2],
+["",[0,1,2,0,0,2,1,2],
 [0,0,0,1,2,0,1,0,1,3,0,0,0]],
-["赵RR",[0,0,2,0,1,0,1,1],
+["",[0,0,2,0,1,0,1,1],
 [0,0,0,0,3,0,0,0,0,2,0,0,0]],
-["周YT",[0,1,1,1,0,0,0,3],
+["",[0,1,1,1,0,0,0,3],
 [1,0,0,1,0,0,0,1,0,2,0,0,1]],
-["朱RZY",[0,1,0,0,0,0,1,0],
+["",[0,1,0,0,0,0,1,0],
 [0,0,0,0,1,0,0,0,0,0,0,0,1]]
 ];
 const STORE_KEY = 'classDiscipline_8w_v2';
@@ -1921,42 +2341,7 @@ $('tPickBtn').addEventListener('click', function(){
     }).join(''));
 });
 
-/* 3. 随机座位表 */
-$('tSeatBtn').addEventListener('click', function(){
-  var col = Math.max(2, Math.min(10, val('tSeatCol',6)));
-  var arr = shuffleArr(allNames());
-  var rows = Math.ceil(arr.length/col);
-  var g = document.createElement('div');
-  var html = '<div class="seattab" style="grid-template-columns:repeat('+col+',1fr)">';
-  var k = 0;
-  for(var r=0;r<rows;r++){
-    for(var c=0;c<col;c++){
-      html += k < arr.length
-        ? '<div class="seat">'+esc(arr[k++])+'</div>'
-        : '<div class="seat empty">空</div>';
-    }
-  }
-  html += '</div><div style="margin-top:6px;font-size:11.5px;color:#7c859e">共 '+arr.length+' 人 / '+col+' 列 / '+rows+' 排'+(arr.length%col? '，末排空 '+(col-arr.length%col)+' 位':'')+'</div>';
-  out('tSeatOut', html);
-});
-
-/* 4. 一周值日表 */
-$('tDutyBtn').addEventListener('click', function(){
-  var days = ['周一','周二','周三','周四','周五'];
-  var arr = shuffleArr(allNames());
-  var g = [], k = 0, per = Math.ceil(arr.length/5);
-  arr.forEach(function(nm){
-    if(!g[k]) g[k] = [];
-    g[k].push(nm);
-    if(g[k].length >= per && k < 4) k++;
-  });
-  out('tDutyOut', days.map(function(d,i){
-    var grp = g[i] || [];
-    return '<div class="grp"><i>'+d+'</i>（'+grp.length+' 人）<br>'+grp.map(esc).join('、')+'</div>';
-  }).join(''));
-});
-
-/* 5. 随机两两配对 */
+/* 随机两两配对 */
 $('tPairBtn').addEventListener('click', function(){
   var arr = shuffleArr(allNames());
   var pairs = [], i = 0;
@@ -1969,97 +2354,223 @@ $('tPairBtn').addEventListener('click', function(){
   }).join('') + '<div style="font-size:11.5px;color:#7c859e;margin-top:4px">共 '+pairs.length+' 组</div>');
 });
 
-/* 6. 违纪角色抽签 */
-
-
-
-/* 7. 是非决策器 */
-
-
-
-/* 8. 数字抽签 */
-
 
 /* ===== 趣味实验室：大富翁 ===== */
-var MP_CELLS = [
-  {t:'起点', k:'start', e:'🏁', d:''},
-  {t:'数学课\n被点名', k:'b', e:'📐', d:'退 2 格'},
-  {t:'主动\n回答问题', k:'g', e:'🙋', d:'进 2 格'},
-  {t:'第四周\n综合症', k:'b', e:'🌋', d:'退 3 格'},
-  {t:'作业\n全对', k:'g', e:'💯', d:'进 3 格'},
-  {t:'走神\n被抓', k:'b', e:'🫥', d:'退 1 格'},
-  {t:'帮同学\n讲题', k:'g', e:'🤝', d:'进 2 格'},
-  {t:'音乐课\n开口跪', k:'n', e:'🎤', d:'原地不动'},
-  {t:'连续两周\n零违纪', k:'g', e:'✨', d:'进 4 格'},
-  {t:'和同桌\n讲话', k:'b', e:'🗣️', d:'退 2 格'},
-  {t:'体育课\n全员安好', k:'n', e:'⚽', d:'原地不动'},
-  {t:'政治课\n辩赢了', k:'g', e:'⚖️', d:'进 2 格'},
-  {t:'迟到\n一分钟', k:'b', e:'⏰', d:'退 1 格'},
-  {t:'被老师\n表扬', k:'g', e:'🌟', d:'进 3 格'},
-  {t:'信息课\n摸鱼', k:'b', e:'🐟', d:'退 2 格'},
-  {t:'月考\n进步', k:'g', e:'📈', d:'进 3 格'},
-  {t:'美术课\n走神', k:'n', e:'🎨', d:'原地不动'},
-  {t:'上课\n吃东西', k:'b', e:'🍜', d:'退 3 格'},
-  {t:'值日\n被夸', k:'g', e:'🧹', d:'进 2 格'},
-  {t:'语文课\n朗读', k:'g', e:'📖', d:'进 1 格'},
-  {t:'后排\n开小会', k:'b', e:'🤫', d:'退 2 格'},
-  {t:'物理实验\n成功', k:'g', e:'🔬', d:'进 2 格'},
-  {t:'被请\n家长', k:'b', e:'📞', d:'退回起点'},
-  {t:'刑满\n释放', k:'end', e:'🎊', d:'到达终点'}
-];
-var mp = {pos:0, who:'', log:[], done:false};
+/* 棋盘按每个人的违纪记录定制：违纪越少 → 好格子越多、步子越大 → 越容易走到终点 */
+var MP_CELLS = [];
+var MP_GOOD = ['表现良好','零违纪','被表扬','主动答题','作业全对','帮同学讲题','值日被夸','全程专注'];
+var MP_BAD  = ['走神','被点名','开口跪','讲小话','摸鱼','吃东西','开小会','迟到'];
+var MP_NEU  = ['课间休息','自习课','眼保健操','课间操','排队打饭','班会课'];
+function mpBuildCells(s){
+  var total = s ? s.total : 0;
+  /* 违纪程度 0（零违纪）～1（高频） */
+  var ratio = Math.min(1, total / 12);
+  /* 学科池：干净学科 = 该同学从没违纪的课；高发学科 = 违纪最多的课 */
+  var subs = SUBS.map(function(n,i){ return {name:n, n: s ? (s.sub[i] || 0) : 0}; })
+                 .filter(function(x){ return x.name !== '不详'; });
+  var clean = subs.filter(function(x){ return x.n === 0; }).map(function(x){ return x.name; });
+  var dirty = subs.filter(function(x){ return x.n > 0; })
+                  .sort(function(a,b){ return b.n - a.n; }).map(function(x){ return x.name; });
+  if(!clean.length) clean = ['全科'];
+  if(!dirty.length) dirty = ['课堂'];
+  /* 好格 / 坏格占比随违纪程度变化 */
+  var N = 22;
+  var nG = Math.round(N * (0.60 - 0.32 * ratio));
+  var nB = Math.round(N * (0.08 + 0.42 * ratio));
+  var nN = N - nG - nB;
+  /* 步长上下限：零违纪走得快、退得少；高频走得慢、退得多 */
+  var gMax = total === 0 ? 4 : (total >= 9 ? 2 : 3);
+  var bMax = total === 0 ? 1 : (total >= 6 ? 4 : 3);
+  var needReset = total >= 6;   /* 只有违纪较多的人才会遇到「被请家长」 */
+  var list = [], i2;
+  for(i2=0;i2<nG;i2++) list.push('g');
+  for(i2=0;i2<nB;i2++) list.push('b');
+  for(i2=0;i2<nN;i2++) list.push('n');
+  /* 洗牌 */
+  for(i2=list.length-1;i2>0;i2--){
+    var jj = Math.floor(Math.random()*(i2+1)), tt = list[i2]; list[i2] = list[jj]; list[jj] = tt;
+  }
+  /* 第 1 格不放坏格，避免开局就被打回去 */
+  if(list[0] === 'b'){
+    for(i2=1;i2<list.length;i2++){
+      if(list[i2] !== 'b'){ list[0] = list[i2]; list[i2] = 'b'; break; }
+    }
+  }
+  var cells = [{t:'起点', k:'start', e:'🏁', d:'', s:0}];
+  var ci = 0, di = 0;
+  list.forEach(function(k){
+    if(k === 'g'){
+      var sub = clean[ci % clean.length];
+      var tpl = MP_GOOD[ci % MP_GOOD.length];
+      var stp = 1 + Math.floor(Math.random() * gMax);
+      cells.push({t: sub + '\n' + tpl, k:'g', e:'🙋', d:'进 ' + stp + ' 格', s:stp});
+      ci++;
+    }else if(k === 'b'){
+      if(needReset){
+        cells.push({t:'被请\n家长', k:'b', e:'📞', d:'退回起点', s:0, reset:true});
+        needReset = false;
+        return;
+      }
+      var sub2 = dirty[di % dirty.length];
+      var tpl2 = MP_BAD[di % MP_BAD.length];
+      var stp2 = 1 + Math.floor(Math.random() * bMax);
+      cells.push({t: sub2 + '\n' + tpl2, k:'b', e:'🫥', d:'退 ' + stp2 + ' 格', s:stp2});
+      di++;
+    }else{
+      var tpl3 = MP_NEU[Math.floor(Math.random() * MP_NEU.length)];
+      cells.push({t: tpl3, k:'n', e:'☕', d:'原地不动', s:0});
+    }
+  });
+  cells.push({t:'刑满\n释放', k:'end', e:'🎊', d:'到达终点', s:0});
+  cells.meta = {total:total, nG:nG, nB:nB, nN:nN, gMax:gMax, bMax:bMax};
+  return cells;
+}
+function mpInfoLine(){
+  var m = MP_CELLS.meta;
+  if(!m) return '';
+  var tip = m.total === 0
+    ? '零违纪：几乎一路顺风，很容易走到终点 🎉'
+    : (m.total >= 9 ? '高频上榜：坏格子成群，路很长' : '偶有违纪：好坏参半，看运气');
+  return '<div class="mpinfo">🎯 <b>' + esc(mp.who) + '</b> 的专属棋盘（按他/她的违纪记录生成）：' +
+    '<span class="gi">好事 ' + m.nG + ' 格</span> · <span class="bi">坏事 ' + m.nB + ' 格</span> · <span class="ni">中性 ' + m.nN + ' 格</span>' +
+    '　|　前进最多 ' + m.gMax + ' 格、后退最多 ' + m.bMax + ' 格　|　' + tip + '</div>';
+}
+var mp = {pos:0, who:'', log:[], done:false, busy:false, steps:0};
 function mpBoard(){
-  var html = '<div class="mpgrid">';
+  if(!MP_CELLS.length) return;
+  var html = mpInfoLine() + '<div class="mpgrid">';
   MP_CELLS.forEach(function(c,i){
     var cls = c.k==='start' ? 'start' : (c.k==='end' ? 'end' : c.k);
-    html += '<div class="mpcell '+cls+(mp.pos===i?' here':'')+'" title="'+esc(c.t.replace(/\n/g,''))+'　'+(c.d||'')+'">'+
+    html += '<div class="mpcell '+cls+(mp.pos===i?' here':'')+'" id="mpc'+i+'" title="'+esc(c.t.replace(/\n/g,''))+'　'+(c.d||'')+'">'+
       '<i>'+c.e+'</i>'+esc(c.t).replace(/\n/g,'<br>')+'</div>';
   });
   html += '</div>';
-  $('mpBoard').innerHTML = html;
+  var box = $('mpBoard');
+  box.innerHTML = html;
+  /* 给终点加个光圈，方便看清目标 */
+  var endEl = $('mpc'+(MP_CELLS.length-1));
+  if(endEl) endEl.classList.add('goal');
 }
-function mpRender(){ mpBoard(); $('mpLog').innerHTML = mp.log.slice().reverse().map(function(x){return '<div>'+x+'</div>';}).join('') || '<div style="color:#aeb5c7">还没有开始，掷个骰子试试。</div>'; }
+function mpPaint(){
+  MP_CELLS.forEach(function(c,i){
+    var el = $('mpc'+i);
+    if(el) el.classList.toggle('here', mp.pos === i);
+  });
+}
+function mpStatus(){
+  var el = $('mpStatus');
+  if(!el) return;
+  if(!MP_CELLS.length) return;
+  var c = MP_CELLS[mp.pos];
+  el.innerHTML = '<b>' + esc(mp.who || '（未选择）') + '</b> 现在在 <b>' + (mp.pos+1) + '</b> / ' + MP_CELLS.length +
+    ' 号格　' + c.e + ' ' + esc(c.t.replace(/\n/g,'')) + (c.d ? '（' + c.d + '）' : '') +
+    '　·　已走 <b>' + mp.steps + '</b> 步' + (mp.done ? '　🎊 <b>已刑满释放</b>' : '');
+}
+function mpRender(){
+  mpBoard(); mpPaint(); mpStatus();
+  $('mpLog').innerHTML = mp.log.slice().reverse().map(function(x){return '<div>'+x+'</div>';}).join('') || '<div style="color:#aeb5c7">还没有开始，掷个骰子试试。</div>';
+}
 function mpStart(){
-  mp.pos = 0; mp.log = []; mp.done = false;
   var sel = $('mpWho');
-  mp.who = sel.value || (RANK[0] ? RANK[0].name : '');
+  var who = sel && sel.value ? sel.value : (RANK[0] ? RANK[0].name : '');
+  mp.who = who;
+  MP_CELLS = mpBuildCells(byName(who));
+  mp.pos = 0; mp.log = []; mp.done = false; mp.busy = false; mp.steps = 0;
   mpRender();
 }
+/* 落地停顿：走完骰子步数后先停一下，再按格子奖惩 */
+function mpLand(cb){
+  var el = $('mpc' + mp.pos);
+  if(el) el.classList.add('landed');
+  var c = MP_CELLS[mp.pos];
+  var st = $('mpStatus');
+  if(st) st.innerHTML = '<b>' + esc(mp.who) + '</b> 📍 落在 <b>' + (mp.pos+1) + '</b> 号格　' +
+    c.e + ' ' + esc(c.t.replace(/\n/g,'')) + '　·　<b>稍等，结算中…</b>';
+  setTimeout(function(){
+    if(el) el.classList.remove('landed');
+    cb();
+  }, 750);
+}
+/* 逐格行走：target 为目标格，dir 为 +1/-1，完成后回调 */
+function mpWalkTo(target, dir, cb){
+  var step = function(){
+    if(mp.pos === target){ cb(); return; }
+    var next = mp.pos + dir;
+    if(next < 0) next = 0;
+    if(next > MP_CELLS.length-1) next = MP_CELLS.length-1;
+    mp.pos = next;
+    mp.steps++;
+    mpPaint(); mpStatus();
+    var el = $('mpc'+mp.pos);
+    if(el){ el.classList.add('stepping'); setTimeout(function(){ el.classList.remove('stepping'); }, 260); }
+    if(mp.pos === target){ setTimeout(cb, 300); return; }
+    setTimeout(step, 300);
+  };
+  step();
+}
+function mpApplyCell(who, cb){
+  var cell = MP_CELLS[mp.pos];
+  if(mp.pos <= 0 || mp.pos >= MP_CELLS.length-1){ cb(); return; }
+  if(cell.k === 'g'){
+    var adv = cell.s || 1;
+    var to = Math.min(MP_CELLS.length-1, mp.pos + adv);
+    mp.log.push('　　' + cell.e + ' ' + cell.d + ' → 前进 ' + adv + ' 格');
+    mpRender();
+    mpWalkTo(to, 1, cb);
+  }else if(cell.k === 'b'){
+    if(cell.reset){
+      mp.log.push('　　' + cell.e + ' 被请家长 → 打回起点 😱');
+      mpRender();
+      mpWalkTo(0, -1, cb);
+    }else{
+      var back = cell.s || 1;
+      var to2 = Math.max(0, mp.pos - back);
+      mp.log.push('　　' + cell.e + ' ' + cell.d + ' → 后退 ' + back + ' 格');
+      mpRender();
+      mpWalkTo(to2, -1, cb);
+    }
+  }else{
+    mp.log.push('　　' + cell.e + ' 原地不动，躲过一劫');
+    mpRender();
+    cb();
+  }
+}
 $('mpRoll').addEventListener('click', function(){
-  if(mp.done){ toast('这局已经结束啦，点重新开始'); return; }
-  var who = $('mpWho').value;
+  if(mp.busy) return;
+  if(mp.done){ toast('这局已经结束啦，点「重新开始」'); return; }
+  var who = $('mpWho') && $('mpWho').value ? $('mpWho').value : mp.who;
+  mp.who = who;
   var d = rnd(6)+1;
   $('mpDice').textContent = ['⚀','⚁','⚂','⚃','⚄','⚅'][d-1];
   var from = mp.pos;
-  mp.pos = Math.min(MP_CELLS.length-1, mp.pos + d);
-  var cell = MP_CELLS[mp.pos];
-  mp.log.push('🎲 ' + esc(who) + ' 掷出 ' + d + ' → ' + String(from+1) + ' → ' + String(mp.pos+1) + ' 号格「' + cell.t.replace(/\n/g,'') + '」');
-  if(mp.pos > 0 && mp.pos < MP_CELLS.length-1){
-    if(cell.k==='g'){
-      var adv = (cell.d.match(/(\d+)/)||[0,0])[1]|0;
-      mp.pos = Math.min(MP_CELLS.length-1, mp.pos + adv);
-      mp.log.push('　　' + cell.e + ' ' + cell.d + ' → 前进到 ' + String(mp.pos+1) + ' 号格');
-    }else if(cell.k==='b'){
-      if(cell.d.indexOf('起点')>=0){
-        mp.pos = 0;
-        mp.log.push('　　' + cell.e + ' 被请家长 → 打回起点 😱');
-      }else{
-        var back = (cell.d.match(/(\d+)/)||[0,0])[1]|0;
-        mp.pos = Math.max(0, mp.pos - back);
-        mp.log.push('　　' + cell.e + ' ' + cell.d + ' → 退到 ' + String(mp.pos+1) + ' 号格');
-      }
-    }else{
-      mp.log.push('　　' + cell.e + ' 原地不动，躲过一劫');
-    }
-  }
-  if(mp.pos >= MP_CELLS.length-1){
-    mp.done = true;
-    mp.log.push('🎊 ' + esc(who) + ' 走到终点，刑满释放！');
-  }
+  var to = Math.min(MP_CELLS.length-1, mp.pos + d);
+  mp.busy = true;
+  var btn = $('mpRoll'); if(btn){ btn.disabled = true; btn.textContent = '走动中…'; }
+  mp.log.push('🎲 ' + esc(who) + ' 掷出 <b>' + d + '</b> 点 → ' + (from+1) + ' → ' + (to+1) + ' 号格');
   mpRender();
+  mpWalkTo(to, 1, function(){
+    var cell = MP_CELLS[mp.pos];
+    mp.log.push('　　📍 停在 ' + (mp.pos+1) + ' 号格「' + cell.t.replace(/\n/g,'') + '」');
+    mpLand(function(){
+    mpApplyCell(who, function(){
+      if(mp.pos >= MP_CELLS.length-1){
+        mp.done = true;
+        mp.log.push('🎊 <b>' + esc(who) + '</b> 走到终点，刑满释放！共走 ' + mp.steps + ' 步');
+      }
+      mp.busy = false;
+      var b2 = $('mpRoll'); if(b2){ b2.disabled = false; b2.textContent = '🎲 掷骰子'; }
+      mpRender();
+    });
+    });
+  });
 });
-$('mpReset').addEventListener('click', function(){ mpStart(); $('mpDice').textContent=''; });
-$('mpWho').addEventListener('change', function(){ mpStart(); });
+$('mpReset').addEventListener('click', function(){
+  mpStart();
+  var d0 = $('mpDice'); if(d0) d0.textContent = '';
+  var b = $('mpRoll'); if(b){ b.disabled = false; b.textContent = '🎲 掷骰子'; }
+});
+var mpWhoSel = $('mpWho');
+if(mpWhoSel) mpWhoSel.addEventListener('change', function(){ mpStart(); });
 
 /* ===== 趣味实验室：战力对决 ===== */
 function powerOf(s){
@@ -2202,7 +2713,7 @@ $('guessBtn').addEventListener('click', function(){
     '<div class="statgrid"><div class="stat"><b>'+ref+'</b><span>系统参考值</span></div>'+
     '<div class="stat"><b>'+lo+'–'+hi+'</b><span>合理区间</span></div>'+
     '<div class="stat"><b>'+Math.round(avg*10)/10+'</b><span>八周均值</span></div></div>'+
-    '<div class="ok">'+comment+'<br><span style="font-size:11.5px">参考值＝近四周均值×50% ＋ 近两周均值×30% ＋ 八周均值×20%，仅供娱乐</span></div>';
+    '<div class="ok">'+comment+'<br><span style="font-size:11.5px">参考值＝近四周均值×50% ＋ 近两周均值×30% ＋ 八周均值×20%</span></div>';
 });
 
 /* ============ 换算器 ============ */
@@ -2223,7 +2734,7 @@ $('calcBtn').addEventListener('click', function(){
 });
 
 /* ============ 性格小测试 ============ */
-var QUIZ = [
+var TYPEQUIZ = [
   {q:'上课走神被提醒时，你通常？', a:['马上回神','过两分钟才回神','完全没听见','其实我只是看窗外']},
   {q:'一周里你最容易出现状况的是？', a:['周一','周三','周五','随机，看心情']},
   {q:'被点名后的反应是？', a:['立刻改正','嘴上答应心里不服','一脸无辜','下次还敢']},
@@ -2231,7 +2742,7 @@ var QUIZ = [
 ];
 var quizAns = [0,0,0,0];
 function renderQuiz(){
-  $('quiz').innerHTML = QUIZ.map(function(item,i){
+  $('quiz').innerHTML = TYPEQUIZ.map(function(item,i){
     return '<div class="quiz-q">'+(i+1)+'. '+item.q+'</div>'+
       item.a.map(function(a,j){
         return '<div class="quiz-a'+(quizAns[i]===j?' on':'')+'" data-i="'+i+'" data-j="'+j+'">'+String.fromCharCode(65+j)+'. '+a+'</div>';
@@ -2322,7 +2833,7 @@ function renderForecast(){
       '<div style="font-size:12px;color:#5b6178">'+x.why.join(' · ')+'</div></div>';
   });
   var safe=S.filter(function(s){return s.total===0;}).length;
-  html+='<div class="ok" style="margin-top:8px">预测仅供参考，别当真。班级里还有 <b>'+safe+'</b> 位同学八周零违纪，'+
+  html+='<div class="ok" style="margin-top:8px">班级里还有 <b>'+safe+'</b> 位同学八周零违纪，'+
     '他们才是「下周一定不上榜」的稳选。</div>';
   $('fcOut').innerHTML=html;
 }
@@ -2375,9 +2886,9 @@ function tkHash(name){
 function tkNo(name){
   return 'WJ-2026-'+String(tkHash(name)%100000).padStart(5,'0');
 }
-function renderTicket(){
-  var s = pickWho('thWho');
-  var box=$('thOut');
+function renderTicket(whoId, outId){
+  var s = pickWho(whoId || 'tkWho');
+  var box=$(outId || 'tkOut');
   if(!s) return;
   var facts=s.w.map(function(v,i){ return v>0 ? (WEEKS[i]+'　'+v+' 次') : null; }).filter(Boolean);
   var hsh=tkHash(s.name);
@@ -2397,10 +2908,10 @@ function renderTicket(){
     '<div class="ln" style="border:0"><span>违法事实</span>'+(facts.length? facts.join('；') : '八周内无违纪记录')+'</div>'+
     '<div class="rule"><b>处罚决定：</b>'+(s.total===0
       ? '经核查，该同学八周内无任何违纪记录，不予处罚，特此表扬 🎉'
-      : pun+'。<br>另处「纪律分」扣减 '+s.total+' 分，折合虚拟罚金 '+fine+' 元（本罚单不具备任何实际效力）。')+'</div>'+
-    '<div class="sign">班级纪律委员会（虚构）　签发日期：'+new Date().toLocaleDateString('zh-CN')+'</div>'+
+      : pun+'。<br>另处「纪律分」扣减 '+s.total+' 分，折合虚拟罚金 '+fine+' 元。')+'</div>'+
+    '<div class="sign">班级纪律委员会　签发日期：'+new Date().toLocaleDateString('zh-CN')+'</div>'+
     '</div>'+
-    '<div class="desc" style="margin-top:8px">罚单内容除「处罚决定」外均来自真实数据；仅用于班级娱乐，不具任何效力。</div>';
+    '<div class="desc" style="margin-top:8px">罚单中的当事人信息、所属班级、累计次数、违法事实等均来自真实登记数据。</div>';
 }
 
 /* ===== 趣味实验室：违纪老虎机 ===== */
@@ -2444,7 +2955,7 @@ function slotResult(r){
     ? '💥 <b>双杀命中！</b>'+esc(who.name)+'在'+r[0]+'确实有违纪（'+who.w[wi]+' 次），'+r[1]+'课也有记录（'+who.sub[si]+' 次）。这组合是真实发生过的。'
     : (hitW ? '🎯 <b>命中周次！</b>'+esc(who.name)+'在'+r[0]+'上榜 '+who.w[wi]+' 次，但'+r[1]+'课是清白的。'
     : (hitS ? '🎯 <b>命中学科！</b>'+esc(who.name)+'在'+r[1]+'课有 '+who.sub[si]+' 次记录，但'+r[0]+'那周很安分。'
-    : '😌 <b>虚惊一场。</b>'+esc(who.name)+'在'+r[0]+'和'+r[1]+'课都没有违纪记录，这组合同框纯属巧合。'));
+    : '😌 <b>虚惊一场。</b>'+esc(who.name)+'在'+r[0]+'和'+r[1]+'课都没有违纪记录。'));
   out.innerHTML='<div class="'+cls+'">'+txt+'<br><span style="font-size:11.5px">组合：'+esc(r[0])+' × '+esc(r[1])+' × '+esc(who.name)+
     ' · 该同学八周累计 '+who.total+' 次</span></div>';
 }
@@ -2460,9 +2971,9 @@ function yearWord(s){
   if(s.spread===1) return ['一闪而过','#6366f1'];
   return ['偶发选手','#8b5cf6'];
 }
-function renderYear(){
-  var s = pickWho('thWho');
-  var box=$('thOut');
+function renderYear(whoId, outId){
+  var s = pickWho(whoId || 'yrWho');
+  var box=$(outId || 'yrOut');
   if(!s) return;
   var w=yearWord(s);
   var peakIdx=s.w.indexOf(s.maxw);
@@ -2523,7 +3034,7 @@ function rdScript(){
       '请同学们注意，峰值为'+WEEKS[PEAK]+'的 '+weekTotals[PEAK]+' 次，是全周期最高，那周的天气是暴雨。'],
     ['红榜时间','截至目前，全班有 <b>'+zeroN+'</b> 位同学八周零违纪，占班级 '+Math.round(zeroN/state.classSize*100)+'%。'+
       '他们是班级的稳定器，掌声送给他们。'],
-    ['结束语','以上就是本周播报的全部内容。数据来自班级真实登记，播报词由程序自动生成，仅供娱乐。我们下周同一时间再见。']
+    ['结束语','以上就是本周播报的全部内容。数据来自班级真实登记，播报词由程序自动生成。我们下周同一时间再见。']
   ];
 }
 function wxWord(v){
@@ -2616,7 +3127,7 @@ function renderBingo(){
 function fillArcadeSelects(){
   var opts=S.slice().sort(function(a,b){ return b.total-a.total || a.name.localeCompare(b.name,'zh'); })
     .map(function(s){ return '<option value="'+esc(s.name)+'">'+esc(s.name)+'（'+s.total+' 次）</option>'; }).join('');
-  ['thWho'].forEach(function(id){
+  ['tkWho','momWho','yrWho','dgWho'].forEach(function(id){
     var el=$(id); if(!el) return;
     var cur=el.value; el.innerHTML=opts;
     if(cur && S.filter(function(s){return s.name===cur;}).length) el.value=cur;
@@ -2624,14 +3135,10 @@ function fillArcadeSelects(){
 }
 $('fcBtn').addEventListener('click', renderForecast);
 $('scNew').addEventListener('click', renderScratch);
-$('tkBtn').addEventListener('click', renderTicket);
 $('slGo').addEventListener('click', slotGo);
-$('yrBtn').addEventListener('click', renderYear);
 $('rdBtn').addEventListener('click', radioPlay);
 $('rdStop').addEventListener('click', radioStop);
 $('bgNew').addEventListener('click', renderBingo);
-var thEl=$('thWho');
-if(thEl) thEl.addEventListener('change', renderTheatre);
 function renderArcade(){
   fillArcadeSelects();
   renderStock(); renderTicket(); renderYear();
@@ -2660,29 +3167,14 @@ $('exportCsv').addEventListener('click', function(){
 $('exportJson').addEventListener('click', function(){
   download('课堂违纪存档.json', JSON.stringify({size:state.classSize, data:S.map(function(s){return {n:s.name,w:s.w,sub:s.sub};})}, null, 1), 'application/json');
 });
-$('importJson').addEventListener('click', function(){ $('fileInput').click(); });
-$('fileInput').addEventListener('change', function(e){
-  var f = e.target.files[0]; if(!f) return;
-  var r = new FileReader();
-  r.onload = function(){
-    try{
-      var o = JSON.parse(r.result);
-      if(!o.data || !o.data.length) throw 0;
-      S = o.data.map(function(d){ return {name:d.n, w:d.w.slice(), sub:d.sub.slice()}; });
-      if(o.size) state.classSize = o.size;
-      compute(); save(); render();
-      $('saveState').textContent = '导入成功';
-    }catch(err){ $('saveState').textContent = '文件格式不对'; }
-  };
-  r.readAsText(f);
-});
 $('print').addEventListener('click', function(){ window.print(); });
+var nmLockBtn = $('nmLock'); if(nmLockBtn) nmLockBtn.addEventListener('click', doLock);
+
 $('hardReset').addEventListener('click', function(){
   if(!confirm('清空本机存档并恢复原始表格？')) return;
   try{ localStorage.removeItem(STORE_KEY); OLD_STORE_KEYS.forEach(function(k){ localStorage.removeItem(k); }); }catch(e){}
-  S = RAW.map(function(r){ return {name:r[0], w:r[1].slice(), sub:r[2].slice()}; });
   state.classSize = 52;
-  compute(); render();
+  applyNames(); render();
   $('saveState').textContent = '已恢复原始表格';
 });
 
@@ -2845,8 +3337,9 @@ function evoOf(s){
   for(var i=0;i<EVO.length;i++) if(s.total <= EVO[i].max) return {i:i, e:EVO[i]};
   return {i:EVO.length-1, e:EVO[EVO.length-1]};
 }
-function renderDiag(){
-  var s = pickWho('thWho'); if(!s) return;
+function renderDiag(whoId, outId){
+  var s = pickWho(whoId || 'dgWho'); if(!s) return;
+  var __out = outId || 'dgOut';
   var ev = evoOf(s);
   var sym = [];
   if(s.maxw>=4) sym.push('单周集中爆发（最高 '+s.maxw+' 次）');
@@ -2869,7 +3362,7 @@ function renderDiag(){
       : (s.delta<0 ? '念其后期收敛、确有悔改之意，着以观后效，暂不追加处置。'
         : (s.delta>0 ? '然其后半程反有加重之势，着令重点关注，限期整改。'
           : '念其前后如一、未见恶化，着以常规提醒，记录在案。')));
-  $('thOut').innerHTML =
+  $(__out).innerHTML =
     '<div class="diag"><div class="dl">'+
       '<b>就诊人</b><span>'+esc(s.name)+'</span>'+
       '<b>科室</b><span>'+dept+'科</span>'+
@@ -2908,8 +3401,9 @@ var MOMENT_TPL = {
     '老师说要表扬零违纪的同学，我先提前高兴一下。'
   ]
 };
-function renderMoment(){
-  var s = pickWho('thWho'); if(!s) return;
+function renderMoment(whoId, outId){
+  var s = pickWho(whoId || 'momWho'); if(!s) return;
+  var __out = outId || 'momOut';
   var key = s.total>=9 ? 'high' : (s.total>=4 ? 'mid' : (s.total>0 ? 'low' : 'zero'));
   var arr = MOMENT_TPL[key];
   var text = arr[rnd(arr.length)].replace('{n}', s.total);
@@ -2918,14 +3412,14 @@ function renderMoment(){
   var picks = shuffleArr(others).slice(0, 3 + rnd(2));
   var cmts = picks.map(function(o){
     var t;
-    if(o.total===0) t = ['震惊，我坐你旁边居然没发现','下次带上我（不是）','？我一直以为你是好学生','老师：名单上怎么会有你'][rnd(4)];
+    if(o.total===0) t = ['震惊，我坐你旁边居然没发现','下次带上我（不是）','？我一直以为你是好学生','名单上怎么会有你'][rnd(4)];
     else if(o.total>=9) t = ['兄弟，同道中人','你这数据还是比我差点','一起罚站啊','懂的都懂 🤝'][rnd(4)];
     else if(o.total>=4) t = ['保重','我懂你','下次注意点','要不咱俩换个座位'][rnd(4)];
     else t = ['哈哈哈哈哈哈','还行，就一次','下次别了','已阅'][rnd(4)];
     return '<div class="cmt"><b>'+esc(o.name)+'</b>'+t+'</div>';
   }).join('');
   var likes = s.total===0 ? (10 + rnd(30)) : Math.max(2, Math.min(state.classSize, state.classSize - s.rank + rnd(8)));
-  $('thOut').innerHTML =
+  $(__out).innerHTML =
     '<div class="moment"><div class="hd"><div class="av">'+esc(s.name.charAt(0))+'</div>'+
     '<div class="who"><b>'+esc(s.name)+'</b><span>八周累计 '+s.total+' 次 · '+evoOf(s).e.t+'</span></div></div>'+
     '<div class="body">'+esc(text)+'</div>'+
@@ -3044,31 +3538,41 @@ function pickWho(id){
 function fillFunSelects(){
   var opts = S.slice().sort(function(a,b){ return b.total-a.total || a.name.localeCompare(b.name,'zh'); })
     .map(function(s){ return '<option value="'+esc(s.name)+'">'+esc(s.name)+'（'+s.total+' 次）</option>'; }).join('');
-  ['#thWho','#evoWho'].forEach(function(sel){
+  ['#tkWho','#momWho','#yrWho','#dgWho','#evoWho'].forEach(function(sel){
     var el = document.querySelector(sel); if(!el) return;
     var cur = el.value; el.innerHTML = opts; if(cur) el.value = cur;
   });
 }
 
 
-/* ============ 单人剧场：四种文体切换 ============ */
-var THEATRE = {
-  tk:  {f:'renderTicket', label:'🧾 违纪罚单'},
-  mom: {f:'renderMoment', label:'📱 朋友圈'},
-  yr:  {f:'renderYear',   label:'🎬 年度回忆'},
-  dg:  {f:'renderDiag',   label:'📜 诊断书'}
-};
-var theatreNow = 'tk';
-function renderTheatre(){
-  var t = THEATRE[theatreNow] || THEATRE.tk;
-  if(typeof window[t.f] === 'function') window[t.f]();
-}
-document.querySelectorAll('[data-th]').forEach(function(c){
-  c.addEventListener('click', function(){
-    document.querySelectorAll('[data-th]').forEach(function(x){x.classList.remove('on');});
-    c.classList.add('on');
-    theatreNow = c.getAttribute('data-th');
-    renderTheatre();
+/* ============ 单人剧场：四个独立玩法 ============ */
+var SOLO = [
+  {id:'tk',  who:'tkWho',  out:'tkOut',  fn:'renderTicket', go:'tkGo',  rand:'tkRand'},
+  {id:'mom', who:'momWho', out:'momOut', fn:'renderMoment', go:'momGo', rand:'momRand'},
+  {id:'yr',  who:'yrWho',  out:'yrOut',  fn:'renderYear',   go:'yrGo',  rand:'yrRand'},
+  {id:'dg',  who:'dgWho',  out:'dgOut',  fn:'renderDiag',   go:'dgGo',  rand:'dgRand'}
+];
+function renderTicketPlay(){ renderTicket('tkWho','tkOut'); }
+function renderMomentPlay(){ renderMoment('momWho','momOut'); }
+function renderYearPlay(){ renderYear('yrWho','yrOut'); }
+function renderDiagPlay(){ renderDiag('dgWho','dgOut'); }
+/* 下拉框换人 → 立即重渲染；「换一个」随机换人 */
+SOLO.forEach(function(c){
+  var sel = $(c.who);
+  if(sel) sel.addEventListener('change', function(){
+    if(typeof window[c.fn] === 'function') window[c.fn](c.who, c.out);
+  });
+  var go = $(c.go);
+  if(go) go.addEventListener('click', function(){
+    if(typeof window[c.fn] === 'function') window[c.fn](c.who, c.out);
+  });
+  var rd = $(c.rand);
+  if(rd) rd.addEventListener('click', function(){
+    var sel2 = $(c.who);
+    if(sel2 && sel2.options.length){
+      sel2.selectedIndex = Math.floor(Math.random() * sel2.options.length);
+      if(typeof window[c.fn] === 'function') window[c.fn](c.who, c.out);
+    }
   });
 });
 
@@ -3077,7 +3581,9 @@ document.querySelectorAll('[data-th]').forEach(function(c){
 /* 展开时自动给一次初始结果，避免空白 */
 function calcInit(){ var b=document.getElementById('calcBtn'); if(b) b.click(); }
 function duelInit(){ fillPlaySelects(); var b=document.getElementById('bpGo'); if(b) b.click(); }
-function toolsInit(){ var b=document.getElementById('tShuffle'); if(b) b.click(); }
+function shuffleInit(){ var b=document.getElementById('tShuffle'); if(b) b.click(); }
+function pickInit(){ var b=document.getElementById('tPickBtn'); if(b) b.click(); }
+function pairInit(){ var b=document.getElementById('tPairBtn'); if(b) b.click(); }
 function slotInit(){
   var o=document.getElementById('slOut');
   if(o && !o.innerHTML.trim()) o.innerHTML='<div class="desc">点「🎰 拉杆」，三列会依次停下并核对是否命中真实记录。</div>';
@@ -3180,7 +3686,12 @@ function render(){
   renderCo(); renderAch(); renderDuanwei();
   renderWheelStat(); renderSim();
   drawWheel(wheelNames());
-  renderTheatre();
+  /* 已展开的单人文体玩法，数据变化时同步刷新 */
+  SOLO.forEach(function(c){
+    if(!labOpen[c.id]) return;
+    var o = $(c.out); if(!o || !o.innerHTML) return;
+    if(typeof window[c.fn] === 'function') window[c.fn](c.who, c.out);
+  });
 }
 /* 填充「玩坏了」面板的四个下拉框（此前遗漏，导致该面板不可用） */
 function fillPlaySelects(){
@@ -3194,16 +3705,199 @@ function fillPlaySelects(){
   if(pa){ pa.innerHTML = opts; if(RANK[0]) pa.value = RANK[0].name; }
   if(pb){ pb.innerHTML = opts; if(RANK[1]) pb.value = RANK[1].name; }
 }
+
+/* ================= 姓名加密 / 答题解锁 ================= */
+var PAGE_TPL = '';
+try{ PAGE_TPL = document.documentElement.outerHTML; }catch(e){ PAGE_TPL = ''; }
+var NB_KEY = 'kb_name_v1';
+var NB = { unlocked:false };   /* 显示方式固定为标准脱敏，不再提供切换 */
+var REAL_NAMES = null;
+var QSEL = [];            /* 当前抽中的 3 题下标 */
+var QFAILS = 0;
+
+/* 答错：门禁内换失败界面，重新答题会换一批题 */
+function failQuiz(){
+  QFAILS++;
+  var box = $('gateMask');
+  if(!box){ openQuiz(); return; }
+  box.innerHTML = '<div class="gatfail"><div class="gatem">🚫</div>' +
+    '<h2>验证失败</h2>' +
+    '<p>答案不正确，无法进入。<br>请核对后重新作答 —— 下次会换一批题。</p>' +
+    '<div class="gatinfo">已答错 <b>' + QFAILS + '</b> 次</div>' +
+    '<button class="btn" id="gatRetry">重新答题</button></div>';
+  box.hidden = false;
+  document.body.style.overflow = 'hidden';
+  var b = $('gatRetry');
+  if(b) b.addEventListener('click', function(){ openQuiz(); });
+}
+
+function pad2n(n){ return n < 10 ? '0' + n : '' + n; }
+function applyNames(){
+  var i;
+  if(NB.unlocked && REAL_NAMES && REAL_NAMES.length === RAW.length){
+    for(i=0;i<RAW.length;i++){
+      var r = REAL_NAMES[i];
+      RAW[i][0] = r;
+    }
+  }else{
+    for(i=0;i<RAW.length;i++) RAW[i][0] = '同学' + pad2n(i + 1);
+  }
+  S = RAW.map(function(r){ return {name:r[0], w:r[1].slice(), sub:r[2].slice()}; });
+  BAD = S.filter(function(s){ return s.w.reduce(function(a,b){return a+b;},0) > 0; });
+  compute();
+}
+/* 用 3 个答案（经 canon 标准化）拼出的密钥去解密；成功返回姓名数组 */
+function tryAnswers(ans){
+  var i, pw = ans.map(function(a, n){
+    return QSEL[n] + ':' + (typeof KB !== 'undefined' && KB.canon ? KB.canon(a) : String(a).replace(/\s+/g, ''));
+  }).join('|');
+  for(i=0;i<QBANK.list.length;i++){
+    var e = QBANK.list[i];
+    var ok = (e.q.length === QSEL.length);
+    for(var j=0;j<e.q.length && ok;j++) if(e.q[j] !== QSEL[j]) ok = false;
+    if(!ok) continue;
+    var arr = KB.decryptNames(pw, e);
+    if(arr && arr.length === RAW.length) return arr;
+  }
+  return null;
+}
+/* ---- 抽题 ---- */
+var QLAST = '';
+function pickQuestions(){
+  var pool = [], i, j, t, key, guard = 0;
+  do{
+    pool = [];
+    for(i=0;i<QUIZ.length;i++) pool.push(i);
+    for(i=pool.length-1;i>0;i--){ j = Math.floor(Math.random()*(i+1)); t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+    QSEL = pool.slice(0,3).sort(function(a,b){return a-b;});
+    key = QSEL.join(',');
+    guard++;
+  }while(key === QLAST && guard < 40 && QBANK.list.length > 1);
+  QLAST = key;
+}
+/* ---- 答题弹窗 ---- */
+function openQuiz(){
+  pickQuestions();
+  var box = $('gateMask');
+  if(!box) return;
+  var html = '<div class="gatbox">' +
+    '<div class="gatlogo">🔒</div>' +
+    '<h2>课堂违纪互动看板</h2>' +
+    '<p class="gatsub">答对随机抽出的 <b>3</b> 道题才能进入。<br>题目从题库随机抽取，每次可能不同。</p>';
+  QSEL.forEach(function(qi, n){
+    html += '<div class="qzitem"><div class="qzq"><span class="qzn">' + (n+1) + '</span>' + esc(QUIZ[qi].q) + '</div>' +
+      '<input type="text" class="qzin" id="qzIn' + n + '" autocomplete="off" placeholder="你的答案"></div>';
+  });
+  html += '<div class="qzerr" id="qzErr"></div>' +
+    '<div class="qzbtns"><button class="btn" id="qzGo">进入</button></div>' +
+    '<label class="qzrm"><input type="checkbox" id="qzRemember" style="width:auto"> 记住本机（下次打开不用再答）</label>' +
+    '</div>';
+  box.innerHTML = html;
+  box.hidden = false;
+  document.body.style.overflow = 'hidden';
+  var first = $('qzIn0'); if(first) setTimeout(function(){ first.focus(); }, 50);
+  $('qzGo').addEventListener('click', submitQuiz);
+  [0,1,2].forEach(function(n){
+    var el = $('qzIn' + n);
+    if(el) el.addEventListener('keydown', function(e){ if(e.key === 'Enter') submitQuiz(); });
+  });
+}
+function closeQuiz(){
+  var box = $('gateMask');
+  if(box){ box.hidden = true; box.innerHTML = ''; }
+  document.body.style.overflow = '';
+}
+function submitQuiz(){
+  var ans = [], n;
+  for(n=0;n<3;n++){
+    var el = $('qzIn' + n);
+    ans.push(el ? String(el.value || '').trim() : '');
+  }
+  if(ans.some(function(x){ return !x; })){
+    $('qzErr').textContent = '三道题都要填哦';
+    return;
+  }
+  /* 解密要做 10 万次密钥派生，先给个「验证中」反馈 */
+  var eb = $('qzErr'), gb = $('qzGo');
+  if(eb) eb.textContent = '验证中…';
+  if(gb){ gb.disabled = true; gb.textContent = '验证中…'; }
+  setTimeout(function(){
+    var arr = null;
+    try{ arr = tryAnswers(ans); }catch(e){ arr = null; }
+    if(!arr){ failQuiz(); return; }
+    REAL_NAMES = arr; NB.unlocked = true;
+    var rm = $('qzRemember') && $('qzRemember').checked;
+    if(rm){
+      try{ localStorage.setItem(NB_KEY, JSON.stringify({names:arr})); }catch(e){}
+    }
+    closeQuiz();
+    applyNames(); refillNameSelects(); paintLock(); render();
+  }, 60);
+}
+
+/* 解锁或锁定后，姓名会整体变化，所有含姓名的下拉框都要重填 */
+function refillNameSelects(){
+  try{ fillFunSelects(); }catch(e){}
+  try{ fillArcadeSelects(); }catch(e){}
+  try{ fillPlaySelects(); }catch(e){}
+  try{ if(typeof dtFillGuess === 'function') dtFillGuess(); }catch(e){}
+}
+
+function doLock(){
+  NB.unlocked = false; REAL_NAMES = null;
+  try{ localStorage.removeItem(NB_KEY); sessionStorage.removeItem(NB_KEY); }catch(e){}
+  applyNames(); refillNameSelects(); paintLock(); render();
+  openQuiz();
+}
+function paintLock(){
+  var bar = $('lockbar'); if(!bar) return;
+  var st = $('nmState');
+  if(NB.unlocked){
+    bar.classList.remove('lock');
+    bar.innerHTML = '<span id="lockIcon">🔓</span>' +
+      '<span class="lb-txt">已通过验证 · 姓名以标准脱敏形式显示（点「锁定」需重新答题）</span>' +
+      '<button class="lb-btn ghost" id="lockBtn2">锁定</button>';
+    $('lockBtn2').addEventListener('click', doLock);
+  }else{
+    bar.classList.add('lock');
+    bar.innerHTML = '<span id="lockIcon">🔒</span>' +
+      '<span class="lb-txt">姓名已加密 · 需答对随机抽出的 3 道题才会显示</span>' +
+      '<button class="lb-btn" id="lockBtn">开始验证</button>';
+    $('lockBtn').addEventListener('click', openQuiz);
+  }
+  if(st) st.textContent = NB.unlocked ? '🔓 已通过验证' : '🔒 未验证（显示代号）';
+}
+function initNames(){
+  try{
+    var o = JSON.parse(localStorage.getItem(NB_KEY) || '{}');
+    if(o && o.names && o.names.length === RAW.length){
+      REAL_NAMES = o.names; NB.unlocked = true;
+    }
+  }catch(e){}
+  applyNames();
+  refillNameSelects();
+  paintLock();
+  /* 整页门禁：已通过（记住本机）才放行，否则必须先答题 */
+  if(NB.unlocked){ closeQuiz(); }
+  else if($('gateMask')){ openQuiz(); }
+  else {
+    /* 元素还没挂载（极端情况），等 DOM 就绪再弹 */
+    document.addEventListener('DOMContentLoaded', function(){ if(!NB.unlocked) openQuiz(); });
+    window.addEventListener('load', function(){ if(!NB.unlocked && !$('gateMask').innerHTML) openQuiz(); });
+  }
+}
+
 function init(){
+  initNames();
   load(); labLoad();
   $('simRange').max = Math.max(1, RANK.length);
   renderQuiz(); render();
   dtFillGuess(); fillFunSelects(); fillArcadeSelects();
   dtNewCase(); renderEvo(); renderTimeMachine();
   fillPlaySelects(); mpStart();
-  renderForecast(); renderScratch(); renderBingo(); renderTheatre();
+  renderForecast(); renderScratch(); renderBingo();
   // 玩法默认收起，仅恢复上次展开过的（其它等点开时再渲染）
-  labDone = {awards:1, badges:1, honor:1, duanwei:1, ach:1, wheel:1, evo:1, co:1, quiz:1, sim:1, timemachine:1, forecast:1, theatre:1};
+  labDone = {awards:1, badges:1, honor:1, duanwei:1, ach:1, wheel:1, evo:1, co:1, quiz:1, sim:1, timemachine:1, forecast:1};
   labRestore();
   var so=$('slOut'); if(so && !so.innerHTML) so.innerHTML='<div class="desc">点「拉杆」开始，三列会依次停下。</div>';
   var ro=$('rdOut'); if(ro && !ro.innerHTML) ro.innerHTML='<div class="desc">点「开始播报」，电台会逐条播出本周违纪要闻。</div>';
