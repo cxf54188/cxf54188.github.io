@@ -269,7 +269,7 @@ footer kbd { background: rgba(255, 255, 255, .07); border: 1px solid var(--line)
           <p>薄冰只承载体积 1 的身体。胀着的时候，它和一堵墙没有区别。</p>
         </div>
       </div>
-      <p class="home-foot">方向键移动 · 空格 呼吸（胀缩） · Z 撤销 · R 重来 · N 下一关 · ESC 关卡表</p>
+      <p class="home-foot">方向键移动 · 空格 呼吸（胀缩） · Z 撤销 · R 重来 · ESC 关卡表</p>
     </div>
   </section>
 
@@ -365,7 +365,7 @@ footer kbd { background: rgba(255, 255, 255, .07); border: 1px solid var(--line)
 
     <footer>
       <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> 或 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动一步 ·
-      <kbd>空格</kbd> 呼吸（胀缩循环） · <kbd>E</kbd> 吸气 · <kbd>Q</kbd> 呼气 · <kbd>Z</kbd> 撤销 · <kbd>R</kbd> 重来 · <kbd>N</kbd> 下一关 · <kbd>ESC</kbd> 关卡表<br>
+      <kbd>空格</kbd> 呼吸（胀缩循环） · <kbd>E</kbd> 吸气 · <kbd>Q</kbd> 呼气 · <kbd>Z</kbd> 撤销 · <kbd>R</kbd> 重来 · <kbd>ESC</kbd> 关卡表<br>
       提示：身体占据 s×s 格——任何一格是墙都过不去，但只要一格踩实，其余悬在深渊上也算站住。
     </footer>
   </section>
@@ -1623,10 +1623,6 @@ document.addEventListener('keydown', function (ev) {
     if (k === 'q') { doAction('X'); return; }
     if (k === 'z') { undo(); return; }
     if (k === 'r') { reset(true); return; }
-    if (k === 'n' && cur < LEVELS.length - 1) {
-      document.getElementById('win').classList.remove('show');
-      loadLevel(cur + 1); show('play'); return;
-    }
     if (k === 'escape') { show('select'); return; }
   } else if (screen === 'select' && k === 'escape') { show('home'); }
 });
