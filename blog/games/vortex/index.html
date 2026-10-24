@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>涡 · VORTEX</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #05080f;
+  --line: rgba(255, 255, 255, .08);
+  --panel: rgba(255, 255, 255, .035);
+  --txt: #dbe6f5;
+  --dim: #7c8aa5;
+  --cy: #22d3ee;
+  --p1: #67e8f9;
+  --p2: #a78bfa;
+  --e1: #4ade80;
+  --e3: #fbbf24;
+  --star: #fbbf24;
+}
+html, body { height: 100%; }
+body {
+  background:
+    radial-gradient(1100px 620px at 22% -10%, #10203c 0%, transparent 60%),
+    radial-gradient(900px 500px at 88% 8%, #1c1030 0%, transparent 62%),
+    var(--bg);
+  color: var(--txt);
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, system-ui, sans-serif;
+  min-height: 100%;
+  display: flex; justify-content: center;
+  padding: 22px 18px 40px;
+  -webkit-font-smoothing: antialiased;
+}
+.app { width: 100%; max-width: 1120px; }
+.screen { display: none; }
+.screen.on { display: block; animation: fade .3s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+
+/* ============ 主界面 ============ */
+.home { text-align: center; padding: 46px 0 10px; }
+.home .title {
+  font-size: 62px; font-weight: 800; letter-spacing: 14px; margin-left: 14px;
+  background: linear-gradient(180deg, #ffffff, #7dd3fc 60%, #22d3ee);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 40px rgba(34, 211, 238, .35));
+}
+.home .en { font-size: 12px; letter-spacing: 12px; color: #6b7b96; margin: 6px 0 0 12px; }
+.home .tag { color: #9fb0c9; font-size: 15px; margin: 22px 0 6px; letter-spacing: 2px; }
+.home .tag b { color: var(--p1); font-weight: 600; }
+.home .tagline { color: #64748f; font-size: 12.5px; letter-spacing: 1px; }
+.home-btns { display: flex; gap: 12px; justify-content: center; margin: 32px 0 18px; flex-wrap: wrap; }
+.big-btn {
+  padding: 14px 34px; border-radius: 14px; cursor: pointer; font-family: inherit; font-size: 15px;
+  background: linear-gradient(180deg, rgba(34, 211, 238, .28), rgba(34, 211, 238, .12));
+  border: 1px solid rgba(34, 211, 238, .55); color: #e8feff; letter-spacing: 3px;
+  box-shadow: 0 10px 30px rgba(34, 211, 238, .16); transition: .16s;
+}
+.big-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(34, 211, 238, .28); }
+.big-btn.ghost { background: rgba(255, 255, 255, .04); border-color: var(--line); color: var(--txt); box-shadow: none; }
+.big-btn.ghost:hover { border-color: rgba(34, 211, 238, .45); }
+.home-star { color: var(--star); font-size: 13px; letter-spacing: 2px; margin-bottom: 6px; }
+.home-star b { font-size: 17px; }
+.home-star span { color: var(--dim); }
+
+.rules { max-width: 720px; margin: 26px auto 0; text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rule { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 13px 15px; }
+.rule h4 { font-size: 12.5px; color: var(--p1); letter-spacing: 1px; margin-bottom: 5px; font-weight: 600; }
+.rule p { font-size: 12px; color: #9fb0c9; line-height: 1.7; }
+.home-foot { margin-top: 30px; color: #4d5a70; font-size: 11.5px; letter-spacing: 1px; }
+
+/* ============ 选关 ============ */
+.sel-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.back-btn {
+  padding: 8px 16px; border-radius: 10px; cursor: pointer; font-family: inherit; font-size: 12.5px;
+  background: rgba(255, 255, 255, .05); border: 1px solid var(--line); color: var(--txt); transition: .14s;
+}
+.back-btn:hover { border-color: rgba(34, 211, 238, .5); color: var(--p1); }
+.sel-head h2 { font-size: 20px; letter-spacing: 4px; font-weight: 700; }
+.sel-head .total { margin-left: auto; color: var(--star); font-size: 13px; letter-spacing: 1px; }
+.sel-head .total span { color: var(--dim); }
+
+.chapter { margin-bottom: 22px; }
+.chapter-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 11px; }
+.chapter-head .cn { font-size: 15px; font-weight: 700; letter-spacing: 3px; }
+.chapter-head .cn em { font-style: normal; color: var(--dim); font-size: 11px; letter-spacing: 2px; margin-right: 8px; }
+.chapter-head .cs { font-size: 11.5px; color: var(--dim); }
+.chapter-head .cst { margin-left: auto; font-size: 12px; color: var(--star); }
+.lv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 10px; }
+.lv-card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px 13px;
+  cursor: pointer; transition: .16s; text-align: left; font-family: inherit; color: var(--txt); position: relative;
+}
+.lv-card:hover { border-color: rgba(34, 211, 238, .55); background: rgba(34, 211, 238, .07); transform: translateY(-2px); }
+.lv-card .no { font-size: 10.5px; color: var(--dim); letter-spacing: 2px; }
+.lv-card .nm { font-size: 15px; font-weight: 600; margin: 2px 0 3px; }
+.lv-card .sb { font-size: 10.5px; color: #6e7d95; line-height: 1.5; height: 31px; overflow: hidden; }
+.lv-card .st { font-size: 13px; color: #3b4761; letter-spacing: 2px; margin-top: 7px; }
+.lv-card .st b { color: var(--star); font-weight: 400; text-shadow: 0 0 10px rgba(251, 191, 36, .5); }
+.lv-card .meta { font-size: 10px; color: #5c6b83; margin-top: 3px; letter-spacing: 1px; }
+.lv-card.locked { opacity: .42; cursor: not-allowed; }
+.lv-card.locked:hover { transform: none; border-color: var(--line); background: var(--panel); }
+.lv-card.locked .nm::after { content: ' 🔒'; font-size: 11px; }
+.lv-card.full { border-color: rgba(251, 191, 36, .4); }
+
+/* ============ 游戏 ============ */
+header { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.lv-info { flex: 1; min-width: 200px; }
+.lv-name { font-size: 17px; font-weight: 600; }
+.lv-name em { font-style: normal; color: var(--dim); font-weight: 400; margin-right: 8px; font-variant-numeric: tabular-nums; }
+.lv-sub { font-size: 12.5px; color: var(--dim); margin-top: 3px; }
+.stats { display: flex; gap: 10px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 7px 14px; text-align: center; min-width: 74px; }
+.stat b { display: block; font-size: 21px; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 10.5px; color: var(--dim); letter-spacing: 1px; }
+.stat.good b { color: var(--e1); }
+
+main { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+.board-col { flex: 0 0 auto; }
+.board-wrap {
+  position: relative; padding: 14px; border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, .012));
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+canvas { display: block; border-radius: 12px; }
+
+.beat-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.beat-track { flex: 1; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .07); overflow: hidden; display: flex; gap: 2px; padding: 0 2px; }
+.beat-cell { flex: 1; border-radius: 2px; background: rgba(255, 255, 255, .05); transition: background .18s; }
+.beat-cell.on { background: var(--cy); box-shadow: 0 0 8px var(--cy); }
+.beat-cell.over { background: var(--e3); box-shadow: 0 0 8px rgba(251, 191, 36, .7); }
+.beat-label { font-size: 11px; color: var(--dim); font-variant-numeric: tabular-nums; min-width: 104px; text-align: right; }
+.beat-label b { color: var(--p1); font-weight: 600; }
+.beat-label i { font-style: normal; color: var(--star); }
+
+.panel { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 14px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+.card h3 { font-size: 12px; letter-spacing: 2px; color: var(--dim); font-weight: 600; margin-bottom: 10px; }
+.card p { font-size: 12.8px; line-height: 1.75; color: #b7c4d8; }
+.card p + p { margin-top: 7px; }
+.card .hl { color: var(--cy); }
+.tip { border-left: 2px solid var(--cy); padding-left: 10px; color: var(--p1); font-size: 12.5px; line-height: 1.7; }
+
+.goal { display: flex; flex-direction: column; gap: 7px; }
+.goal-row { display: flex; align-items: center; gap: 9px; font-size: 12px; color: #9fb0c9; }
+.goal-row i { color: #3b4761; font-style: normal; font-size: 14px; }
+.goal-row.done i { color: var(--star); text-shadow: 0 0 10px rgba(251, 191, 36, .55); }
+.goal-row.done { color: #cbd6e8; }
+.goal-row em { margin-left: auto; font-style: normal; color: #5c6b83; font-size: 11px; }
+
+.timeline { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; min-height: 34px; }
+.tk { width: 27px; height: 27px; border-radius: 7px; background: rgba(255, 255, 255, .05); display: flex; align-items: center; justify-content: center; font-size: 13px; color: #93a3bd; border: 1px solid transparent; }
+.tk.new { background: rgba(103, 232, 249, .14); border-color: rgba(103, 232, 249, .45); color: var(--p1); }
+.tl-note { font-size: 11.5px; color: var(--dim); margin-top: 9px; line-height: 1.7; }
+.tl-note b { color: #cbd6e8; font-weight: 600; }
+
+.legend { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+.lg { display: flex; align-items: center; gap: 8px; font-size: 11.8px; color: #a9b7cd; }
+.lg i { width: 15px; height: 15px; border-radius: 4px; flex: 0 0 auto; display: block; }
+.lg .dot { border-radius: 50%; }
+
+.pad { display: grid; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(2, 46px); gap: 7px; justify-content: center; }
+.pad button {
+  background: rgba(255, 255, 255, .05); border: 1px solid var(--line); color: var(--txt);
+  border-radius: 11px; font-size: 17px; cursor: pointer; transition: .14s; font-family: inherit;
+}
+.pad button:hover { background: rgba(34, 211, 238, .16); border-color: rgba(34, 211, 238, .5); }
+.pad button:active { transform: translateY(1px); }
+.pad .up { grid-column: 2; grid-row: 1; }
+.pad .left { grid-column: 1; grid-row: 2; }
+.pad .down { grid-column: 2; grid-row: 2; }
+.pad .right { grid-column: 3; grid-row: 2; }
+.pad .wait { grid-column: 3; grid-row: 1; font-size: 13px; color: var(--dim); }
+.btn-row { display: flex; gap: 8px; margin-top: 11px; flex-wrap: wrap; }
+.btn {
+  flex: 1; min-width: 76px; padding: 9px 10px; border-radius: 11px; cursor: pointer;
+  background: rgba(255, 255, 255, .05); border: 1px solid var(--line); color: var(--txt);
+  font-size: 12.5px; font-family: inherit; transition: .14s;
+}
+.btn:hover { background: rgba(34, 211, 238, .14); border-color: rgba(34, 211, 238, .45); }
+.btn.primary { background: rgba(34, 211, 238, .18); border-color: rgba(34, 211, 238, .55); color: #dffaff; }
+.btn:disabled { opacity: .38; cursor: not-allowed; }
+
+footer { margin-top: 18px; font-size: 11.5px; color: #64748f; line-height: 1.9; }
+footer kbd { background: rgba(255, 255, 255, .07); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; font-family: inherit; font-size: 11px; color: #b7c4d8; }
+
+/* ============ 结算 ============ */
+.win {
+  position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+  background: rgba(4, 7, 14, .62); backdrop-filter: blur(4px); z-index: 30;
+}
+.win.show { display: flex; animation: fade .35s ease; }
+.win-box {
+  text-align: center; padding: 34px 44px; border-radius: 22px; min-width: 380px;
+  background: linear-gradient(180deg, rgba(20, 32, 56, .96), rgba(9, 14, 26, .96));
+  border: 1px solid rgba(34, 211, 238, .28); box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+  animation: pop .45s cubic-bezier(.2, 1.4, .4, 1);
+}
+@keyframes pop { from { transform: scale(.88) translateY(14px); opacity: 0 } to { transform: scale(1) translateY(0); opacity: 1 } }
+.win-box h2 { font-size: 27px; letter-spacing: 6px; color: #eafcff; text-shadow: 0 0 30px rgba(34, 211, 238, .6); font-weight: 700; }
+.win-sub { font-size: 11.5px; color: var(--dim); letter-spacing: 2px; margin-top: 8px; }
+.win-stars { display: flex; justify-content: center; gap: 14px; margin: 20px 0 6px; }
+.win-stars .ws { font-size: 40px; color: #2c3648; transition: .3s; transform: scale(1); }
+.win-stars .ws.on { color: var(--star); text-shadow: 0 0 22px rgba(251, 191, 36, .7); animation: starpop .5s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes starpop { 0% { transform: scale(.2) rotate(-40deg); opacity: 0 } 60% { transform: scale(1.25) } 100% { transform: scale(1); opacity: 1 } }
+.win-goals { margin: 14px 0 20px; display: flex; flex-direction: column; gap: 5px; }
+.win-goals div { font-size: 11.5px; color: #7c8aa5; letter-spacing: 1px; }
+.win-goals div.ok { color: var(--star); }
+.win-box .row { display: flex; gap: 10px; justify-content: center; margin-top: 4px; }
+.win-box .btn { flex: 0 0 auto; min-width: 106px; padding: 11px 18px; font-size: 13px; }
+
+
+/* ============ 水流 ============ */
+.flow-row { display: flex; align-items: center; gap: 10px; margin-top: 7px; }
+.flow-track { flex: 1; display: flex; gap: 5px; align-items: center; height: 18px; }
+.flow-chip {
+  display: flex; align-items: center; gap: 5px; padding: 1px 8px 1px 6px; border-radius: 8px;
+  background: rgba(103, 232, 249, .1); border: 1px solid rgba(103, 232, 249, .3);
+  font-size: 11px; color: #a5e8f7; letter-spacing: .5px;
+}
+.flow-chip b { color: var(--p1); font-weight: 700; }
+.flow-label { font-size: 11px; color: var(--dim); min-width: 104px; text-align: right; }
+.flow-label b { color: var(--p1); font-weight: 600; }
+.flow-label i { font-style: normal; color: var(--star); }
+.stat.drift b { color: var(--star); }
+.tk.slide { background: rgba(56, 189, 248, .16); border-color: rgba(56, 189, 248, .5); color: #7dd3fc; }
+.tk.stir { background: rgba(251, 191, 36, .16); border-color: rgba(251, 191, 36, .5); color: var(--star); }
+
+@keyframes shake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
+
+@media (max-width: 900px) {
+  main { flex-direction: column; align-items: center; }
+  .panel { width: 100%; max-width: 520px; }
+  .rules { grid-template-columns: 1fr; }
+  .home .title { font-size: 42px; letter-spacing: 8px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ 主界面 ============ -->
+  <section class="screen on" id="screen-home">
+    <div class="home">
+      <div class="title">涡</div>
+      <div class="en">V O R T E X</div>
+      <p class="tag">你踩上的每一格水，都会<b>把你冲走</b>。</p>
+      <p class="tagline">而水流被你搅过之后，会转向——所以你走过的路，会一遍遍改写成新的样子。</p>
+      <div class="home-btns">
+        <button class="big-btn" id="btn-continue">继续旅程</button>
+        <button class="big-btn ghost" id="btn-select">关卡选择</button>
+      </div>
+      <div class="home-star" id="home-star"></div>
+      <div class="rules">
+        <div class="rule">
+          <h4>漂流</h4>
+          <p>踏进涡里就会被水推走，一路滑到冲进静水、撞上岸，或滑出边界为止。<b>中途停不下来。</b></p>
+        </div>
+        <div class="rule">
+          <h4>转向</h4>
+          <p>滑行途中每经过一个涡，就顺着那一格的方向拐弯。整条水路是一条折线。</p>
+        </div>
+        <div class="rule">
+          <h4>搅动</h4>
+          <p>滑过的每一个涡都会被你搅得转 90°。同一片水域走第二遍，出来的路完全不同。</p>
+        </div>
+        <div class="rule">
+          <h4>漩涡</h4>
+          <p>站在涡上时按空格，可原地把它拧转 90°（算一步）。若水流首尾相接成环，你会被卷住——那步走不了。</p>
+        </div>
+      </div>
+      <p class="home-foot">方向键移动 · 空格搅动脚下的涡 · Z 撤销 · R 重来 · N 下一关 · ESC 关卡表</p>
+    </div>
+  </section>
+
+  <!-- ============ 选关 ============ -->
+  <section class="screen" id="screen-select">
+    <div class="sel-head">
+      <button class="back-btn" id="sel-back">← 主界面</button>
+      <h2>关卡选择</h2>
+      <div class="total" id="sel-total"></div>
+    </div>
+    <div id="chapters"></div>
+  </section>
+
+  <!-- ============ 游戏 ============ -->
+  <section class="screen" id="screen-play">
+    <header>
+      <button class="back-btn" id="play-back">← 关卡表</button>
+      <div class="lv-info">
+        <div class="lv-name" id="lv-name"></div>
+        <div class="lv-sub" id="lv-sub"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="steps">0</b><span>步数</span></div>
+        <div class="stat" id="stat-best"><b id="best">0</b><span>最优</span></div>
+        <div class="stat"><b id="pbest">—</b><span>我的纪录</span></div>
+        <div class="stat" id="stat-drift"><b id="drift">0</b><span>漂流</span></div>
+      </div>
+    </header>
+
+    <main>
+      <div class="board-col">
+        <div class="board-wrap"><canvas id="board"></canvas></div>
+        <div class="beat-row">
+          <div class="beat-track" id="beat-track"></div>
+          <div class="beat-label" id="beat-label"></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-track" id="flow-track"></div>
+          <div class="flow-label" id="flow-label"></div>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <div class="card">
+          <h3>目 标</h3>
+          <div class="goal" id="goal"></div>
+        </div>
+
+        <div class="card tip" id="tip"></div>
+
+        <div class="card">
+          <h3>轨 迹</h3>
+          <div class="timeline" id="timeline"></div>
+          <div class="tl-note" id="tl-note"></div>
+        </div>
+
+        <div class="card">
+          <h3>图 例</h3>
+          <div class="legend">
+            <div class="lg"><i style="background:#0d1a2e;border:1px solid rgba(56,189,248,.55)"></i>涡（踏上去就被冲走）</div>
+            <div class="lg"><i style="background:#101c33;border:1px dashed rgba(103,232,249,.5)"></i>静水（水流到此散开）</div>
+            <div class="lg"><i style="background:#3a2d6b;border:1px solid rgba(167,139,250,.62)"></i>岸（撞上就停）</div>
+            <div class="lg"><i style="background:#04070e;border:1px solid rgba(255,255,255,.14)"></i>深渊（同样挡住你）</div>
+            <div class="lg"><i style="background:#fbbf24;transform:rotate(45deg)"></i>出口符文</div>
+            <div class="lg"><i class="dot" style="background:#67e8f9"></i>你</div>
+            <div class="lg"><i style="background:rgba(251,191,36,.18);border:1px solid #fbbf24"></i>刚被你搅过的涡</div>
+            <div class="lg"><i style="background:rgba(103,232,249,.15);border:1px dashed #67e8f9"></i>悬停预览：滑行路径</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>操 作</h3>
+          <div class="pad">
+            <button id="up" class="up">↑</button>
+            <button id="left" class="left">←</button>
+            <button id="down" class="down">↓</button>
+            <button id="right" class="right">→</button>
+            <button id="turn" class="wait">搅动</button>
+          </div>
+          <div class="btn-row">
+            <button class="btn" id="undo">撤销</button>
+            <button class="btn" id="reset">重来</button>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> 或 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动 ·
+      <kbd>空格</kbd> 搅动脚下的涡（原地转 90°，算一步） · <kbd>Z</kbd> 撤销 · <kbd>R</kbd> 重来 · <kbd>N</kbd> 下一关 · <kbd>ESC</kbd> 关卡表<br>
+      提示：把鼠标停在你想去的那格上，虚线会告诉你——踏下去之后，水会带你去哪里。
+    </footer>
+  </section>
+</div>
+
+<!-- ============ 结算 ============ -->
+<div class="win" id="win">
+  <div class="win-box">
+    <h2 id="win-title">归流达成</h2>
+    <div class="win-sub" id="win-sub"></div>
+    <div class="win-stars" id="win-stars">
+      <span class="ws">★</span><span class="ws">★</span><span class="ws">★</span>
+    </div>
+    <div class="win-goals" id="win-goals"></div>
+    <div class="row">
+      <button class="btn" id="win-again">再走一次</button>
+      <button class="btn" id="win-list">关卡表</button>
+      <button class="btn primary" id="win-next">下一关</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* 涡 VORTEX —— 核心规则引擎（浏览器 / Node 通用）
+   地形：. 静水   ^>v< 涡   # 岸   ~ 深渊   G 出口
+   规则：踏入涡 → 被水流推走，沿流向滑行，遇涡则转向，直到冲进静水或撞上岸；
+        滑过的每一个涡都被搅动，顺时针转 90°。
+        空格 = 原地搅动脚下的涡（花一步，不移动）。 */
+var ENGINE = (function () {
+  'use strict';
+
+  var STILL = 0, VORTEX = 1, WALL = 2, ABYSS = 3, EXIT = 4;
+  var DX = [0, 1, 0, -1], DY = [-1, 0, 1, 0];
+  var ACTS = ['U', 'R', 'D', 'L', 'T'];
+  var ARROW = ['^', '>', 'v', '<'];
+  var MAXSLIDE = 300;
+
+  function parse(lv) {
+    var rows = lv.rows, h = rows.length, w = rows[0].length, n = w * h;
+    var kind = new Int8Array(n), dir = new Int8Array(n);
+    dir.fill(-1);
+    var ex = -1, ey = -1, vx = [];
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var c = rows[y].charAt(x), i = y * w + x;
+        if (c === '.') kind[i] = STILL;
+        else if (c === '#') kind[i] = WALL;
+        else if (c === '~') kind[i] = ABYSS;
+        else if (c === 'G') { kind[i] = EXIT; ex = x; ey = y; }
+        else {
+          kind[i] = VORTEX;
+          dir[i] = c === '^' ? 0 : c === '>' ? 1 : c === 'v' ? 2 : c === '<' ? 3 : 0;
+          vx.push(i);
+        }
+      }
+    }
+    return { w: w, h: h, n: n, kind: kind, dir: dir, ex: ex, ey: ey, vx: vx,
+      name: lv.name || '', subtitle: lv.subtitle || '', tip: lv.tip || '', best: lv.best || 0 };
+  }
+
+  function init(L, px, py) { return { px: px, py: py, dir: L.dir.slice() }; }
+  function clone(st) { return { px: st.px, py: st.py, dir: st.dir.slice() }; }
+
+  function passable(L, x, y) {
+    if (x < 0 || y < 0 || x >= L.w || y >= L.h) return false;
+    var k = L.kind[y * L.w + x];
+    return k === STILL || k === VORTEX || k === EXIT;
+  }
+
+  /* 从 (sx,sy) 滑行；就地搅动 t.dir。返回 null 表示卷进环形漩涡（该操作非法） */
+  function slide(t, L, sx, sy) {
+    var si = sy * L.w + sx, d = t.dir[si];
+    var cx = sx, cy = sy, path = [[sx, sy]], seen = Object.create(null);
+    seen[si * 4 + d] = 1;
+    for (;;) {
+      var nx = cx + DX[d], ny = cy + DY[d];
+      if (!passable(L, nx, ny)) break;            // 撞岸 / 深渊 / 出界：停在当前格
+      cx = nx; cy = ny; path.push([cx, cy]);
+      var ci = cy * L.w + cx;
+      if (L.kind[ci] !== VORTEX) break;           // 冲进静水或出口：水流散了
+      d = t.dir[ci];
+      if (seen[ci * 4 + d]) return null;          // 环形流：卷入漩涡
+      seen[ci * 4 + d] = 1;
+      if (path.length > MAXSLIDE) return null;
+    }
+    for (var p = 0; p < path.length; p++) {
+      var pi = path[p][1] * L.w + path[p][0];
+      if (L.kind[pi] === VORTEX) t.dir[pi] = (t.dir[pi] + 1) & 3;
+    }
+    return { ex: cx, ey: cy, path: path };
+  }
+
+  function step(L, st, act) {
+    var t = clone(st), i = st.py * L.w + st.px;
+    if (act === 'T') {
+      if (L.kind[i] !== VORTEX) return null;      // 静水上没有东西可搅
+      t.dir[i] = (t.dir[i] + 1) & 3;
+      return { st: t, path: [[st.px, st.py]], stir: true, slid: false };
+    }
+    var d = ACTS.indexOf(act);
+    if (d < 0 || d > 3) return null;
+    var nx = st.px + DX[d], ny = st.py + DY[d];
+    if (!passable(L, nx, ny)) return null;
+    if (L.kind[ny * L.w + nx] === VORTEX) {
+      var r = slide(t, L, nx, ny);
+      if (!r) return null;
+      t.px = r.ex; t.py = r.ey;
+      return { st: t, path: r.path, stir: false, slid: true };
+    }
+    t.px = nx; t.py = ny;
+    return { st: t, path: [[nx, ny]], stir: false, slid: false };
+  }
+
+  /* 试算：不改变状态，只回答"踏上去会滑到哪" —— 供悬停预览使用 */
+  function drySlide(L, st, sx, sy) {
+    if (L.kind[sy * L.w + sx] !== VORTEX) return null;
+    var t = clone(st);
+    var r = slide(t, L, sx, sy);
+    if (!r) return null;
+    return { path: r.path, ex: r.ex, ey: r.ey };
+  }
+
+  function isWin(L, st) { return st.px === L.ex && st.py === L.ey; }
+
+  function key(L, st) {
+    var s = st.px + ',' + st.py;
+    for (var k = 0; k < L.vx.length; k++) s += st.dir[L.vx[k]];
+    return s;
+  }
+
+  /* 供绘制：把路径转成带方向的分段 */
+  function trace(L, st, path) {
+    var out = [];
+    for (var p = 0; p < path.length; p++) {
+      var i = path[p][1] * L.w + path[p][0];
+      out.push([path[p][0], path[p][1], L.kind[i] === VORTEX ? st.dir[i] : -1]);
+    }
+    return out;
+  }
+
+  return {
+    STILL: STILL, VORTEX: VORTEX, WALL: WALL, ABYSS: ABYSS, EXIT: EXIT,
+    DX: DX, DY: DY, ACTS: ACTS, ARROW: ARROW,
+    parse: parse, init: init, clone: clone, passable: passable,
+    step: step, isWin: isWin, key: key, trace: trace, drySlide: drySlide
+  };
+})();
+
+if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
+
+</script>
+<script>
+window.LEVELS = [
+ {id:'1-1',chapter:1,name:'入涡',subtitle:'踏进涡里，你就不再属于自己',tip:'你踩上涡的一瞬间就会被水推走，一路滑到冲进静水或撞上岸为止。先算清楚会滑到哪里，再抬脚。',
+  rows:['#######','##vG^^#','##v^^##','#..<>>#','#<<<>>#','#######'],
+  start:[5,3],best:5},
+ {id:'1-2',chapter:1,name:'长漂',subtitle:'一次落水，横穿半张图',tip:'滑行不会中途停下。一次落水可能带你穿过整片水域——终点常常远得超出直觉。',
+  rows:['#######','#.<..<#','#<<<<G#','##>>^^#','#>#>^^#','#######'],
+  start:[2,3],best:6},
+ {id:'1-3',chapter:1,name:'搅流',subtitle:'不移动，也能拧动水流',tip:'站在涡上时，空格可以搅动脚下那一格，让它转 90°。这是唯一不必移动就能改水路的办法。',
+  rows:['#######','###Gvv#','##>>.v#','#vvv<<#','#vvv<<#','#######'],
+  start:[3,4],best:6},
+ {id:'1-4',chapter:1,name:'回水',subtitle:'同一片水域，第二遍就变了',tip:'你滑过的每一个涡都会被搅动转向。同一片水流走第二遍，出来的路完全不同。',
+  rows:['#######','#vGv.>#','##vv>.#','#vvv>>#','##vvv>#','#######'],
+  start:[4,2],best:6},
+ {id:'1-5',chapter:1,name:'窄门',subtitle:'只有唯一一条水路',tip:'水路越窄越要精确。这一关只有唯一解——每一步都是锁死的。',
+  rows:['#######','#^^^^^#','#^^^.^#','#<v##.#','#v#.vG#','#######'],
+  start:[2,3],best:7},
+ {id:'2-1',chapter:2,name:'拧流',subtitle:'把一片水一格一格拧过来',tip:'连续搅动同一个位置，水流会一格一格转向，直到给你开出一条河道。',
+  rows:['########','#v.#G>>#','#>vv.>>#','#.v^<vv#','#vvvvvv#','#<##<<<#','########'],
+  start:[6,3],best:9},
+ {id:'2-2',chapter:2,name:'改道',subtitle:'先改水，再下水',tip:'走不通的时候，先想想能不能把某几格的水拧个方向，让下一次滑行落到别处。',
+  rows:['########','#><..>>#','#<<<>>>#','#>>#>.>#','##^>>>>#','##<vGvv#','########'],
+  start:[1,1],best:9},
+ {id:'2-3',chapter:2,name:'分水',subtitle:'水流会分岔，也会汇合',tip:'同一片水域里藏着好几股方向不同的流。找准你要上的那一股。',
+  rows:['########','#>>>>>>#','#>#<>.>#','#>><^^^#','#.>^^#^#','#<<G<<<#','########'],
+  start:[4,1],best:10},
+ {id:'2-4',chapter:2,name:'往复',subtitle:'来来回回，把水刷成你要的形状',tip:'这一关靠反复冲刷同一片水域开路。别怕绕——每一次经过都在改写它。',
+  rows:['########','#<<<#vv#','#<<<v.G#','#<<<>>>#','##<<>>.#','#.^^<<>#','########'],
+  start:[2,4],best:10},
+ {id:'2-5',chapter:2,name:'定水',subtitle:'把整片水调成一个姿态',tip:'你需要的不只是一条路，而是让整片水域在某个瞬间呈现特定形状。',
+  rows:['########','##vv^^^#','##>v^>.#','#^^^.^^#','#^^^^^^#','#.vvvG##','########'],
+  start:[5,2],best:12},
+ {id:'3-1',chapter:3,name:'大流',subtitle:'一次漂流穿过八格',tip:'最长的滑行可以跨越整张图。先找到那条最长的水道。',
+  rows:['########','#<<.>>>#','#<<>>>>#','#^^#^^^#','#^^##^^#','#<G<.^^#','########'],
+  start:[6,5],best:12},
+ {id:'3-2',chapter:3,name:'五搅',subtitle:'五次搅动，五分之一的水路',tip:'搅动是稀缺资源：每一步都算数。想清楚拧哪一格、拧几次。',
+  rows:['#########','##vG<v<##','##<v^<v<#','#v<<<<###','#<<<<<<.#','#<<<<.<>#','#########'],
+  start:[6,5],best:12},
+ {id:'3-3',chapter:3,name:'深涡',subtitle:'水会自己打转',tip:'当水流首尾相接，你会被卷进漩涡——那种走法是不允许的。留意环形。',
+  rows:['########','#<.<>>>#','#><<.>>#','###<<<<#','#^^^<^G#','#>##^^^#','########'],
+  start:[4,3],best:12},
+ {id:'3-4',chapter:3,name:'乱流',subtitle:'方向越杂，越要先定一个锚',tip:'这片水域几乎没有规律。先找一个你能反复利用的固定结构。',
+  rows:['#########','#v^^<<<<#','#^^^<<.<#','#^^.<<#<#','#v^v<>#>#','#>##<<G>#','#########'],
+  start:[2,3],best:13},
+ {id:'3-5',chapter:3,name:'归海',subtitle:'十二次漂流，才走到出口',tip:'压轴关。你需要把整片水域一遍遍重刷，直到它把你送到出口。',
+  rows:['#########','#>#><<<v#','#>#><<^v#','#G##<<<v#','#v<>>>>v#','#.vv>>>.#','#########'],
+  start:[4,2],best:17},
+];
+
+
+</script>
+<script>
+/* ================= 常量 ================= */
+var CHAPTERS = [
+  { n: 1, cn: '初涡', en: 'FIRST DRIFT', desc: '踏水即滑 · 学会被冲走' },
+  { n: 2, cn: '搅流', en: 'STIRRING', desc: '原地拧转水流开路' },
+  { n: 3, cn: '乱流', en: 'WHIRLPOOL', desc: '长距离漂流与反复重刷' }
+];
+var TOTAL_STARS = LEVELS.length * 3;
+var GLYPH = { U: '↑', D: '↓', L: '←', R: '→' };
+var ACT_NAME = { U: '向上', D: '向下', L: '向左', R: '向右', T: '搅动脚下的涡' };
+var DIRV = { U: [0, -1], D: [0, 1], L: [-1, 0], R: [1, 0] };
+var ARROW_CH = ['↑', '→', '↓', '←'];
+
+var COL = {
+  waterTop: '#123b5c', waterBot: '#0a1d33', waterEdge: 'rgba(56,189,248,.22)',
+  stillTop: '#101c33', stillBot: '#0b1626', stillEdge: 'rgba(103,232,249,.3)',
+  bankTop: '#4a3a86', bankBot: '#241a48', bankEdge: 'rgba(167,139,250,.5)',
+  voidCol: '#04070e', player: '#67e8f9', exit: '#fbbf24', arrow: '#7dd3fc'
+};
+
+var cv = document.getElementById('board');
+var ctx = cv.getContext('2d');
+var CELL = 62, PAD = 16;
+
+var L = null, st = null, hist = [], cur = 0, moves = [], won = false, screen = 'home';
+var trails = [], parts = [], pAnim = null, dirFrom = null, dirT0 = null, stirT0 = null;
+var drift = 0, hover = null, lastPath = null, stepLog = [];
+
+/* ================= 存档 ================= */
+var SAVE_KEY = 'vortex.v1';
+var save = { stars: {}, best: {} };
+try {
+  var raw = localStorage.getItem(SAVE_KEY);
+  if (raw) save = JSON.parse(raw);
+  if (!save.stars) save.stars = {};
+  if (!save.best) save.best = {};
+} catch (e) { }
+function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) { } }
+function starsOf(id) { return save.stars[id] || 0; }
+function totalStars() { var s = 0; LEVELS.forEach(function (l) { s += starsOf(l.id); }); return s; }
+function unlocked(i) { return i === 0 || starsOf(LEVELS[i - 1].id) >= 1; }
+function firstUnfinished() {
+  for (var i = 0; i < LEVELS.length; i++) if (unlocked(i) && starsOf(LEVELS[i].id) === 0) return i;
+  for (var j = LEVELS.length - 1; j >= 0; j--) if (unlocked(j)) return j;
+  return 0;
+}
+function starsFor(best, steps) {
+  var s = 1;
+  if (steps <= best * 2) s++;
+  if (steps <= best) s++;
+  return s;
+}
+
+/* ================= 音效 ================= */
+var actx = null;
+function ac() { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { } } return actx; }
+function tone(f, dur, type, vol, delay) {
+  var a = ac(); if (!a) return;
+  var o = a.createOscillator(), g = a.createGain();
+  o.type = type || 'sine'; o.frequency.value = f;
+  var t0 = a.currentTime + (delay || 0);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(vol || .07, t0 + .012);
+  g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  o.connect(g); g.connect(a.destination);
+  o.start(t0); o.stop(t0 + dur + .05);
+}
+
+/* ================= 屏幕 ================= */
+function show(name) {
+  screen = name;
+  ['home', 'select', 'play'].forEach(function (n) {
+    document.getElementById('screen-' + n).classList.toggle('on', n === name);
+  });
+  if (name === 'home') renderHome();
+  if (name === 'select') renderSelect();
+}
+
+function renderHome() {
+  var s = totalStars();
+  document.getElementById('home-star').innerHTML =
+    '★ <b>' + s + '</b> <span>/ ' + TOTAL_STARS + '　·　已通关 ' +
+    LEVELS.filter(function (l) { return starsOf(l.id) > 0; }).length + ' / ' + LEVELS.length + ' 关</span>';
+  var btn = document.getElementById('btn-continue');
+  var idx = firstUnfinished();
+  var allDone = LEVELS.every(function (l) { return starsOf(l.id) > 0; });
+  btn.textContent = allDone ? '重玩关卡' : (idx === 0 ? '开始旅程' : '继续 · 第 ' + (idx + 1) + ' 关');
+}
+
+function renderSelect() {
+  document.getElementById('sel-total').innerHTML = '★ <b>' + totalStars() + '</b> <span>/ ' + TOTAL_STARS + '</span>';
+  var box = document.getElementById('chapters');
+  box.innerHTML = '';
+  CHAPTERS.forEach(function (ch) {
+    var lvs = LEVELS.filter(function (l) { return l.chapter === ch.n; });
+    var got = 0; lvs.forEach(function (l) { got += starsOf(l.id); });
+    var wrap = document.createElement('div');
+    wrap.className = 'chapter';
+    var head = document.createElement('div');
+    head.className = 'chapter-head';
+    head.innerHTML = '<div class="cn"><em>CHAPTER ' + ch.n + '</em>' + ch.cn + '</div>' +
+      '<div class="cs">' + ch.desc + '</div>' +
+      '<div class="cst">★ ' + got + ' / ' + lvs.length * 3 + '</div>';
+    wrap.appendChild(head);
+    var grid = document.createElement('div');
+    grid.className = 'lv-grid';
+    lvs.forEach(function (lv) {
+      var i = LEVELS.indexOf(lv);
+      var s = starsOf(lv.id);
+      var lock = !unlocked(i);
+      var card = document.createElement('button');
+      card.className = 'lv-card' + (lock ? ' locked' : '') + (s === 3 ? ' full' : '');
+      card.innerHTML =
+        '<div class="no">' + String(i + 1).padStart(2, '0') + ' · ' + lv.rows[0].length + '×' + lv.rows.length + '</div>' +
+        '<div class="nm">' + lv.name + '</div>' +
+        '<div class="sb">' + lv.subtitle + '</div>' +
+        '<div class="st">' + '★'.repeat(s).replace(/★/g, '<b>★</b>') + '☆'.repeat(3 - s) + '</div>' +
+        '<div class="meta">最优 ' + lv.best + ' 步' + (save.best[lv.id] ? ' · 我 ' + save.best[lv.id] + ' 步' : '') + '</div>';
+      if (!lock) card.onclick = function () { loadLevel(i); show('play'); };
+      grid.appendChild(card);
+    });
+    wrap.appendChild(grid);
+    box.appendChild(wrap);
+  });
+}
+
+/* ================= 关卡 ================= */
+function loadLevel(i) {
+  cur = i;
+  reset(false);
+  document.getElementById('lv-name').innerHTML = '<em>' + String(i + 1).padStart(2, '0') + '</em>' + LEVELS[i].name;
+  document.getElementById('lv-sub').textContent = LEVELS[i].subtitle;
+  document.getElementById('best').textContent = LEVELS[i].best;
+  var pb = save.best[LEVELS[i].id];
+  document.getElementById('pbest').textContent = pb ? pb : '—';
+  var tipEl = document.getElementById('tip');
+  tipEl.textContent = LEVELS[i].tip || '';
+  tipEl.style.display = LEVELS[i].tip ? 'block' : 'none';
+  document.getElementById('win').classList.remove('show');
+  document.getElementById('stat-best').classList.toggle('good', !!pb && pb <= LEVELS[i].best);
+  sizeCanvas();
+}
+
+function reset(sound) {
+  L = ENGINE.parse(LEVELS[cur]);
+  st = ENGINE.init(L, LEVELS[cur].start[0], LEVELS[cur].start[1]);
+  hist = []; moves = []; won = false; drift = 0; lastPath = null; hover = null;
+  trails = [st.py * L.w + st.px];
+  parts = []; pAnim = null; stepLog = [];
+  dirFrom = new Int8Array(L.n); dirT0 = new Float64Array(L.n); stirT0 = new Float64Array(L.n);
+  for (var i = 0; i < L.n; i++) dirFrom[i] = st.dir[i];
+  document.getElementById('win').classList.remove('show');
+  if (sound) tone(300, .1, 'triangle', .05);
+  updateHUD();
+}
+
+/* ================= 动作 ================= */
+function doAction(a) {
+  if (won || !L) return;
+  var r = ENGINE.step(L, st, a);
+  if (!r) { tone(150, .1, 'square', .035); shake(); failMsg(a); return; }
+
+  var prev = st, now = performance.now();
+  hist.push({ st: prev, trails: trails.slice(), drift: drift, lastPath: lastPath });
+  stepLog.push({ slid: r.slid, len: r.path.length, stir: r.stir });
+  st = r.st;
+  moves.push(a);
+
+  // 记录被搅动的格子，供旋转动画
+  for (var i = 0; i < L.n; i++) {
+    if (prev.dir[i] !== st.dir[i]) { dirFrom[i] = prev.dir[i]; dirT0[i] = now; stirT0[i] = now; }
+  }
+
+  lastPath = r.path.slice();
+  if (r.slid) {
+    drift += r.path.length;
+    pAnim = { path: r.path, t0: now, dur: Math.min(420, 90 + r.path.length * 55) };
+    for (var p = 0; p < r.path.length; p++) spawnParts(r.path[p][0], r.path[p][1], 1, COL.arrow);
+    tone(420, .1, 'sine', .05);
+    if (r.path.length >= 4) tone(300, .18, 'triangle', .03, .05);
+  } else if (r.stir) {
+    spawnParts(st.px, st.py, 5, COL.exit);
+    tone(360, .14, 'triangle', .05);
+  } else {
+    pAnim = { path: r.path, t0: now, dur: 140 };
+    tone(620, .09, 'sine', .05);
+  }
+  trails.push(st.py * L.w + st.px);
+  if (trails.length > 10) trails.shift();
+
+  hover = null;
+  updateHUD();
+  if (ENGINE.isWin(L, st)) win();
+}
+
+function shake() {
+  var w = document.querySelector('.board-wrap');
+  w.style.animation = 'none'; void w.offsetWidth;
+  w.style.animation = 'shake .3s';
+}
+
+function failMsg(a) {
+  var msg = '';
+  if (a === 'T') {
+    msg = '脚下是静水，没有东西可搅';
+  } else {
+    var d = ['U', 'R', 'D', 'L'].indexOf(a);
+    var nx = st.px + ENGINE.DX[d], ny = st.py + ENGINE.DY[d];
+    if (nx < 0 || ny < 0 || nx >= L.w || ny >= L.h) msg = '那边是世界的边缘';
+    else {
+      var j = ny * L.w + nx;
+      if (!ENGINE.passable(L, nx, ny)) msg = '那边是岸（或深渊），过不去';
+      else if (L.kind[j] === ENGINE.VORTEX && !ENGINE.drySlide(L, st, nx, ny)) msg = '踏下去会被卷进首尾相接的漩涡';
+      else msg = '过不去';
+    }
+  }
+  document.getElementById('tl-note').innerHTML = '<b style="color:#f87171">' + msg + '</b>';
+}
+
+function spawnParts(x, y, n, color) {
+  for (var k = 0; k < (n || 2); k++) {
+    parts.push({
+      x: x, y: y, c: color || COL.player,
+      vx: (Math.random() - .5) * 1.4, vy: (Math.random() - .5) * 1.4 - .3,
+      t0: performance.now(), dur: 380 + Math.random() * 240
+    });
+  }
+  if (parts.length > 300) parts.splice(0, parts.length - 300);
+}
+
+/* ================= HUD ================= */
+function updateHUD() {
+  var n = moves.length;
+  document.getElementById('steps').textContent = n;
+
+  var track = document.getElementById('beat-track');
+  if (track.children.length !== L.best) {
+    track.innerHTML = '';
+    for (var i = 0; i < L.best; i++) {
+      var d = document.createElement('div'); d.className = 'beat-cell'; track.appendChild(d);
+    }
+  }
+  var over = n > L.best;
+  for (var j = 0; j < track.children.length; j++) {
+    track.children[j].className = 'beat-cell' + (j < n || over ? ' on' : '') + (over ? ' over' : '');
+  }
+  var tag = n <= L.best ? '<i>★★★</i>' : (n <= L.best * 2 ? '<i>★★</i>' : '<i>★</i>');
+  document.getElementById('beat-label').innerHTML = '<b>' + n + '</b> / ' + L.best + ' 步 · ' + tag;
+
+  // 水流条：最近一次滑行的转向链
+  var ft = document.getElementById('flow-track');
+  ft.innerHTML = '';
+  if (lastPath && lastPath.length > 1) {
+    for (var q = 0; q < lastPath.length; q++) {
+      var c = lastPath[q], ci = c[1] * L.w + c[0];
+      var chip = document.createElement('div');
+      chip.className = 'flow-chip';
+      chip.textContent = L.kind[ci] === ENGINE.VORTEX ? ARROW_CH[st.dir[ci]] : '·';
+      ft.appendChild(chip);
+      if (q > 9) { chip.textContent = '…'; break; }
+    }
+  } else {
+    ft.innerHTML = '<span style="font-size:11px;color:#5c6b83">尚未漂流</span>';
+  }
+  document.getElementById('flow-label').innerHTML = lastPath && lastPath.length > 1
+    ? ('上次漂流 <b>' + lastPath.length + '</b> 格 · <i>累计 ' + drift + '</i>')
+    : '<i>累计漂流 ' + drift + ' 格</i>';
+  document.getElementById('drift').textContent = drift;
+
+  document.getElementById('goal').innerHTML =
+    '<div class="goal-row' + (n <= L.best ? ' done' : '') + '"><i>' + (n <= L.best ? '★' : '☆') + '</i>不超过 <b>' + L.best + '</b> 步<em>★★★</em></div>' +
+    '<div class="goal-row' + (n <= L.best * 2 ? ' done' : '') + '"><i>' + (n <= L.best * 2 ? '★' : '☆') + '</i>不超过 <b>' + (L.best * 2) + '</b> 步<em>★★</em></div>' +
+    '<div class="goal-row' + (ENGINE.isWin(L, st) ? ' done' : '') + '"><i>◉</i>冲进（或走进）出口符文<em>通关</em></div>' +
+    '<div class="goal-row"><i>≈</i>累计漂流 <b>' + drift + '</b> 格<em>路程</em></div>';
+
+  var tl = document.getElementById('timeline');
+  tl.innerHTML = '';
+  var showFrom = Math.max(0, moves.length - 14);
+  for (var m = showFrom; m < moves.length; m++) {
+    var t = document.createElement('div');
+    var a = moves[m];
+    var cls = m === moves.length - 1 ? ' new' : '';
+    if (stepLog[m] && stepLog[m].slid) cls += ' slide';
+    else if (a === 'T') cls += ' stir';
+    t.className = 'tk' + cls;
+    t.textContent = a === 'T' ? '↻' : GLYPH[a];
+    tl.appendChild(t);
+  }
+  if (!moves.length) tl.innerHTML = '<span class="tl-note" style="margin:0">尚未落水</span>';
+  var note = document.getElementById('tl-note');
+  if (moves.length) {
+    var last = moves[moves.length - 1];
+    var ln = lastPath ? lastPath.length : 1;
+    note.innerHTML = '第 <b>' + moves.length + '</b> 步：<b>' + ACT_NAME[last] + '</b>　·　' +
+      (last === 'T' ? '脚下的涡转了 90°'
+        : (ln > 1 ? '漂流了 <b>' + ln + '</b> 格，沿途 ' + Math.max(0, ln - 1) + ' 个涡被搅动转向'
+          : '走进静水，水流到此散开'));
+  } else {
+    note.innerHTML = '踏进涡里就会被冲走 · 滑过的每一个涡都会转 90°';
+  }
+}
+
+/* ================= 结算 ================= */
+function win() {
+  won = true;
+  var n = moves.length, s = starsFor(L.best, n);
+  var id = LEVELS[cur].id;
+  var prev = starsOf(id);
+  if (s > prev) save.stars[id] = s;
+  var isBest = !save.best[id] || n < save.best[id];
+  if (isBest) save.best[id] = n;
+  persist();
+
+  var allDone = LEVELS.every(function (l) { return starsOf(l.id) > 0; });
+  document.getElementById('win-title').textContent = allDone ? '水域已走遍' : '归流达成';
+  document.getElementById('win-sub').textContent = String(cur + 1).padStart(2, '0') + ' · ' + L.name + '　—　' + L.subtitle;
+
+  var ws = document.getElementById('win-stars').children;
+  for (var k = 0; k < 3; k++) ws[k].classList.remove('on');
+  for (var q = 0; q < s; q++) (function (q) {
+    setTimeout(function () { ws[q].classList.add('on'); }, 260 + q * 190);
+  })(q);
+
+  var rows = [
+    ['★★★ 不超过 ' + L.best + ' 步', n <= L.best],
+    ['★★ 不超过 ' + (L.best * 2) + ' 步', n <= L.best * 2],
+    ['归流达成 · 抵达出口符文', true]
+  ];
+  document.getElementById('win-goals').innerHTML = rows.map(function (r) {
+    return '<div class="' + (r[1] ? 'ok' : '') + '">' + r[0] + '　—　' + (r[1] ? '达成' : '本次 ' + n + ' 步') + '</div>';
+  }).join('') + '<div class="ok">本次 ' + n + ' 步 · 漂流 ' + drift + ' 格' + (isBest ? ' · 新纪录' : ' · 纪录 ' + save.best[id] + ' 步') + '</div>';
+
+  document.getElementById('win-next').style.display = (cur < LEVELS.length - 1) ? '' : 'none';
+  document.getElementById('win').classList.add('show');
+  tone(660, .16, 'sine', .06); tone(880, .18, 'sine', .05, .12); tone(1320, .3, 'sine', .045, .24);
+  document.getElementById('stat-best').classList.toggle('good', save.best[id] <= L.best);
+  document.getElementById('pbest').textContent = save.best[id];
+}
+
+function undo() {
+  if (!hist.length || won) return;
+  var h = hist.pop();
+  st = h.st; trails = h.trails; drift = h.drift; lastPath = h.lastPath; moves.pop();
+  stepLog.pop();
+  for (var i = 0; i < L.n; i++) { dirFrom[i] = st.dir[i]; dirT0[i] = 0; }
+  pAnim = null; hover = null;
+  tone(240, .08, 'triangle', .04);
+  updateHUD();
+}
+
+/* ================= 画布 ================= */
+function sizeCanvas() {
+  var n = Math.max(L.w, L.h);
+  var avail = Math.min(470, window.innerWidth - 130);
+  CELL = Math.max(42, Math.min(76, Math.floor((avail - 2 * PAD) / n)));
+  var dpr = window.devicePixelRatio || 1;
+  cv.width = (L.w * CELL + 2 * PAD) * dpr;
+  cv.height = (L.h * CELL + 2 * PAD) * dpr;
+  cv.style.width = (L.w * CELL + 2 * PAD) + 'px';
+  cv.style.height = (L.h * CELL + 2 * PAD) + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function rr(c, x, y, w, h, r) {
+  c.beginPath();
+  c.moveTo(x + r, y);
+  c.arcTo(x + w, y, x + w, y + h, r);
+  c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r);
+  c.arcTo(x, y, x + w, y, r);
+  c.closePath();
+}
+function cellXY(x, y) { return [PAD + x * CELL, PAD + y * CELL]; }
+
+/* 某格当前的显示角度（含旋转动画） */
+function angleOf(i, now) {
+  var d = st.dir[i];
+  if (dirFrom[i] === d || dirFrom[i] < 0 || !dirT0[i]) return d * Math.PI / 2 - Math.PI / 2;
+  var el = (now - dirT0[i]) / 300;
+  if (el >= 1) return d * Math.PI / 2 - Math.PI / 2;
+  var f = dirFrom[i], delta = ((d - f) + 4) % 4;
+  return (f + delta * Math.max(0, el)) * Math.PI / 2 - Math.PI / 2;
+}
+
+function drawTile(x, y, now) {
+  var i = y * L.w + x, kd = L.kind[i], p = cellXY(x, y);
+  var px = p[0], py = p[1], s = CELL, g = s * .08, sz = s - g * 2;
+
+  if (kd === ENGINE.WALL) {
+    rr(ctx, px + g, py + g, sz, sz, 7);
+    var wg = ctx.createLinearGradient(px, py, px, py + s);
+    wg.addColorStop(0, COL.bankTop); wg.addColorStop(1, COL.bankBot);
+    ctx.fillStyle = wg; ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.07)';
+    rr(ctx, px + g, py + g, sz, sz * .34, 6); ctx.fill();
+    ctx.strokeStyle = COL.bankEdge; ctx.lineWidth = 1; ctx.stroke();
+    return;
+  }
+  if (kd === ENGINE.ABYSS) {
+    rr(ctx, px + g, py + g, sz, sz, 7);
+    ctx.fillStyle = COL.voidCol; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.06)'; ctx.lineWidth = 1; ctx.stroke();
+    return;
+  }
+
+  if (kd === ENGINE.VORTEX) {
+    var ang = angleOf(i, now);
+    var cx = px + s / 2, cy = py + s / 2;
+    var dx = Math.cos(ang), dy = Math.sin(ang), h2 = s * .62;
+    // 沿流向的渐变：整片水看起来在流
+    rr(ctx, px + g, py + g, sz, sz, 7);
+    var wg2 = ctx.createLinearGradient(cx - dx * h2, cy - dy * h2, cx + dx * h2, cy + dy * h2);
+    wg2.addColorStop(0, COL.waterBot); wg2.addColorStop(1, COL.waterTop);
+    ctx.fillStyle = wg2; ctx.fill();
+    ctx.strokeStyle = COL.waterEdge; ctx.lineWidth = 1; ctx.stroke();
+    // 刚被搅动：金边
+    if (stirT0[i] && now - stirT0[i] < 620) {
+      var a2 = 1 - (now - stirT0[i]) / 620;
+      rr(ctx, px + g, py + g, sz, sz, 7);
+      ctx.strokeStyle = 'rgba(251,191,36,' + (a2 * .9).toFixed(3) + ')';
+      ctx.lineWidth = 2; ctx.stroke();
+    }
+    // 箭头
+    ctx.save();
+    ctx.translate(cx, cy); ctx.rotate(ang);
+    ctx.beginPath();
+    ctx.moveTo(s * .27, 0);
+    ctx.lineTo(-s * .12, -s * .17);
+    ctx.lineTo(-s * .04, 0);
+    ctx.lineTo(-s * .12, s * .17);
+    ctx.closePath();
+    ctx.fillStyle = COL.arrow; ctx.fill();
+    ctx.restore();
+    return;
+  }
+
+  // 静水 / 出口
+  rr(ctx, px + g, py + g, sz, sz, 7);
+  var fg = ctx.createLinearGradient(px, py, px, py + s);
+  fg.addColorStop(0, COL.stillTop); fg.addColorStop(1, COL.stillBot);
+  ctx.fillStyle = fg; ctx.fill();
+  if (kd === ENGINE.STILL) {
+    ctx.setLineDash([4, 3]);
+    ctx.strokeStyle = COL.stillEdge; ctx.lineWidth = 1; ctx.stroke();
+    ctx.setLineDash([]);
+  } else {
+    ctx.strokeStyle = 'rgba(251,191,36,.6)'; ctx.lineWidth = 1.2; ctx.stroke();
+    var pulse = .5 + .5 * Math.sin(now / 420);
+    ctx.save();
+    ctx.translate(px + s / 2, py + s / 2); ctx.rotate(now / 1600);
+    ctx.beginPath();
+    ctx.moveTo(0, -s * .27); ctx.lineTo(s * .27, 0); ctx.lineTo(0, s * .27); ctx.lineTo(-s * .27, 0);
+    ctx.closePath();
+    ctx.shadowColor = 'rgba(251,191,36,.85)'; ctx.shadowBlur = 12 + 10 * pulse;
+    ctx.fillStyle = COL.exit; ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(px + s / 2, py + s / 2, s * .16, 0, 6.2832);
+    ctx.fillStyle = '#0a1322'; ctx.fill();
+  }
+}
+
+/* 悬停预览：把"踏下去会滑到哪"画出来 */
+function drawHover() {
+  if (!hover || won) return;
+  var hx = hover[0], hy = hover[1];
+  var dx = hx - st.px, dy = hy - st.py;
+  if (Math.abs(dx) + Math.abs(dy) !== 1) return;
+  if (!ENGINE.passable(L, hx, hy)) return;
+  var isV = L.kind[hy * L.w + hx] === ENGINE.VORTEX;
+  var path = isV ? ENGINE.drySlide(L, st, hx, hy) : null;
+  var endX = hx, endY = hy, ok = true;
+  if (isV) {
+    if (!path) { ok = false; }
+    else { endX = path.ex; endY = path.ey; }
+  }
+  var cells = path ? path.path : [[hx, hy]];
+  ctx.save();
+  for (var q = 0; q < cells.length; q++) {
+    var c = cells[q], p = cellXY(c[0], c[1]), s = CELL, g = s * .08;
+    rr(ctx, p[0] + g, p[1] + g, s - g * 2, s - g * 2, 7);
+    ctx.fillStyle = ok ? 'rgba(103,232,249,.13)' : 'rgba(248,113,113,.12)';
+    ctx.fill();
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = ok ? 'rgba(103,232,249,.75)' : 'rgba(248,113,113,.7)';
+    ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  // 终点标记
+  var pe = cellXY(endX, endY);
+  ctx.beginPath();
+  ctx.arc(pe[0] + CELL / 2, pe[1] + CELL / 2, CELL * .3, 0, 6.2832);
+  ctx.strokeStyle = ok ? '#67e8f9' : '#f87171';
+  ctx.lineWidth = 2.2; ctx.stroke();
+  ctx.restore();
+}
+
+function playerPos(now) {
+  if (!pAnim || !pAnim.path.length) return [st.px, st.py];
+  var el = (now - pAnim.t0) / pAnim.dur;
+  if (el >= 1) return [st.px, st.py];
+  var path = pAnim.path, seg = el * (path.length - 1);
+  var k = Math.floor(seg), f = seg - k;
+  if (k >= path.length - 1) return [st.px, st.py];
+  return [path[k][0] + (path[k + 1][0] - path[k][0]) * f,
+          path[k][1] + (path[k + 1][1] - path[k][1]) * f];
+}
+
+function drawPlayer(now) {
+  var pos = playerPos(now), s = CELL;
+  var cx = PAD + pos[0] * CELL + CELL / 2, cy = PAD + pos[1] * CELL + CELL / 2;
+  ctx.save();
+  for (var t = 0; t < trails.length - 1; t++) {
+    var ti = trails[t], tx = ti % L.w, ty = (ti / L.w) | 0;
+    ctx.beginPath();
+    ctx.arc(PAD + tx * CELL + CELL / 2, PAD + ty * CELL + CELL / 2, s * .09, 0, 6.2832);
+    ctx.fillStyle = 'rgba(103,232,249,' + ((t + 1) / trails.length * .28).toFixed(3) + ')';
+    ctx.fill();
+  }
+  ctx.restore();
+  if (L.kind[st.py * L.w + st.px] === ENGINE.VORTEX) {
+    ctx.beginPath(); ctx.arc(cx, cy, s * .4, 0, 6.2832);
+    ctx.strokeStyle = 'rgba(125,211,252,.5)'; ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
+  }
+  ctx.beginPath(); ctx.arc(cx, cy, s * .28, 0, 6.2832);
+  ctx.shadowColor = 'rgba(103,232,249,.9)'; ctx.shadowBlur = 16;
+  ctx.fillStyle = COL.player; ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.beginPath(); ctx.arc(cx, cy, s * .28, 0, 6.2832);
+  ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 1.2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx - s * .08, cy - s * .08, s * .065, 0, 6.2832);
+  ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.fill();
+}
+
+function drawParts(now) {
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var p = parts[i], el = (now - p.t0) / p.dur;
+    if (el >= 1) { parts.splice(i, 1); continue; }
+    var x = PAD + (p.x + p.vx * el * 6) * CELL + CELL / 2;
+    var y = PAD + (p.y + p.vy * el * 6) * CELL + CELL / 2;
+    ctx.globalAlpha = 1 - el;
+    ctx.beginPath(); ctx.arc(x, y, CELL * .045 * (1 - el * .5), 0, 6.2832);
+    ctx.fillStyle = p.c; ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+function draw() {
+  requestAnimationFrame(draw);
+  if (screen !== 'play' || !L) return;
+  var now = performance.now();
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  rr(ctx, 2, 2, L.w * CELL + 2 * PAD - 4, L.h * CELL + 2 * PAD - 4, 14);
+  ctx.fillStyle = '#070c17'; ctx.fill();
+  for (var y = 0; y < L.h; y++) for (var x = 0; x < L.w; x++) drawTile(x, y, now);
+  drawHover();
+  drawPlayer(now);
+  drawParts(now);
+}
+
+/* ================= 事件 ================= */
+function nextLevel() {
+  if (cur < LEVELS.length - 1) { loadLevel(cur + 1); show('play'); }
+  else show('select');
+}
+
+document.getElementById('btn-continue').onclick = function () { loadLevel(firstUnfinished()); show('play'); };
+document.getElementById('btn-select').onclick = function () { show('select'); };
+document.getElementById('sel-back').onclick = function () { show('home'); };
+document.getElementById('play-back').onclick = function () { show('select'); };
+document.getElementById('undo').onclick = undo;
+document.getElementById('reset').onclick = function () { reset(true); };
+document.getElementById('turn').onclick = function () { doAction('T'); };
+['up', 'down', 'left', 'right'].forEach(function (id) {
+  var map = { up: 'U', down: 'D', left: 'L', right: 'R' };
+  document.getElementById(id).onclick = function () { doAction(map[id]); };
+});
+document.getElementById('win-again').onclick = function () { reset(true); };
+document.getElementById('win-list').onclick = function () { show('select'); };
+document.getElementById('win-next').onclick = function () { nextLevel(); };
+
+function cellAt(e) {
+  var rect = cv.getBoundingClientRect();
+  return [Math.floor((e.clientX - rect.left - PAD) / CELL), Math.floor((e.clientY - rect.top - PAD) / CELL)];
+}
+cv.addEventListener('mousemove', function (e) { hover = cellAt(e); });
+cv.addEventListener('mouseleave', function () { hover = null; });
+cv.addEventListener('click', function (e) {
+  if (won || !L) return;
+  var c = cellAt(e), dx = c[0] - st.px, dy = c[1] - st.py;
+  if (Math.abs(dx) + Math.abs(dy) !== 1) return;
+  doAction(dx === 1 ? 'R' : dx === -1 ? 'L' : dy === 1 ? 'D' : 'U');
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  var k = e.key;
+  if (screen === 'play') {
+    if (k === 'ArrowUp' || k === 'w' || k === 'W') { doAction('U'); e.preventDefault(); return; }
+    if (k === 'ArrowDown' || k === 's' || k === 'S') { doAction('D'); e.preventDefault(); return; }
+    if (k === 'ArrowLeft' || k === 'a' || k === 'A') { doAction('L'); e.preventDefault(); return; }
+    if (k === 'ArrowRight' || k === 'd' || k === 'D') { doAction('R'); e.preventDefault(); return; }
+    if (k === ' ' || k === 'Spacebar') { doAction('T'); e.preventDefault(); return; }
+    if (k === 'z' || k === 'Z') { undo(); e.preventDefault(); return; }
+    if (k === 'r' || k === 'R') { reset(true); e.preventDefault(); return; }
+    if (k === 'n' || k === 'N') {
+      if (won) nextLevel();
+      else if (cur < LEVELS.length - 1) { loadLevel(cur + 1); show('play'); }
+      e.preventDefault(); return;
+    }
+    if (k === 'Escape') { show('select'); e.preventDefault(); return; }
+  } else if (k === 'Escape') {
+    show('home');
+  }
+});
+
+window.addEventListener('resize', function () { if (L && screen === 'play') sizeCanvas(); });
+
+/* ================= 启动 ================= */
+renderHome();
+requestAnimationFrame(draw);
+
+</script>
+</body>
+</html>
