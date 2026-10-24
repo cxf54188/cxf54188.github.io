@@ -989,6 +989,9 @@ function show(name) {
   });
   if (name === 'home') renderHome();
   if (name === 'select') renderSelect();
+  // 切屏后画布尺寸/可见性可能变化，强制续帧并在下一帧重画一次
+  kick();
+  if (name === 'play') setTimeout(function () { if (L) sizeCanvas(); }, 0);
 }
 
 function renderHome() {
@@ -1057,6 +1060,7 @@ function loadLevel(i) {
   document.getElementById('win').classList.remove('show');
   document.getElementById('stat-best').classList.toggle('good', !!pb && pb <= L.best);
   sizeCanvas();
+  kick();                                  // 保险：进关卡时确保渲染循环活着
 }
 
 function reset(sound) {
@@ -1509,9 +1513,26 @@ function drawTrails(now) {
   }
 }
 
+/* 渲染循环：RAF 链 + 定时心跳双重驱动。
+   坑：主界面时 L 为 null，若某帧早退且没有排下一帧，RAF 链就彻底断掉，
+   之后点进关卡画布永远是空白。所以这里既让续帧无条件执行，
+   又挂一个 120ms 的 setInterval 心跳兜底重启 —— 无论什么时序都不会白屏。 */
+var rafPending = false, lastDrawAt = 0;
+function frame(time) { rafPending = false; draw(time); }
+function kick() { if (!rafPending) { rafPending = true; requestAnimationFrame(frame); } }
+function heartbeat() {
+  if (!L || !st) { kick(); return; }               // 还没进关卡：保持循环活着
+  if (performance.now() - lastDrawAt > 300) {      // 超过 300ms 没画过 → RAF 链已死
+    rafPending = false;
+    draw(performance.now());                       // 直接同步重画一次，不依赖 RAF
+  }
+}
+
 function draw(time) {
+  kick();
   if (!L || !st) return;
   var now = time || performance.now();
+  lastDrawAt = now;
   ctx.clearRect(0, 0, cv.width, cv.height);
   ctx.fillStyle = 'rgba(6,10,20,.55)';
   rr(ctx, 0, 0, L.w * CELL + 2 * PAD, L.h * CELL + 2 * PAD, 12); ctx.fill();
@@ -1549,7 +1570,6 @@ function draw(time) {
     if (t2 >= 1) zAnim = null;
   }
   drawBody({ x: bx, y: by, s: bs }, now, 1, false);
-  requestAnimationFrame(draw);
 }
 
 /* ================= 预览 ================= */
@@ -1611,11 +1631,12 @@ document.addEventListener('keydown', function (ev) {
   } else if (screen === 'select' && k === 'escape') { show('home'); }
 });
 
-window.addEventListener('resize', function () { if (L) sizeCanvas(); });
+window.addEventListener('resize', function () { if (L) { sizeCanvas(); kick(); } });
 
 renderHome();
 renderSelect();
-requestAnimationFrame(draw);
+kick();
+setInterval(heartbeat, 120);                       // 心跳：任何情况下都能把渲染拉回来
 </script>
 </body>
 </html>
