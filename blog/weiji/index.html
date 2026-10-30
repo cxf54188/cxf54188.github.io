@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>课堂违纪互动看板 · 八周 × 十三学科</title>
+<title>课堂违纪互动看板 · 九周 × 十三学科 × 星期几 × 小组</title>
 <style>
 :root{
   color-scheme:light;
@@ -355,6 +355,62 @@ input:disabled,select:disabled,textarea:disabled{opacity:.55;cursor:not-allowed}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:6px}
 
+.grpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:4px}
+.grpcell{border:1px solid var(--line);border-radius:12px;padding:11px 13px;cursor:pointer;
+  background:var(--soft);transition:.16s;position:relative}
+.grpcell:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:var(--shadow)}
+.grpcell.on{border-color:var(--brand);background:var(--soft3);box-shadow:0 3px 10px rgba(79,70,229,.14)}
+.grpcell .gh{display:flex;align-items:center;gap:6px;font-size:13.5px}
+.grpcell .gh b{flex:1}
+.grpcell .gm{font-size:14px}
+.grpcell .gn{font-size:11px;color:var(--muted);font-weight:600}
+.grpcell .gv{font-size:19px;font-weight:800;margin:6px 0 4px;line-height:1.1}
+.grpcell .gbar{height:6px;border-radius:4px;background:var(--soft3);overflow:hidden;margin-bottom:6px}
+.grpcell .gbar i{display:block;height:100%;border-radius:4px;transition:width .35s ease}
+.grpcell .gd{font-size:11.5px;color:var(--muted);line-height:1.65}
+.grpgrid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.grpitem{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--soft2);cursor:pointer;
+  display:flex;flex-direction:column;gap:2px;transition:.14s}
+.grpitem:hover{border-color:var(--brand);background:var(--soft3)}
+.grpitem b{font-size:13px}
+.grpitem span{font-size:11.5px;color:var(--muted);line-height:1.55}
+.grpitem .mini{font-size:10.5px;color:var(--muted);opacity:.85}
+@media(max-width:640px){.grpgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+.gdhead{display:flex;align-items:center;justify-content:center;gap:16px;margin:10px 0 8px;
+  font-size:15px;color:var(--ink)}
+.gdhead span{font-size:22px;font-weight:800;color:var(--brand);padding:0 6px}
+.gdrow{display:grid;grid-template-columns:1fr 96px 1fr;gap:8px;align-items:center;
+  padding:7px 10px;border-radius:9px;background:var(--soft);margin-bottom:5px;font-size:12.5px}
+.gdrow .gdl{text-align:right;color:var(--muted)}
+.gdrow .gdr{text-align:left;color:var(--muted)}
+.gdrow .gdl.win{color:var(--brand);font-weight:800}
+.gdrow .gdr.win{color:var(--red);font-weight:800}
+.gdrow .gdk{text-align:center;font-size:11.5px;color:var(--muted);font-weight:600}
+.anazone{display:grid;gap:14px}
+.anbox{border:1px solid var(--line);border-radius:14px;padding:2px;animation:fade .25s ease;display:grid;gap:14px}
+.anbody{padding:2px 0}
+.anbar{display:grid;grid-template-columns:88px 1fr 128px;gap:9px;align-items:center;font-size:12.5px;margin-bottom:6px}
+.anbar .anl{font-weight:700;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.anbar .ant{height:16px;border-radius:5px;background:var(--soft3);overflow:hidden}
+.anbar .ant i{display:block;height:100%;border-radius:5px;transition:width .35s ease}
+.anbar .anv{font-size:11.5px;color:var(--muted);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.anmat{border-collapse:separate;border-spacing:2px;font-size:11.5px;width:auto}
+.anmat th{padding:4px 7px;font-weight:700;color:var(--muted);font-size:11px;white-space:nowrap}
+.anmat tbody th{color:var(--ink);font-weight:700;background:var(--soft2);border-radius:5px}
+.anmat td{width:30px;height:26px;text-align:center;border-radius:5px;font-weight:700;font-size:11.5px}
+.anwk{font-size:13px;font-weight:800;margin:12px 0 6px;padding:5px 10px;border-radius:8px;
+  background:var(--soft3);color:var(--ink)}
+.anday{border:1px solid var(--line);border-radius:10px;padding:8px 11px;margin-bottom:7px;background:var(--soft)}
+.anday .andh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.anday .andh b{font-size:13.5px}
+.anday .andw{font-size:11.5px;padding:1px 7px;border-radius:999px;background:var(--soft3);color:var(--muted);font-weight:700}
+.anday .andn{font-size:11.5px;color:var(--muted)}
+.anday .ands{font-size:12.5px;margin-top:4px;color:var(--ink2);line-height:1.6}
+.anday .andp{font-size:12px;margin-top:3px;color:var(--muted);line-height:1.6}
+@media(max-width:640px){
+  .anbar{grid-template-columns:64px 1fr 96px;font-size:11.5px}
+  .anbar .anv{font-size:10.5px}
+}
 .mpgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin:10px 0}
 @media(max-width:640px){.mpgrid{grid-template-columns:repeat(6,1fr)}}
 .mpcell{position:relative;aspect-ratio:1/1;border-radius:9px;display:flex;align-items:center;justify-content:center;
@@ -580,7 +636,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
     <button class="themebtn" id="themeBtn" title="切换深色 / 亮色">🌙</button>
     <h1>课堂违纪互动看板</h1>
     <div class="ai-tag">✨ 本界面由元宝AI分析生成</div>
-    <p>八周追踪 × 十三学科双维度 · 五个分析板块 + 一个趣味实验室（27 个玩法）</p>
+    <p>九周追踪 × 十三学科 · 星期几与小组维度 · 总览 + 分析实验室（19 个视角）+ 趣味实验室（28 个玩法）</p>
     <div class="hero-badges">
       <span id="b1">—</span><span id="b2">—</span><span id="b3">—</span><span id="b4">—</span>
       <span id="b5">—</span>
@@ -603,10 +659,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
 
   <nav class="tabs">
     <div class="tab on" data-t="overview">总览</div>
-    <div class="tab" data-t="rank">学生排行榜</div>
-    <div class="tab" data-t="week">周趋势</div>
-    <div class="tab" data-t="subj">学科透视</div>
-    <div class="tab" data-t="heat">违纪热力图</div>
+    <div class="tab" data-t="ana">📊 分析实验室</div>
     <div class="tab" data-t="lab">🎪 趣味实验室</div>
     <div class="tab" data-t="set">⚙️ 数据与设置</div>
   </nav>
@@ -617,7 +670,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
       <div class="grid2">
         <div class="card">
           <h3>每周违纪走势</h3>
-          <div class="desc">柱子为当周违纪总次数，折线为当周涉及人数（右侧刻度）。点击柱子可查看当周名单。</div>
+          <div class="desc">柱子为当周违纪总次数，折线为当周涉及人数（右侧刻度）。点击柱子可跳到分析实验室查看当周名单。</div>
           <div id="weekBars"></div>
           <div class="legend">
             <span><i style="background:#6366f1"></i>违纪次数</span>
@@ -626,7 +679,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
         </div>
         <div class="card">
           <h3>违纪程度分层</h3>
-          <div class="desc">按八周累计次数划分人群，点击色块可跳转到排行榜查看对应名单。</div>
+          <div class="desc">按九周累计次数划分人群，点击色块可跳到分析实验室的排行榜查看对应名单。</div>
           <div id="donut"></div>
           <div id="donutLegend"></div>
         </div>
@@ -634,13 +687,13 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
       <div class="grid2b">
         <div class="card">
           <h3>前半程 vs 后半程</h3>
-          <div class="desc">前四周（W1–W4）与后四周（W5–W8）对比，看班级整体是在收敛还是扩散。</div>
+          <div class="desc">前四周（W1–W4）与后五周（W5–W9）对比，看班级整体是在收敛还是扩散。</div>
           <div class="statgrid" id="cmpStat"></div>
           <div id="cmpBars"></div>
         </div>
         <div class="card">
           <h3>本期重点关注</h3>
-          <div class="desc">累计次数最高的同学，以及第七–八周仍在违纪的同学。</div>
+          <div class="desc">累计次数最高的同学，以及第八–九周仍在违纪的同学。</div>
           <div id="focus"></div>
         </div>
       </div>
@@ -652,56 +705,95 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
         </div>
         <div class="card">
           <h3>本周班级气象台</h3>
-          <div class="desc">按最近一周（第八周）的违纪强度换算成天气，方便直观感受班级纪律状况。</div>
+          <div class="desc">按最近一周（第九周）的违纪强度换算成天气，方便直观感受班级纪律状况。</div>
           <div id="wxBox"></div>
         </div>
       </div>
     </div>
 
     <!-- 排行榜 -->
-    <div class="panel" id="rank">
-      <div class="card">
-        <h3>学生违纪排行榜</h3>
-        <div class="desc">点击任意一行可查看该同学的完整档案；支持搜索、排序与分层筛选。</div>
-        <div class="ctrl">
-          <input type="search" id="q" placeholder="搜索姓名，如：艾 / XY">
-          <span class="chip on" data-sort="total">按总次数</span>
-          <span class="chip" data-sort="recent">按最近一周</span>
-          <span class="chip" data-sort="delta">按趋势变化</span>
-          <span class="chip" data-sort="spread">按活跃周数</span>
-          <span class="chip" data-sort="subspread">按学科广度</span>
-        </div>
-        <div class="ctrl" id="filters">
-          <span class="chip on" data-f="all">全部</span>
-          <span class="chip" data-f="high">重点关注 ≥9</span>
-          <span class="chip" data-f="mid">需提醒 4–8</span>
-          <span class="chip" data-f="low">偶发 1–3</span>
-          <span class="chip" data-f="active">近期仍有违纪</span>
-          <span class="chip" data-f="worse">后半程恶化</span>
-        </div>
-        <div id="rankList"></div>
-      </div>
-    </div>
 
-    <!-- 周趋势 -->
-    <div class="panel" id="week">
+
+
+
+
+    <!-- 分析实验室 -->
+    <div class="panel" id="ana">
+      <div class="labintro">
+        <b>19 个分析视角，一次展开一个</b>
+        <span>按小组、周次、星期几、学科、个人等维度重新切分这份数据 —— 点下面的按钮展开对应分析，再点一次收起；展开新的会自动收起上一个。上次展开的会记在本机。</span>
+        <div class="ctrl" style="margin:10px 0 0">
+          <button class="btn ghost" id="anaNone">收起当前</button>
+          <span id="anaCount" style="font-size:12.5px;color:var(--muted)"></span>
+        </div>
+      </div>
+
+      <div class="sec"><span class="sec-i">📅</span><b>时间与星期</b><em>星期几、逐日流水、周次 × 星期交叉、累计曲线</em></div>
+
+      <div class="playbtns">
+        <button class="pbtn" data-an="aDow"><i>📅 </i><b>📅 星期几分布</b><em>周一到周日各违纪多少次、涉及多少人，找出全班的「黑色星期几」。</em></button>
+        <button class="pbtn" data-an="aDowSub"><i>🔥 </i><b>🔥 星期几 × 学科矩阵</b><em>7 天 × 13 科热力表，看哪天的哪门课最容易出状况。</em></button>
+        <button class="pbtn" data-an="aDaily"><i>📆 </i><b>📆 逐日流水</b><em>按日期还原每一次违纪：哪天、星期几、什么课、有谁。</em></button>
+        <button class="pbtn" data-an="aWkDow"><i>🗓️ </i><b>🗓️ 周次 × 星期几</b><em>9 周 × 7 天热力图，看哪一周的哪一天最炸。</em></button>
+        <button class="pbtn" data-an="aCum"><i>📈 </i><b>📈 累计增长曲线</b><em>违纪次数随日期累积的走势，看班级是加速还是刹车。</em></button>
+        <button class="pbtn" data-an="week"><i>📋 </i><b>📋 逐周明细与汇总表</b><em>点任意一周查看当周名单；下方是九周汇总表（含合计行）。</em></button>
+      </div>
+      <div class="anazone" id="anaZone1">
+    <div class="anbox" id="week" style="display:none">
       <div class="card">
-        <h3>逐周明细</h3>
+        <h3>逐周明细<button class="fold" data-afold="week" title="收起">✕</button></h3>
         <div class="desc">点击任意一周，查看该周违纪名单与次数分布。</div>
         <div class="ctrl" id="weekChips"></div>
         <div id="weekTable"></div>
       </div>
       <div class="card">
-        <h3>八周汇总表</h3>
+        <h3>九周汇总表</h3>
         <div class="desc">横向为周次，纵向为同学，数值即违纪次数。</div>
         <div style="overflow-x:auto"><table id="fullTable"></table></div>
       </div>
     </div>
 
     <!-- 学科透视 -->
-    <div class="panel" id="subj">
+      </div>
+
+      <div class="sec"><span class="sec-i">🗺️</span><b>分布与形态</b><em>人 × 周热力图、形态分类、高危组合</em></div>
+
+      <div class="playbtns">
+        <button class="pbtn" data-an="heat"><i>🌡️ </i><b>🌡️ 违纪热力图</b><em>52 人 × 9 周热力图，颜色越深代表该周次数越多；附形态分类。</em></button>
+        <button class="pbtn" data-an="aCombo"><i>🎯 </i><b>🎯 高危组合 Top</b><em>「星期几 + 学科」组合排行，找出最容易出事的时间地点组合。</em></button>
+      </div>
+      <div class="anazone" id="anaZone2">
+    <div class="anbox" id="heat" style="display:none">
       <div class="card">
-        <h3>学科违纪分布</h3>
+        <h3>违纪热力图（按周）<button class="fold" data-afold="heat" title="收起">✕</button></h3>
+        <div class="desc">颜色越深代表该周违纪次数越多。鼠标悬停查看详情，点击格子或姓名查看个人档案。</div>
+        <div class="heatwrap"><div class="heat" id="heatGrid"></div></div>
+        <div class="scale">
+          <span>0</span><i class="lv0"></i><i class="lv1"></i><i class="lv2"></i><i class="lv3"></i><i class="lv4"></i><span>4 次及以上</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>形态分类</h3>
+        <div class="desc">依据九周分布形态，把违纪同学分成四类，便于差异化处理。</div>
+        <div id="pattern"></div>
+      </div>
+    </div>
+
+    <!-- 小组榜 -->
+      </div>
+
+      <div class="sec"><span class="sec-i">📚</span><b>学科维度</b><em>13 门课的分布、走势与单科钻取</em></div>
+
+      <div class="playbtns">
+        <button class="pbtn" data-an="subj"><i>📚 </i><b>📚 学科总览</b><em>13 科分布、各科「单科之王」、学科画像、人 × 学科热力表。</em></button>
+        <button class="pbtn" data-an="aSubDow"><i>📅 </i><b>📅 学科 × 星期几</b><em>13 门课在一周 7 天里的分布，看某科是不是只在特定日子出事。</em></button>
+        <button class="pbtn" data-an="aSubWk"><i>📊 </i><b>📊 学科 × 周次走势</b><em>各科 9 周走势折线，看哪科在恶化、哪科已收敛。</em></button>
+        <button class="pbtn" data-an="aSubDeep"><i>🔍 </i><b>🔍 单科深度剖析</b><em>选一门课，逐周走势、星期几、小组分布、Top 人物一次看完。</em></button>
+      </div>
+      <div class="anazone" id="anaZone3">
+    <div class="anbox" id="subj" style="display:none">
+      <div class="card">
+        <h3>学科违纪分布<button class="fold" data-afold="subj" title="收起">✕</button></h3>
         <div class="desc">十三门学科的违纪次数与涉及人数对比。</div>
         <div id="subBars"></div>
       </div>
@@ -728,26 +820,94 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
     </div>
 
     <!-- 热力图 -->
-    <div class="panel" id="heat">
+      </div>
+
+      <div class="sec"><span class="sec-i">👥</span><b>小组维度</b><em>8 个小组在周次、学科、星期几上的表现</em></div>
+
+      <div class="playbtns">
+        <button class="pbtn" data-an="grp"><i>👥 </i><b>👥 小组总览</b><em>8 组卡片（人均 / 总次数 / 零违纪可切换排序）+ 对比 + 科代表 + 成员明细 + 逐周排名变化。</em></button>
+        <button class="pbtn" data-an="aGrpWk"><i>📈 </i><b>📈 小组 × 周次趋势</b><em>8 个小组 9 周的违纪走势，看谁在收敛、谁在抬头。</em></button>
+        <button class="pbtn" data-an="aGrpSub"><i>🧩 </i><b>🧩 小组 × 学科分布</b><em>每组 13 门课的分布，看出各组的问题集中在哪科。</em></button>
+        <button class="pbtn" data-an="aGrpDow"><i>📊 </i><b>📊 小组 × 星期几</b><em>每组在一周 7 天里的分布，看哪组的问题出在特定日子。</em></button>
+      </div>
+      <div class="anazone" id="anaZone4">
+    <div class="anbox" id="grp" style="display:none">
       <div class="card">
-        <h3>违纪热力图（按周）</h3>
-        <div class="desc">颜色越深代表该周违纪次数越多。鼠标悬停查看详情，点击格子或姓名查看个人档案。</div>
-        <div class="heatwrap"><div class="heat" id="heatGrid"></div></div>
-        <div class="scale">
-          <span>0</span><i class="lv0"></i><i class="lv1"></i><i class="lv2"></i><i class="lv3"></i><i class="lv4"></i><span>4 次及以上</span>
+        <h3>👥 小组违纪榜<button class="fold" data-afold="grp" title="收起">✕</button></h3>
+        <div class="desc">按大九班 8 个小组统计九周违纪情况。可切换按「总次数」或「人均次数」排名，点任意一组看成员明细。全班 52 人已全部编入 8 个小组。</div>
+        <div class="ctrl" id="grpSort">
+          <span class="chip on" data-gs="avg">按人均次数</span>
+          <span class="chip" data-gs="total">按总次数</span>
+          <span class="chip" data-gs="zero">按零违纪人数</span>
+        </div>
+        <div id="grpBoard"></div>
+      </div>
+      <div class="grid2b">
+        <div class="card">
+          <h3>小组对比</h3>
+          <div class="desc">横向条形图，一眼看出哪组最安静、哪组最热闹。</div>
+          <div id="grpBars"></div>
+        </div>
+        <div class="card">
+          <h3>组内科代表</h3>
+          <div class="desc">每组违纪最多的同学，以及该组的高发学科。</div>
+          <div id="grpStar"></div>
         </div>
       </div>
       <div class="card">
-        <h3>形态分类</h3>
-        <div class="desc">依据八周分布形态，把违纪同学分成四类，便于差异化处理。</div>
-        <div id="pattern"></div>
+        <h3>成员明细</h3>
+        <div class="desc">点上面的小组卡片，这里会列出该组每位成员的九周数据。</div>
+        <div id="grpDetail"><div style="color:var(--muted);font-size:12.5px">选一个小组查看成员明细。</div></div>
+      </div>
+      <div class="card">
+        <h3>小组排名变化</h3>
+        <div class="desc">逐周排名表，数字为该周违纪次数排名（1 = 次数最多）。红色＝前两名，绿色＝后两名，最后一列是前后半程的走势判断。</div>
+        <div id="grpRankBox"></div>
       </div>
     </div>
 
-    <!-- 趣味实验室 -->
+    <!-- 分析实验室 -->
+      </div>
+
+      <div class="sec"><span class="sec-i">👤</span><b>个人维度</b><em>排行榜与上榜时间轨迹</em></div>
+
+      <div class="playbtns">
+        <button class="pbtn" data-an="rank"><i>🏅 </i><b>🏅 学生违纪排行榜</b><em>点击任意一行查看完整档案；支持搜索、5 种排序与 4 种分层筛选。</em></button>
+        <button class="pbtn" data-an="aFirst"><i>🕐 </i><b>🕐 首次 / 末次上榜</b><em>每人第一次和最近一次违纪是哪天、什么课，间隔多久。</em></button>
+        <button class="pbtn" data-an="aStreak"><i>🔗 </i><b>🔗 连续上榜追踪</b><em>谁连续几周都在榜上，谁已经连续几周没出现。</em></button>
+      </div>
+      <div class="anazone" id="anaZone5">
+    <div class="anbox" id="rank" style="display:none">
+      <div class="card">
+        <h3>学生违纪排行榜<button class="fold" data-afold="rank" title="收起">✕</button></h3>
+        <div class="desc">点击任意一行可查看该同学的完整档案；支持搜索、排序与分层筛选。</div>
+        <div class="ctrl">
+          <input type="search" id="q" placeholder="搜索姓名，如：艾 / XY">
+          <span class="chip on" data-sort="total">按总次数</span>
+          <span class="chip" data-sort="recent">按最近一周</span>
+          <span class="chip" data-sort="delta">按趋势变化</span>
+          <span class="chip" data-sort="spread">按活跃周数</span>
+          <span class="chip" data-sort="subspread">按学科广度</span>
+        </div>
+        <div class="ctrl" id="filters">
+          <span class="chip on" data-f="all">全部</span>
+          <span class="chip" data-f="high">重点关注 ≥9</span>
+          <span class="chip" data-f="mid">需提醒 4–8</span>
+          <span class="chip" data-f="low">偶发 1–3</span>
+          <span class="chip" data-f="active">近期仍有违纪</span>
+          <span class="chip" data-f="worse">后半程恶化</span>
+        </div>
+        <div id="rankList"></div>
+      </div>
+    </div>
+
+    <!-- 周趋势 -->
+      </div>
+
+    </div>
     <div class="panel" id="lab">
       <div class="labintro">
-        <b>27 个玩法，一次展开一个</b>
+        <b>28 个玩法，一次展开一个</b>
         <span>点下面的按钮展开对应玩法，再点一次收起；展开新的会自动收起上一个。上次展开的会记在本机，下次打开自动恢复。</span>
         <div class="ctrl" style="margin:10px 0 0">
           <button class="btn ghost" id="labNone">收起当前</button>
@@ -757,15 +917,15 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
 
       <div class="sec"><span class="sec-i">🏆</span><b>颁奖与称号</b><em>奖项、徽章、荣誉、段位与班级成就，全部由数据自动生成</em></div>
       <div class="playbtns">
-        <button class="pbtn" data-play="awards"><i>🏆 </i><b>🏆 八周违纪奥斯卡</b><em>奖项由数据自动生成，颁奖词可自由口播。点「逐项揭晓」有开奖动画，点卡片看当事人档案…</em></button>
+        <button class="pbtn" data-play="awards"><i>🏆 </i><b>🏆 九周违纪奥斯卡</b><em>奖项由数据自动生成，颁奖词可自由口播。点「逐项揭晓」有开奖动画，点卡片看当事人档案…</em></button>
         <button class="pbtn" data-play="badges"><i>🎖️</i><b>🎖️ 徽章墙</b><em>每位违纪同学按数据特征自动生成的称号，鼠标悬停可看说明，点击看档案。</em></button>
-        <button class="pbtn" data-play="honor"><i>🥇 </i><b>🥇 荣誉墙 · 零违纪同学</b><em>八周内一次都没上榜的同学，稳如泰山。</em></button>
+        <button class="pbtn" data-play="honor"><i>🥇 </i><b>🥇 荣誉墙 · 零违纪同学</b><em>九周内一次都没上榜的同学，稳如泰山。</em></button>
         <button class="pbtn" data-play="duanwei"><i>🏅 </i><b>🏅 段位赛</b><em>按违纪次数给全班定段位 —— 这里的「王者」是零违纪那位。</em></button>
         <button class="pbtn" data-play="ach"><i>🏅 </i><b>🏅 班级成就墙</b><em>16 项成就，看看哪些已被同学解锁、哪些还空着。</em></button>
       </div>
       <div class="playzone">
         <div class="play" id="play-awards" data-fn="renderAwards" style="display:none"><div class="card">
-        <h3>🏆 八周违纪奥斯卡<button class="fold" data-fold="awards" title="收起">✕</button></h3>
+        <h3>🏆 九周违纪奥斯卡<button class="fold" data-fold="awards" title="收起">✕</button></h3>
         <div class="desc">奖项与颁奖词由数据自动生成，可直接口播。点「逐项揭晓」有开奖动画，点卡片看当事人档案。</div>
         <div class="ctrl">
           <button class="btn" id="revealBtn">🎉 逐项揭晓</button>
@@ -780,7 +940,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
       </div></div>
         <div class="play" id="play-honor" data-fn="renderHonor" style="display:none"><div class="card">
         <h3>🥇 荣誉墙 · 零违纪同学<button class="fold" data-fold="honor" title="收起">✕</button></h3>
-        <div class="desc">八周内一次都没上榜的同学，稳如泰山。</div>
+        <div class="desc">九周内一次都没上榜的同学，稳如泰山。</div>
         <div id="honor"></div>
       </div></div>
         <div class="play" id="play-duanwei" data-fn="renderDuanwei" style="display:none"><div class="card">
@@ -882,7 +1042,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
         <div class="grid2b" style="gap:12px">
           <div class="tool">
             <b>① 猜下周总次数</b>
-            <div class="th">输入你猜的数字，系统结合近四周、近两周与八周均值给出评价。</div>
+            <div class="th">输入你猜的数字，系统结合近四周、近两周与九周均值给出评价。</div>
             <div class="ctrl" style="margin:8px 0 0">
               <input type="number" id="guess" placeholder="例如 12" style="width:110px">
               <button class="btn" id="guessBtn">提交预测</button>
@@ -903,8 +1063,8 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
         <h3>⏰ 时光机<button class="fold" data-fold="timemachine" title="收起">✕</button></h3>
         <div class="desc">拖到任意一周，看看「截至那一周」的榜单长什么样 —— 谁早早领先，谁后半程才冒头。</div>
         <div class="ctrl">
-          <input type="range" id="tmRange" min="1" max="8" value="8" style="width:min(420px,90%)">
-          <span id="tmLabel" style="font-size:13px;font-weight:700">截至第八周</span>
+          <input type="range" id="tmRange" min="1" max="9" value="9" style="width:min(420px,90%)">
+          <span id="tmLabel" style="font-size:13px;font-weight:700">截至第九周</span>
           <button class="btn ghost" id="tmPlay">▶ 自动播放</button>
         </div>
         <div id="tmOut"></div>
@@ -929,6 +1089,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
         <button class="pbtn" data-play="bingo"><i>🎯 </i><b>🎯 违纪宾果</b><em>24 个格子是 24 条关于本班违纪数据的陈述，系统会自动核对并点亮…</em></button>
         <button class="pbtn" data-play="duel"><i>⚔️</i><b>⚔️ 战力对决</b><em>把两位同学的违纪数据折算成五项战力，逐项比大小，赢一项得一分。</em></button>
         <button class="pbtn" data-play="radio"><i>📻 </i><b>📻 违纪广播台</b><em>自动写稿的班级电台，点「开始播报」逐条播出本周违纪要闻。</em></button>
+        <button class="pbtn" data-play="grpduel"><i>👥 </i><b>👥 小组对抗赛</b><em>任选两个小组正面对决，比总次数、人均、零违纪、学科广度与最近一周，逐项…</em></button>
       </div>
       <div class="playzone">
         <div class="play" id="play-monopoly" data-fn="mpStart" style="display:none"><div class="card">
@@ -943,6 +1104,18 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
         <div class="mpstatus" id="mpStatus">—</div>
         <div id="mpBoard"></div>
         <div class="tout" id="mpLog" style="max-height:180px"></div>
+      </div></div>
+        <div class="play" id="play-grpduel" data-fn="grpDuelInit" style="display:none"><div class="card">
+        <h3>👥 小组对抗赛<button class="fold" data-fold="grpduel" title="收起">✕</button></h3>
+        <div class="desc">任选两个小组正面对决，五项逐项比拼：总次数（少者胜）、人均次数（少者胜）、零违纪人数（多者胜）、学科广度（少者胜）、最近一周（少者胜）。赢一项得一分，最后给出判词。</div>
+        <div class="ctrl">
+          <select id="gdA" style="width:130px"></select>
+          <span style="font-weight:800;color:var(--brand)">VS</span>
+          <select id="gdB" style="width:130px"></select>
+          <button class="btn" id="gdGo">开始对决</button>
+          <button class="btn ghost" id="gdRand">随机两组</button>
+        </div>
+        <div id="gdOut"></div>
       </div></div>
         <div class="play" id="play-detective" data-fn="dtNewCase" style="display:none"><div class="card">
         <h3>🔍 违纪侦探（计分版）<button class="fold" data-fold="detective" title="收起">✕</button></h3>
@@ -1112,12 +1285,10 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:26px;line-
       <div class="card">
         <h3>数据与存档</h3>
         <div class="desc">所有修改保存在你自己的浏览器里（localStorage），换电脑不会同步；导出 JSON 可备份，导出 CSV 可用 Excel 打开。</div>
-        <div class="warn" style="margin-top:8px">如果看到的数字和登记表对不上（比如仍是上一版的旧数据），点一下「清空存档并恢复原始表格」即可 —— 通常是浏览器里存了更早版本的存档。</div>
         <div class="ctrl">
           <button class="btn" id="exportCsv">导出 CSV</button>
           <button class="btn ghost" id="exportJson">导出 JSON 存档</button>
           <button class="btn ghost" id="print">打印 / 存为 PDF</button>
-          <button class="btn warn" id="hardReset">清空存档并恢复原始表格</button>
         </div>
         <div id="saveState" class="ok" style="margin-top:6px">—</div>
       </div>
@@ -1191,12 +1362,79 @@ var FAKE = new Proxy(function(){}, {
 function $(id){ return document.getElementById(id) || FAKE; }
 
 /* ============ 基础数据 ============ */
-const WEEKS = ['第一周','第二周','第三周','第四周','第五周','第六周','第七周','第八周'];
-const SHORT = ['W1','W2','W3','W4','W5','W6','W7','W8'];
+const WEEKS = ['第一周','第二周','第三周','第四周','第五周','第六周','第七周','第八周','第九周'];
+const SHORT = ['W1','W2','W3','W4','W5','W6','W7','W8','W9'];
 const SUBS  = ['语文','数学','英语','物理','政治','历史','生物','地理','信息','音乐','美术','体育','不详'];
-const NW = 8, NS = 13;
-const L = 7, L2 = 6, L3 = 5;   /* 最后一周 / 倒数第二 / 倒数第三 */
-const HALF = 4;                 /* 前半程周数：W1–W4 */
+const NW = 9, NS = 13;
+const L = 8, L2 = 7, L3 = 6;   /* 最后一周 / 倒数第二 / 倒数第三 */
+const HALF = 4;
+
+/* 大九班分组（全班 52 人，8 个小组） */
+const DOWCN = ['周一','周二','周三','周四','周五','周六','周日'];
+const DOWSH = ['一','二','三','四','五','六','日'];
+/* 事件级：{w(1based), dow(0=周一), date, subIdx, names[]} —— 在 buildDow() 里从 EVENTS 构建 */
+var EV = [];
+/* 全局派生 */
+var DOWTOT = [0,0,0,0,0,0,0], DOWPEO = [0,0,0,0,0,0,0];
+var DOWSUB = [];   /* [dow][sub] */
+var WKDow  = [];   /* [week][dow] */
+var GRPDOW = [];   /* [groupIdx][dow] */
+var SUBWK  = [];   /* [sub][week] */
+var GRPSUB = [];   /* [groupIdx][sub] */
+var GRPWK  = [];   /* [groupIdx][week] */
+function buildDow(){
+  EV = EVENTS.map(function(e){ return {w:e[0], dow:e[1], date:e[2], sub:e[3], n:e[4]}; });
+  DOWTOT=[0,0,0,0,0,0,0]; DOWPEO=[0,0,0,0,0,0,0];
+  DOWSUB = []; WKDow = []; GRPDOW = []; SUBWK = []; GRPSUB = []; GRPWK = [];
+  for(var i=0;i<7;i++){ DOWSUB.push(new Array(NS).fill(0)); }
+  for(var i=0;i<NW;i++){ WKDow.push(new Array(7).fill(0)); }
+  for(var i=0;i<NS;i++){ SUBWK.push(new Array(NW).fill(0)); }
+  GROUPS.forEach(function(){ GRPDOW.push(new Array(7).fill(0)); GRPSUB.push(new Array(NS).fill(0)); GRPWK.push(new Array(NW).fill(0)); });
+  var seen = {};
+  EV.forEach(function(e){
+    var cnt = e.n.length;
+    DOWTOT[e.dow] += cnt;
+    DOWSUB[e.dow][e.sub] += cnt;
+    WKDow[e.w-1][e.dow] += cnt;
+    SUBWK[e.sub][e.w-1] += cnt;
+    e.n.forEach(function(p){
+      var k = e.dow+'|'+p;
+      if(!seen[k]){ seen[k]=1; DOWPEO[e.dow]++; }
+      var gi = grpIndexOf(p);
+      if(gi>=0){ GRPDOW[gi][e.dow] += 1; GRPSUB[gi][e.sub] += 1; GRPWK[gi][e.w-1] += 1; }
+    });
+  });
+}
+/* 按日期聚合 */
+function dailyAgg(){
+  var map = {}, order = [];
+  EV.forEach(function(e){
+    if(!map[e.date]){ map[e.date] = {date:e.date, dow:e.dow, w:e.w, n:0, subs:{}, names:[]}; order.push(e.date); }
+    map[e.date].n += e.n.length;
+    map[e.date].subs[e.sub] = (map[e.date].subs[e.sub]||0) + e.n.length;
+    map[e.date].names = map[e.date].names.concat(e.n);
+  });
+  return order.map(function(d){ return map[d]; });
+}
+function grpIndexOf(name){
+  for(var i=0;i<GROUPS.length;i++){ if(GROUPS[i].m.indexOf(name)>=0) return i; }
+  return -1;
+}
+function grpOf(name){
+  for(var i=0;i<GROUPS.length;i++){ if(GROUPS[i].m.indexOf(name)>=0) return GROUPS[i]; }
+  return null;
+}
+
+const GROUPS = [
+  {g:1, m:['艾XY','何YM','梁BL','王ZY','陈CX','刘XY','唐K']},
+  {g:2, m:['敖JS','何ZQ','罗YX','张JR','杜YT','刘YX','任YL']},
+  {g:3, m:['曾YC','黄KC','牟HR','张JC','段PY','舒T']},
+  {g:4, m:['陈BS','惠CY','穆XH','张YH','葛YT','田YC']},
+  {g:5, m:['陈XF','江KY','秦WM','张ZY','黄SQ','王W','陈ZY']},
+  {g:6, m:['陈YM','蒋HY','邱YL','赵RR','李H','王YH','杨YR']},
+  {g:7, m:['付JY','汤HY','周YT','李KX','韦ZX','张ZT','郭SR']},
+  {g:8, m:['韩CX','李PL','朱RZY','刘RX','张JY']}
+];                 /* 前半程周数：W1–W4 */
 function sumW(a,s,e){ var t=0; for(var i=s;i<e;i++) t+=(a[i]||0); return t; }
 /* ============ 纯 JS 解密库：SHA-256 / HMAC / PBKDF2 / AES-256-CBC ============
    不依赖 crypto.subtle，https 与 file:// 下行为一致 */
@@ -1522,111 +1760,219 @@ const QUIZ = [{"q": "我们亲爱的班主任姓啥？（一个汉字回答）"}
 /* 每种 3 题组合各一份密文（C(6,3)=20）。密钥 = 该组合三题答案按题目顺序用 | 连接 */
 const QBANK = { iter: 100000, list: [{"q": [0, 1, 2], "salt": "0STBKQnG7TjIU2J4lVNihA==", "iv": "IdsJgB6VdOwNixuqcA+VMg==", "data": "9mIz5xMXNdvif/RUzKAgp8wedp66c/FDY3Gse4NpIkZZSDV3TkOluWlReLjLMn8izSgH/5Zw3H+eWYu2GY8UX1P7bGnIdDqPHEnbvDCcpla+BL7jpfwpZkWa0DjoT5xJjlzFLxNdvGFoGtXZMJebcYiTyYLfQ7hSw8u11FedAPJnPFZkr6rFxGYWO+oUaScu6qELeNHwATop8u4nbDfKmCeEFBecIIstu+e2UrF31IvsdYsUKJm08cWOWMl2F6Ie3EMiAXSz+1q0FR/+BPCeaVnbdMoMWL7B1z+mIMxFIUJ07pw5h+epTTcD3a96U+CVUPktFBO7Q2n8XCywOICI6Ql4l1ajyL6aSXNZavmWbnxJnpTqzbIdjqNU0LvgTL2xkFOFXozQZneCeZ+fQw5MvAPpbe0NDsI4ry+gFUNzUgzfaqz/2QF/yb5hPK6gsnXirgGnLegVCZNJmJ/ckWWIDNcCA70srfOhhtNkRWg8fdoac9/LjcJnOaL6d0jEEB594wPxF2qveDxdrkTpVH9AVHyqkUHLkIZuzl8Yd9pXlYE=", "iv2": "Nh49BYL7jfbkSGRctRdXRw==", "verify": "KA+npIGmS2EejD5FQqqwrA=="}, {"q": [0, 1, 3], "salt": "Trs0I2kc1vStOL3d0xUHrQ==", "iv": "oo/PBy7S97F2ZSPUACy2eg==", "data": "f9xaOC4FlDOx5Wtu+yYoJXy2YJ7pUxC8HIt5c9KNGMj4aJ71QfpCGrREE6198hNooXkRFduZQLM3jpCDLaZ+z6XUer97HVUOT8NbxiZzdqQ/0F5Q0cLy+eQNLl2YSfk06FJSXOMbcNXMBH44cf4yRBRlqTr1SaA5pfmoUdMYll5+DRUhrd9dwnFIts9vVFGQw1hHXZ8w/Wa/7fAMQTGz1MCz33YYSfzLDe22r262yyvqhmTepk6tx2nb1eFpYRLHxGp5JvM2FSrkt3xcgmkYFi+b1TtfvfIXDBhX1SHcPJm/tMPEm70vzIIr1X+2BTgYwGTIHsvJunJHP4VVnYJf03Cz0tbOsR4qKv8c3ufrn1++M0taguv4kv4tCTIZ/RrxC9/YX+kVJr+2wm98AB2zlF9ipR+ASX2Iuun5dEn8B/gEsG8tVfdKxZE/SwW8wSWGpMRLoQ49HMKKZPt2nv5yenAtAHOGA1cWz0FEoMI7PuhBXNqksEFZbrOY37wrDgXGKImgF5hB3n972SbWVohWfRYxJLJ/wYEj3U++v4gRKsw=", "iv2": "37hESk+TKM5a5CQqGMpySg==", "verify": "LSwsdnFacxI49PGPuQcflw=="}, {"q": [0, 1, 4], "salt": "MpAJGT6l9y530CmXVR6X8g==", "iv": "+RwcimTwKfSPI+WQw0df6w==", "data": "HqiB6dAnmiAgLP80L6DvoYJ8GnmbfVe7OZWCJCQ6I99rhfCDm42cH5MPm3M+JwgrIXap7kJmd5HV59UeXmlBvKeVysXrzkwxbWwGqAmbRDVQXa2o/kAHWwItysal0Y02LsmwCwhsKoop4T4Bp1fBtderxdVBhFSDem7BSz1d5by6kF+G/LclbeoUKD+h6oyx/r38KiNWFliXMZA5/cjcs4CKjkmXHcB+MvjDL+DsYYquDgUEBwvtfHa62c1dhDV66vIOrbvzO5SOshd2DfdNUOdBjuAC94REKLb/GKRy/KX9wEvjoRK5okNEl7VHuSlCEocCOVQdC3k69jGqBp4nLRMfOLNs/ozGYJmlevaYL5p2qwFaENaZbQr6dfH/3g4Ut+7cLKZcfbTijzScQTkARemtipHpDfpjfY5FYOPCncuINEpqxdmFucFL69v4bziXndHAPs8WIkzfYCdg9H8tYr8J1Zh24oSTyhybpjWjidiY6CP/xmocC9W7VQIzNUqcWlmh2jDD4lpyP/mnvP9TYFuibNxeup/Gj9LCmCRNolw=", "iv2": "VXQHHMaz4mCfMB0X/+pPTQ==", "verify": "88lfKUxwUNKCmwuxkoporQ=="}, {"q": [0, 1, 5], "salt": "EqO5Z8KdJ4KepC6XyWxFfw==", "iv": "0xKRdCbj8QIaKRas4eJs6w==", "data": "n9seZMDy2gZf3bLKSODy8U+FarpqmotOvWEbuxDa35DLiVIT7zDt03oK2dWdIlanulRFAZc4BiNyC8ClN9RMShqBZIVhGjlegp1j/mjnWGW8b2zf5kpm3EJvq/3Mj7gLyV+csWyb/N3cCIKjp9ZVtNOKl98B2LiyjDTaYYiA41w6fxsmkhm02nFNhApK5J33IdO4yp5G+cJY0y/gtyJmQdN6h8/WNVTX9RgecvFAH+PUTBEPHeN9HJUA1oP201PPyDZhoBZt0idb1LdiTC0cToeZgepLRR1E4NZVAR6Q3KLkI3FNXw13BMGMV9lAVbsXY1GZdTVbiOC62pdlOWRfR4EF37TkXkfiMOy5z23YozF/4DNOxf5JUKFEhZeEXvpDr/ObMFb8gelVxdx1XKlRsocIK6mVqAaTKGWQcYGXTAx1rmA89llwczZ4PB+9SpIrTL/M8bLlAsUFfeBlMY9L4RkJ3XXU8vMoFOshPQGqZBX5QEjNhDLT7QNhYle7oWxg0LyW4nj4SjPxPhDETHmKqgN+u0U/zKAqVhcWaXlCP/c=", "iv2": "Oelgan2+JOOEJ7Ogkb5eig==", "verify": "gvDFNZSHBMEGiY5qdcJZmg=="}, {"q": [0, 2, 3], "salt": "h57EM1mqrHE/N3DeGtSKmQ==", "iv": "LQGsVz+/I+mwC9WX0l4UOA==", "data": "Gt3+DFiZuQ3Yr14YQzQpzJO4vcPgPlFlIgqFYLTvyCKl5lGte8J9S0hNm7+LnnRnHmtdM2XNBLLTkGOgGyJLE1w+3fENqFvvfjt5cUobnqOQ4H6B1GTO7uchr9TehbxDJ3tUCY03VA4/LnWuT2ZDc2o2S32M4dthXXw0W4bISTlsCpKQoWdLyG+Uc1pTF4CQQg7WKGpKRiPla/L6P23QgusWg5CfU30/UUN6EKLXQtqlaahkrAWFfgx48Rn6pGYlFDNZgnUhISDZQXRbctRWulJSuthSelNth8qcBTB2EhqsKDq5iuATegk72FAbe0V2A5E0C2qyFm5H5rGBbkNIORGoq6WXWoUDrsPG15bM4oTZjt2Ku7vlWQsEkdirNHDSeXXBGwnx+sH7KsV+sn4lvk/RgYMB9xAECL8l/InrGDuvYrLSvFdQY6R13ZuPS6yq+W6/an0Pz2eBt3pIam4E2Qnw66+Gz7vLWfCPcK/nbMEVV89gnKdMeDNUbOpsufUQsqIZzSgQs//dXzQJWbB/X4j6vlLsyUkyUegbCB9v5Z0=", "iv2": "4m+yYjhS+9n8HhTJGnLRxA==", "verify": "jr39JP8Fs4k8Ub+rseocpA=="}, {"q": [0, 2, 4], "salt": "cCfSwsmo6rveaTx7YjYV0w==", "iv": "aFa+Vu/EKVZFK8ZJuF+S1A==", "data": "FzHz3mX2r55Br+N7gdoXOywicsJOvT0pVScE1HnOx88xtZoaKLoubQ01axEPW5FIaSwEKRJVGOU/w8VJy08xYdqgiRxI5jPL2U3hG4lTYW4+LAetSxCX51etROrwPjQSlH5s7ZvmYxyZyWeE5el8Z/b1bpLaNFsFOMLgcMx6UHJ6KJcHnpTXBmeZsaNi86DtfMRk+Zy7ez2Old4fw03sCB37W+JdgV2y0+O9ZdAIySPFqCkK9H08cL37qyj0DUHm0USND5UtVdmnaxJY/T9EOp5aYCdZC1M76YQiWaFRJntqYP2nAh9lYGWJzRqcK83q5SjF2sxY3PwLffKUYFprrvrj+dOSB4Qsa3njupvZDwAgpuHWYkxFz9zJuUnero6BwFBcMSQ7EF77gtstn/vz2Xr0Ib7Xm4ZGSNLDAQZ1EkJmPbaRq0BhC4yzdk1E0KNLnaAGLZZ9HyDHqQU2Qkvrl/PrFzK8CXPh4+HadpZTzfCVSiFvmteqCFH9uMW7VqY0mFCtQUs/V9ZgtVMDJAp5zRSKIkv1z2xuqgRtYKQlYOA=", "iv2": "PY+fqRJgoynA/GGRi6CjPA==", "verify": "hRt3D1yveuMcXMxuLuPZEg=="}, {"q": [0, 2, 5], "salt": "+UPBOXweTYd9x5nFpYKsiQ==", "iv": "4OeNA1zOYn9ZImpALf5Grw==", "data": "kgVESan50WGypH+iU/O1OW0P47MOJKfxdOHi7l6r2BrUKfAPK2POLO4QO7Cwh9kc+vJ+VRnV3A49vJDXpen5dIxC2Kc11W2tZorb+taf2bOywS1lPp+DJPWjtLOwqV5luEB3snNrClhxzlA2f4QafxpQpt8a0XidF+qPgMxcOU9B1c3/wOA2XoWmjH5I08ocjbkoSMnAZ/d479EiZpy6qSqQ6UQ03l+4w890PwK1cQ4XLU3ETbdZQb0kGdfeaVX/O7MY/337tS4iX7LRxm3DkolqmUKGeHKlkvqU5IP3ZZbwVEUj8ZcrD3kThE2ZOexw7yXYd+Dh8YasysMa9R22Ojb7cbtmGgNPmtcL6Dsa7IbKHUd9bjWN25fYnjBa6DHV/1ViCOg44/+Q1CSFZMJZul8P8/N+8njX2pGv6Gv0jhaXfzx99M1IcEs1J7YNdrasBBX3DPF1Y/smSHMK7bzU+RXzR9VE4it872ZQLW5x2DIOim5LeUqLhi59hom0P2gkr+4Uzv52t6GK6bTI2342bmvH6emmQBOJnYi/2dbH7S0=", "iv2": "Kvcpvc5UPu6uCM34Bgw3yA==", "verify": "AhZGfJ6wQ6zlrxOgDiPpTQ=="}, {"q": [0, 3, 4], "salt": "Kr8wB74dg56E3Sn8QbHd4Q==", "iv": "lF03dUa6hAuj+RKIK5skcw==", "data": "GCsh39i0cU+rXrPz0Eu1kmMm/AiMw3J7Cl9Vu214q4XaMp6B92AIWzZf5wv0duFUsNKo0h4Tpz1uQ8MjJyDI2UTkUCEHbWC6F0M1qUp5kwDnBL5CeDTeFe7LFrOPx93OH55qYDZtuBbdUuN7ZQc48gTPN/iF/auFLBPnThgEIMid21+ZYOiiCrsbV+jKixqj4ZK/fK+Zjy7ovXHcvRKH7T5IZSw+NdddStAQpJ3pBUHhGjFptwE8mgvWXkbdexNyAr0hjDufFc2+ij7afdJ6YL41fiMwcYnY4XoVadzRqIHDIii3IxamAhwu2ON42zRltKWiV3+0/3DgcCSIJqVD6ceit0sCQA/MaqbYHU+UbWIdvFuZQETFe/lG0JAUWCcY4YwF/nO1dz8391ZXE5ytaBG2TclJgtgQonYNoNF4LLANxaCighayKNw2c7OaGihoyGJ17VZCYfCtR+qOlNRRInom2OtFHfunUaqfQkEou5PUeFW9vSKa96K+n5zKbhAt+3r9vwrNWd5lUTV6z9X+KsGM9RLV8rwpjNtwa+nzxBI=", "iv2": "bFyRoJGPRCZLHz5AtkNk9A==", "verify": "CQWU0ITeuipTsnvAo5yqsw=="}, {"q": [0, 3, 5], "salt": "YGnVk9ga/af/M8kGL14sNA==", "iv": "b4ggg2vBdDr6oqRhzlRSTQ==", "data": "PHY9bsdvE6Gam6P5Wn7wnFQpHP5hJURZD+nXqxCErqCxqFAsJViIsrlG715FFjMvX7Rh5eFdXUx2gmXrGtVHVMOcc5H5TfgjyGqkvQVQbTLHXIsviGa3153mn7sPneDjv0+cvXSXZrryul20RlTQzt4UmGPDzfsAJ6jbXPk4KxNpEI9KO+3DyezI1VLSG+n3Whxl6BBnmQgu6IgdzFaRe9yeHx7FuK9Hc5A0p0Cc11t870jpaAsfUP+k0MDGvq9ezmUwhyRwtzXxfiBNMLx8HLp9F/FgdpZlE66FPiC7unnXOzQ6kEb0otwltTHwdmMu3Wp+JBmo6QERbp4kHHpv72G/k7FjxZ6N5nEe0gzIhLjaohz7yVr0gamGTQ8T9vJzKfMbN7I0Djp8J/4ovKxBfRXLUKaDkSt4LWAhMX8B0LKz0QwarenkW3Om8xvXAKvfCzX5BrAQHkinxZEJXIDrmc5nXtZhzhAtTu62DVfdolzsCJx4YDflywl6bCHVHXMRT/YboDIQ4U5mqZHve1hszbi8V7FGN8Cm9ccKdps5fbg=", "iv2": "Eq0H6Q82xUlhX9cMTfukww==", "verify": "Cd29lK+4s498Ew0mI7yoGQ=="}, {"q": [0, 4, 5], "salt": "vo77/sIyAJYjXf2Cbr9L4Q==", "iv": "tFl2VNja5mcPhgqi1j18mQ==", "data": "3JL37lsO2ORaQYgymXuaiV6VHmT2Wt6nZn1V9okewsBuwh6xrpNmDFBCCohm+EIjZOOPIe4/FFfW9h5embovb7+nTLbzv6+H5jJxCZB/QmpM5aWMRfWC2vnsD2oJuABRwITVG2BnI6TltJCO9fdvbiwB0Zehg0RNBzTiCbxLZ3ECx9UQNeXhKFEqYnT5Bgn5kVfMoL8F9Vu5hSJr1UuYvlpX4X9vKKJVcqGEcgIhq74g5QD+h19yRSVWkSRKo+ZA58vDtvYx1NVO/dUqbURM27Dxtx6+sEFwOdmacAzN7ynRP7AhspDT2FV7SdAYa4+UifjEpoSb8cHRC/4r29QEJHdTwIC8AUqtALl7uwLmdclLB2xg2ijjH+a3jwb5I4HZO0FW2ve6QgyxqpYmNnUPP1q9yoHoWTaA1n2Pz3xZ6aGiDSfseeaCXTGNI3nNeWoYjzuOvkYqPdh8owQAzDCKFCdqIjqFYaSDWThPgNnK09o2RCXpuz46Q/IqWtheMjQXln+zH1kXbsc6tb6cThaP8PRPdWJPUvmnQgd2XHpebc8=", "iv2": "y1uj7yWP8HosyLLeL27BBA==", "verify": "sqZu05uwlAWcJt26/kXdgg=="}, {"q": [1, 2, 3], "salt": "9/ePkRXSnmZ/GicdJusCzg==", "iv": "plxJkdsy+S2nfE7GhPRiTA==", "data": "O+CWzfy3jT95fFfxmflvqTxSthn2ZfMZk3QnDxQnxYN968cTvb2QzWF1G45UR4LXpYv6T0OsB3ZaPxMpD5xGCuMGwqb3qeLy5jhAvwfdy5JD+6A6wjsPztgi6H96xQivjqCI9XBk1Q4Fph/2YO+Qdof3IfUk93laCwsHdNaEUZh6prWuHqttPm1bVK+updU3oSXg/kiIxkjNj0Jl3AhCuTQ8En37J8EoE1Cy1eV2flqTAwqYN1iKYVuKBbWpSj6kJ3M8wtqCpV6hVUTZLoqNaL9XxzK2mhA22zKGAf9+CoUUQdAnVlxv7+CQywDfJkeDjiLK6kiBsZD2BEtD1kKswr5JUDsazocnjEMLVJR7vLXw3hRFLDfCJte0J+rbv0reOf+W0LiwU/39TOvhDOQ1Nlw9RuVJ0gDfCqb2B/Lth9Ct4qtuZTN303WsAqxbSnb2U0mWjlTqYuo4E/JYFWWwCPPDWsuf6sjzpNTDKS67TUKZvUgGBknip42IQs3mRhBPAMqig7bVgHkm2Gv38Hj8mJWdTRwU05sqoIrozeYrnDg=", "iv2": "POJtQS8w83oIf91TbELoJg==", "verify": "KC2uJHLhlez4IS9hFtDN3g=="}, {"q": [1, 2, 4], "salt": "zkmm9ltRfR/yvrGL790wDQ==", "iv": "fjiW7M1zhsHFzZ++QXU1oA==", "data": "RRFnxp94VM7CKTv92O/SjRqOkN0Mi5J3xOnkdbLFF6RFEb8t45NQSn6JIxNvu426aphL4e6Zh/rgYUzMyIm/lCMMVnnPaP0eKdA4C4xD7h1MIc2i8NgDUM5VPM1Yv/EpAS7xgZ1SnWUnECyR2cy4U8qRX4mxRPhqteiG3vkKnTbmjyaWQsilyYZaDDnQdgfw2pve44MwAcDyg1GWVknA8wxX3ubL8GeSLve0lc/NO0OejHDziZqgKSuH/XXszMvOEbX44rSoWyvqGbd4LrY3anW81AdVT8WLbVjhdTLT/IrNjl2K1mxM2CQ4m1Zri3GIZpaWmsKjPv9r+IMCAliGV0DzPjyjtMa0ZMCdrZUjIkYHYEPTj+PVXrrrovxRYkl+NqqypLLrxsuCu7UBU6afLLBTYNSYqJV42sVuaFoIuhDRaejgUGHSTIFlPy2kEFFx9GTlDb2+377F7CRMhD8AORhrZ7k1bjZxOp6UUwU+ikuWo8sNzbeKft6tLXFWs2X++LkQpDqgAn2PscouO+aJazGhuzioqnoIpk1SrdLk9Wo=", "iv2": "1QCx+9jEqR8TE0RBi1mWIw==", "verify": "yYa8av2AbWdijNm1yjqXgw=="}, {"q": [1, 2, 5], "salt": "r7D+7MpXgsxlqAbcaraeyA==", "iv": "R5HDFBUHnixJEdKHU75xOA==", "data": "ZSGPPZJPuAi9nW8c756+TVuJhcR7K3BpSwlXh0t6rx8hcad77NK4BMoGB8RHsqzYStT0diwckix7nFwFldkgL5/5b0Ro9C6FjNz8beciktH6TCiiOxwwaqU8x5jwDfF/OZxLwjLElaWJnufEBI6IUVb6L14dUET78pTzHOlCLTTsAy5bzQZ7lRjStI/SP4GbAy9QGqlRuDUT5t1k3AAe+xb7yrJhr7w9WiN4fpluxwaElDO80jHlxQU0Y366luS2vt/FY+c6JrS9cTlMNUS65NK8ySw/GaKlJGqsPFEjWQPnw0COsMwARpz7h29FMA4XxwAZni/DwzZeiALwhfs1Mvd07jKKObEucz2Obo4+E1nNZW1gJ/KfujcgDF+6sjNAz+ZR3fEbQOZJLO3yNWv9xD4rxdF0yI8dw3oQSY+NAOLsWWXeBEsQKTEgaXyVm+Esi1V14GswoanyvUfQnH9PNdxr7/xdROT1NGZNp0e91uj/1QfPKWjD33AD1uMcQPgZtzzbHtiuWGTVEY7oOnW0Fgs4WA1EHFFdy0+KPTGvxd0=", "iv2": "iVicMA78KNPzpnNr/CdzFQ==", "verify": "ziZKKewNmdZ9RToGv2MkDQ=="}, {"q": [1, 3, 4], "salt": "/EDD083oayJbgWarsiHMCQ==", "iv": "RLQHIvhBcUeuv+EeYlyRCA==", "data": "fMtwLyOktfS7XWB4V3CXd+0/z8xIgqEhANSLdoEPRcx4BLS8vPlsk9mDt/hJVnzn/3pl0ncelvnd1AkGi1+Up7+gHuacrrig7aTHWvo8DL1T9dS9yb5xyCOBpOLFQkeJGMITWKZDZAKP/0Hpp234GxR76bv27HVEJbTIJj8DOpVAq5S7ps0qk8sM2hdNmTOH+YfJMIhpQt9vATHQPDe02LioBVryjgrvRRov8Snqm9wSCAR1YXS3OglwXLtsAbcZhK1LZrJSHbPkKbdr4cukQxAIOUdAizKYKrJsUXTT0HieTbIAlgCY2njmv6d963knhkUml48dcEiHoy7jANVjAnJToOpKtUCDmMPwzc2Ww8Ka2EEH4FghwD8ZfoBq7C7FveH9SOvFaGa3rj38vnZ5Xl76BwokGSRrFhxDEXsErpPAHVjgifoeBH11+QyawpqjizvNUFUjLpYmSvbOwZTIH+iVIOGBIoGkcScXJ0zxFGv9j+H0QWFk601kPgAV0saySa56IY+kIWHWDilS6iHdZkYrRTGCewYopB5olnGBjzU=", "iv2": "lgSjx/LnAQdvuMzKB+pgkg==", "verify": "5SlwBbYQ61PIWR6RKjJmnA=="}, {"q": [1, 3, 5], "salt": "yklJW23OEHDfDqhuFEd8bw==", "iv": "atCkjsh4AOQRL7p43+aa6w==", "data": "/SBKWyTCcxy/e7cNueZ7/FBYNPVxybF+JobDW98XXVlMl/ViXJOQPVI6zsv2RMkJNoLVv5pUw2uG3W9UcS/cPl6Zrw0l8zEcYLzQC3xWEW74Q8l0EGFF9+0dVIXT9+HbP0GDCpqRnDZ/i+ETSK4gvGGC1RI5mbePIIRAR6R/Iii+BNxDJXGWpbcsjep3GxYFeSJKWtlvjJIlnUCJBLKwlZgSONoTD6KrZbymgHSshv+qVD2sKNZoLs96zJGguwvq3XM7S9lLJaSp+b2GZtwgFlRHbuASfzESmGCr5WeiB8hL8XaU5iLdmQUZhBTHFdyBhBMWSEIZKI8f+vxVr9dxoqU9PesIWcA3TAxPwyBQzh4KPisiYfQu+XceBikTcagc6VuAqW2r8ThZ2KlMsGZSZRSqtu6OtPR63K27G5shm1pedR7T2BVVTaKlgcocd3TAMU9cM9uOEE1SnDsgbgO35YSqTyz7ZXZaws1O7L/vQhBzIDVpVBdnBgxzWvqre1nLpYqhbFN8zJb1Brlyj1cHzk+Sb9+jckYw4skAx575p1Q=", "iv2": "PBCbe9A3UzbzB5VTyPkolQ==", "verify": "i3IKmbfu3rGIjm6bCl/yKA=="}, {"q": [1, 4, 5], "salt": "YYsSPUwQiRiTVMtdPIDqCw==", "iv": "s9V4UQuWZBewjFTZKbBqkw==", "data": "bnBJW6bWg/GbuHF74Ydx9NGkiW4U7kv9NZ/mtu0YvjN3f7eWGVIskiP5xqE5jjM0oqKQ50c9fDCAXZGAPLWmrgV3v5T+Bz9X/rL6FPLy0otFjM/6atpiU+xfDOetYRzWKy5Sb2w4AJuCQ2aioFjG+9XuUQEx9O4p2mUI+F1jHcUH3egCKRujif6VSND33077fjqIbC2XExy4RGnVRpdjANrKRnvnmQ2R+sFxKoqLrZfZaSD43ddNjJPSc01K7rV9Gxj+HKCvMXxnZb9EWo34dcLAtj1nrix+LG3jwJgvgSmZ3jB7iog23DlFTXQjZATmsRrC3IVwtvMcmZxMZ0ZvvSQ4p3Rjg+sSamR1lvXB9WE53ukonRRVGIIhHzkXPdjCcd5xuLoeXvYTQapuH5DbcdWPym8BjlGhCI9Hqmh3sIc4hl3o4mYk+a7mLFRNy29kAuuxjx6WHuo81t5d43kfXKfPOV+uOOK07oytryPht4j31gi3dWJ871JrrQsDI//eaAoeKtIoTKf79iD+rknwqkukOymhUWMuqPEeXtNS9jg=", "iv2": "BciMAgM11U7Qlu77MX38Ug==", "verify": "fmvh5aXpe1Mpv9nDSLKsXQ=="}, {"q": [2, 3, 4], "salt": "W3XYRxqPfmFUbCTauFQbaA==", "iv": "Gna8W+QB+rhmklhqPxIGRA==", "data": "GzfyjkfFG9uv8QCUdnz/dmqvT/jnWCyeoiW6OfwDQFCBvODbruhIin+/jbOgIkBQ1mq72aiMtzV91gPinUPArEClkcPEepNEyUXShlpUQKJ+N0AE++ZNraN+qU2RLofSrCHqVYgtUNOC4UJnJTMNswgeqhjAH6Jph/J0hRYHjixKlwbUawrmrsSMM/EGN6I/csmCcI6bpaTKgeImYBxa+CC/RSdqEgPv9ZZH5Gw53CFiE/o063LhtBqb9E2ZTjnFa/heXlxi0u3Wfqhq4OOTsxyNrOFgtUjg1yuilZgnrf4bSmC6bLPa9RRv4F98kOc8dIuUPrSnrsN/t+AKxNoubOkO56SEXNEb43zBWT1fx5qbnh/TiGzsOoSLnkkfcPBIW0z84Pvv7dDAssJFMgpQOEnOy+DusOOZ47IxZaQDM0oQB7VQ3wmp00GjY6aJ23DP8Y3dtV12hepxb30ApOf41WdujR7hXps/c1R4n3PCGkjWRQ/drrydARLg533cT6Vk8hQfhEZTUgjnW9lJ32BFLuy6ndy65q9GsEvKmwZmWBM=", "iv2": "3UPyl/XAZ6EB3tdJlvHCCg==", "verify": "HFOYLliicE5l7rD4E2cYFQ=="}, {"q": [2, 3, 5], "salt": "NDAnQ6QO37JT+DopAzHISw==", "iv": "vQ75ZWEWh4UkwqllwjET/Q==", "data": "k3k3hA+XDBGgny9DgHBxRui+M7NTTmgYofl4HuMS2MW8KlKpeT9193vRhSnpH9Nf9sA95UfZ7e46TZC+kvTctpT2ZIbxPsmsOb+NJZTIitOyWOqmhMXYy6v+A3Gzu31e92Q8GOIpiQ8vk7Ca1d8KANQjoab4m10VWqMLCLUzjv402khlAwG++hKTSyeTu63fYOZ4yeeUlPr5H7Iahozsb7HwSDURaQf9osJhMWQpradfJK1uR5blaZp2V9wXhN3hpkPoja+ottIIyT1UVDNKQMWBcWsuM7uk/S0oOY4tXRWWAUZ+BScQVGoy4JO8RQXwVnUtH7fN6YHBnaAHsGQI/D5hW2Iz2EYKEexwAztSLPYRivhId98n86Bxr3JWxx12D2aLzcZvYdNfSWxmr2Wx9+re34hgCnuY5NiqzpId3BEeyQVpWaeFcC9EoGz48rXJCJtt6wSCSg7LNDomjekue5xiO0Oxab6lTkwegxONfEpew4iK8CZd/q1CVYFwmhboe6V1sMYzlIJZ3T4ziHO5yq+QBRZDdpb+ciRD4AhokEQ=", "iv2": "xoSyg8k31dSXCDA2frxKHA==", "verify": "Km7Tsze/P2FC5q2hRhJm0A=="}, {"q": [2, 4, 5], "salt": "CyqRGPZIZ6s5NcsHkhLLpg==", "iv": "bQno0sIfWRwvYIGJzujEuw==", "data": "smn/6/RIrStD4fZgW0om7JhG0MHqP75rAEfgnP/fwhtsfKoYFXUtZ6tMjz5hvXLe2qjkK+AgXyTn5WWjNQLp21B839Sdch/0DcHVcy+6P9rYnhugBComzxdC8e3iv9Yt35fRkICa8PLg3ueL6/OL437ZF56OUvaPK9S+N+snW15KTry9wWsOLVAPFKHM9b1fKZXRZx1eFn7iF36X3e8k3wspVR/OwaVAx8vWjwv1BHGlzbkJBlYNmFg9ocoFR506ffPJjWSADutI0LaEwssMFnXTPo6MPgcNfk9wDwzu4VvkEsbQc2du+rZOYEIssmLHv4lWXkpDsC2GKB2bMHVURf0oKxonGS4R1UdEg+thRcagaV2Tux5SG6NGKmDi0+TspqYzz6Dc8+zISpja4NoUQ3NuuiVjNsc+9NekM0xr7d/qL1YJTfcN1rnTj8W+2WON0yDYykzttW1ACp5Z7TFy2HakqOKBo34+adYo0Ay22BSsJMslpnczCgL4txOv1HZYIJvggHrzSJMZOJHppjTkV9BzIufHqtk2tv4E3zWQbFY=", "iv2": "+iORi1SpA58SOoPlYACUwg==", "verify": "zn0BwqKXhDRazllj7Q9emw=="}, {"q": [3, 4, 5], "salt": "dTOMIXT4FW/nepdCum6qgQ==", "iv": "eW86kjMEqKfVHVGpldceog==", "data": "IZnBZV+EJesa30f6SntX99AFzzflK1v4Zo57o0ScjHTvK+FPrZPhl48O+5zbbIOJpqtkVMGGNHCj9Lzx6Qc+9YUrkIoXJ505hMy92/cHzCGNkRPTBQyBZrH4nunEzqLIlZSV2D/22pIx5yECE9llqs09ua0ENbSxjjvIzXG8mV+6CIkSOWUlTfLVXSLaIioHN5VpwBWMXojLmgMZ4oFBKIQT4v/ucTpS/aoj3qFHmNb/Gi9uzKBWoZBIYQv+eBbMudJDIAAW3ZxMuCh1LZWMGS/uvoohvZ0kKD+wNpRWvvmgsgzRS9vsHuqQ3/68UmUfmJlpQ6weaZaLvUiM2k7B/3oC9hI24ddqNAi4c1Q2chv7NgC3O6YDWprw+J/36uY1xVKzM1adZood/Vqjl7aw8GDYnOEkfLX43hBiFZ/lUzKWUG4Xk8ITFYF5Hu1fglNyghjAFxuqchkknH/yrRgyOoaA1lCU3n0Ncofe/Xi8N2EwhBsTl6aaNrZvY1YIBM5TwlBzrN3fuYiDfg2kh+3eLc/6TiuilNNapqW8fy9WeQg=", "iv2": "5z2ePSAjyENzZaGI+Rb62g==", "verify": "PkjSqUakjV/Pf4FL55hl0A=="}] };
 
+const EVENTS = [
+  [1,3,'9.3',0,['杜YT','梁BL']],
+  [1,3,'9.3',8,['张ZT','付JY']],
+  [1,4,'9.4',4,['付JY','艾XY','何YM','任YL','刘YX']],
+  [2,0,'9.7',1,['艾XY']],
+  [2,1,'9.8',4,['何YM','付JY']],
+  [2,2,'9.9',12,['艾XY','罗YX','周YT','梁BL','朱RZY']],
+  [2,4,'9.11',4,['付JY','何YM']],
+  [2,4,'9.11',3,['张ZY','韩CX']],
+  [3,0,'9.14',10,['何YM','艾XY','穆XH','何ZQ']],
+  [3,0,'9.14',6,['张ZY']],
+  [3,0,'9.14',5,['陈BS']],
+  [3,1,'9.15',3,['牟HR']],
+  [3,1,'9.15',0,['付JY','何ZQ']],
+  [3,1,'9.15',4,['赵RR','穆XH']],
+  [3,3,'9.17',9,['秦WM','穆XH','罗YX','何YM','艾XY','周YT','何ZQ','梁BL','李PL','陈BS','张ZY','赵RR']],
+  [4,6,'9.20',1,['梁BL','艾XY','穆XH','牟HR','张YH','秦WM','何ZQ','何YM']],
+  [4,6,'9.20',7,['汤HY','周YT','何YM','艾XY','敖JS','何ZQ','段PY','罗YX','付JY']],
+  [4,0,'9.21',0,['秦WM','艾XY']],
+  [4,0,'9.21',1,['秦WM','汤HY','陈YM']],
+  [4,0,'9.21',10,['穆XH','付JY','张JC']],
+  [4,0,'9.21',6,['刘YX','何YM','段PY','惠CY','张JR']],
+  [4,1,'9.22',1,['何YM','梁BL']],
+  [4,1,'9.22',4,['穆XH','付JY','敖JS']],
+  [4,3,'9.24',1,['穆XH','付JY','罗YX']],
+  [4,3,'9.24',9,['穆XH','艾XY','何YM']],
+  [5,0,'9.28',1,['付JY','杜YT','段PY']],
+  [5,1,'9.29',3,['穆XH','何ZQ','段PY']],
+  [5,1,'9.29',4,['张JC','何YM','赵RR','陈CX','任YL']],
+  [6,3,'10.8',1,['唐K']],
+  [6,3,'10.8',9,['唐K','艾XY','张ZY']],
+  [6,3,'10.8',8,['李PL','张ZY']],
+  [6,4,'10.9',7,['何YM','刘YX']],
+  [6,5,'10.10',3,['付JY','段PY']],
+  [7,0,'10.12',10,['梁BL','陈BS']],
+  [7,0,'10.12',3,['刘RX','段PY']],
+  [7,1,'10.13',1,['梁BL','何YM','刘YX']],
+  [7,1,'10.13',3,['何YM']],
+  [7,1,'10.13',4,['汤HY','朱RZY','赵RR','张ZY','何ZQ','艾XY']],
+  [7,2,'10.14',3,['何ZQ','艾XY']],
+  [8,0,'10.19',0,['汤HY','周YT']],
+  [8,0,'10.19',10,['陈YM','蒋HY']],
+  [8,0,'10.19',3,['艾XY','周YT']],
+  [8,0,'10.19',5,['何ZQ','艾XY']],
+  [8,1,'10.20',4,['穆XH','秦WM','何ZQ','艾XY','张ZY']],
+  [8,1,'10.20',7,['何ZQ','牟HR']],
+  [8,2,'10.21',0,['何ZQ']],
+  [8,3,'10.22',9,['梁BL','周YT','汤HY','罗YX','秦WM','赵RR','张ZY']],
+  [8,4,'10.23',4,['穆XH','张JC']],
+  [9,0,'10.26',10,['穆XH','舒T','陈BS']],
+  [9,0,'10.26',6,['敖JS','秦WM']],
+  [9,0,'10.26',5,['张ZY','邱YL']],
+  [9,1,'10.27',1,['秦WM','黄KC','刘YX']],
+  [9,2,'10.28',2,['秦WM','张ZY']],
+  [9,4,'10.30',7,['穆XH','张JC','秦WM','张ZY','赵RR','邱YL']]
+];
 const RAW = [
-["",[1,2,2,4,0,1,2,3],
-[1,2,0,2,3,1,0,1,0,3,1,0,1]],
-["",[0,0,0,2,0,0,0,0],
-[0,0,0,0,1,0,0,1,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,2,0,0,0,1,0],
-[0,0,0,0,0,1,0,0,0,1,1,0,0]],
-["",[0,0,0,0,1,0,0,0],
-[0,0,0,0,1,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,1,0,1,0,0,0,1],
-[0,1,0,0,1,0,0,0,0,0,1,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[1,0,0,0,1,0,0,0],
-[2,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,2,2,1,1,0],
-[1,0,0,3,0,0,1,1,0,0,0,0,0]],
-["",[2,2,1,4,1,1,0,0],
-[1,2,0,1,4,0,0,1,1,0,1,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,1,0,0,0,0,0,0],
-[0,0,0,1,0,0,0,0,0,0,0,0,0]],
-["",[1,1,2,5,1,1,2,0],
-[0,3,0,1,3,0,1,2,0,2,1,0,0]],
-["",[0,0,3,2,1,0,2,4],
-[2,1,0,2,2,1,0,2,0,1,1,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,1,0,0,0,0],
-[0,0,0,0,0,0,1,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,1],
-[0,0,0,0,0,0,0,0,0,0,1,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,1,0,0,1,0,0],
-[0,0,0,0,0,0,0,0,1,1,0,0,0]],
-["",[1,1,1,2,0,0,2,1],
-[1,3,0,0,0,0,0,0,0,2,1,0,1]],
-["",[0,0,0,0,0,0,1,0],
-[0,0,0,1,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[1,0,0,1,0,1,1,0],
-[0,1,0,0,1,0,1,1,0,0,0,0,0]],
-["",[0,1,1,2,0,0,0,1],
-[0,1,0,0,0,0,0,1,0,2,0,0,1]],
-["",[0,0,1,1,0,0,0,1],
-[0,1,0,1,0,0,0,1,0,0,0,0,0]],
-["",[0,0,3,5,1,0,0,2],
-[0,2,0,1,4,0,0,0,0,2,2,0,0]],
-["",[0,0,1,3,0,0,0,2],
-[1,2,0,0,1,0,0,0,0,2,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[1,0,0,0,1,0,0,0],
-[0,0,0,0,2,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,2,0,0,1,2],
-[1,1,0,0,1,0,0,1,0,1,0,0,0]],
-["",[0,0,0,0,0,2,0,0],
-[0,1,0,0,0,0,0,0,0,1,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,1,1,0,0,1],
-[0,0,0,0,2,0,0,0,0,0,1,0,0]],
-["",[0,0,0,1,0,0,0,0],
-[0,0,0,0,0,0,1,0,0,0,0,0,0]],
-["",[0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-["",[0,0,0,1,0,0,0,0],
-[0,1,0,0,0,0,0,0,0,0,0,0,0]],
-["",[1,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,1,0,0,0,0]],
-["",[0,1,2,0,0,2,1,2],
-[0,0,0,1,2,0,1,0,1,3,0,0,0]],
-["",[0,0,2,0,1,0,1,1],
-[0,0,0,0,3,0,0,0,0,2,0,0,0]],
-["",[0,1,1,1,0,0,0,3],
-[1,0,0,1,0,0,0,1,0,2,0,0,1]],
-["",[0,1,0,0,0,0,1,0],
-[0,0,0,0,1,0,0,0,0,0,0,0,1]]
+  ["",[1,2,2,4,0,1,2,3,0],
+   [1,2,0,2,3,1,0,1,0,3,1,0,1],
+   [5,2,2,3,1,0,2]],
+  ["",[0,0,0,2,0,0,0,0,1],
+   [0,0,0,0,1,0,1,1,0,0,0,0,0],
+   [1,1,0,0,0,0,1]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,2,0,0,0,1,0,1],
+   [0,0,0,0,0,1,0,0,0,1,2,0,0],
+   [3,0,0,1,0,0,0]],
+  ["",[0,0,0,0,1,0,0,0,0],
+   [0,0,0,0,1,0,0,0,0,0,0,0,0],
+   [0,1,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,1,0,0,0,1,0],
+   [0,1,0,0,0,0,0,0,0,0,1,0,0],
+   [2,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[1,0,0,0,1,0,0,0,0],
+   [1,1,0,0,0,0,0,0,0,0,0,0,0],
+   [1,0,0,1,0,0,0]],
+  ["",[0,0,0,2,2,1,1,0,0],
+   [0,1,0,3,0,0,1,1,0,0,0,0,0],
+   [3,1,0,0,0,1,1]],
+  ["",[2,2,1,4,1,1,0,0,0],
+   [1,2,0,1,4,0,0,1,1,0,1,0,0],
+   [2,3,0,2,2,1,1]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,1,0,0,0,0,0,0,0],
+   [0,0,0,1,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,1,0,0]],
+  ["",[1,2,2,5,1,1,2,0,0],
+   [0,3,0,1,4,0,1,2,0,2,1,0,0],
+   [2,5,0,2,3,0,2]],
+  ["",[0,0,3,2,1,0,2,4,0],
+   [2,1,0,2,2,1,0,2,0,1,1,0,0],
+   [2,5,2,1,0,0,2]],
+  ["",[0,0,0,0,0,0,0,0,1],
+   [0,1,0,0,0,0,0,0,0,0,0,0,0],
+   [0,1,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,1,0,0,0,0,0],
+   [0,0,0,0,0,0,1,0,0,0,0,0,0],
+   [1,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,1,0],
+   [0,0,0,0,0,0,0,0,0,0,1,0,0],
+   [1,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,1,0,0,1,0,0,0],
+   [0,0,0,0,0,0,0,0,1,1,0,0,0],
+   [0,0,0,2,0,0,0]],
+  ["",[1,1,1,2,0,0,2,1,0],
+   [1,3,0,0,0,0,0,0,0,2,1,0,1],
+   [1,2,1,3,0,0,1]],
+  ["",[0,0,0,0,0,0,1,0,0],
+   [0,0,0,1,0,0,0,0,0,0,0,0,0],
+   [1,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[1,0,0,1,0,1,1,0,1],
+   [0,2,0,0,1,0,1,1,0,0,0,0,0],
+   [1,2,0,0,2,0,0]],
+  ["",[0,1,1,2,0,0,0,1,0],
+   [0,1,0,0,0,0,0,1,0,2,0,0,1],
+   [0,0,1,3,0,0,1]],
+  ["",[0,0,1,1,0,0,0,1,0],
+   [0,1,0,1,0,0,0,1,0,0,0,0,0],
+   [0,2,0,0,0,0,1]],
+  ["",[0,0,3,5,1,0,0,2,2],
+   [0,2,0,1,4,0,0,1,0,2,3,0,0],
+   [3,4,0,3,2,0,1]],
+  ["",[0,0,1,3,0,0,0,2,4],
+   [1,3,1,0,1,0,1,1,0,2,0,0,0],
+   [3,2,1,2,1,0,1]],
+  ["",[0,0,0,0,0,0,0,0,2],
+   [0,0,0,0,0,1,0,1,0,0,0,0,0],
+   [1,0,0,0,1,0,0]],
+  ["",[1,0,0,0,1,0,0,0,0],
+   [0,0,0,0,2,0,0,0,0,0,0,0,0],
+   [0,1,0,0,1,0,0]],
+  ["",[0,0,0,0,0,0,0,0,1],
+   [0,0,0,0,0,0,0,0,0,0,1,0,0],
+   [1,0,0,0,0,0,0]],
+  ["",[0,0,0,2,0,0,1,2,0],
+   [1,1,0,0,1,0,0,1,0,1,0,0,0],
+   [2,1,0,1,0,0,1]],
+  ["",[0,0,0,0,0,2,0,0,0],
+   [0,1,0,0,0,0,0,0,0,1,0,0,0],
+   [0,0,0,2,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,1,1,0,0,1,1],
+   [0,0,0,0,2,0,0,1,0,0,1,0,0],
+   [1,1,0,0,2,0,0]],
+  ["",[0,0,0,1,0,0,0,0,0],
+   [0,0,0,0,0,0,1,0,0,0,0,0,0],
+   [1,0,0,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0]],
+  ["",[0,0,0,1,0,0,0,0,0],
+   [0,1,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,1]],
+  ["",[1,0,0,0,0,0,0,0,0],
+   [0,0,0,0,0,0,0,0,1,0,0,0,0],
+   [0,0,0,1,0,0,0]],
+  ["",[0,1,2,0,0,2,1,2,3],
+   [0,0,1,1,2,1,1,1,1,3,0,0,0],
+   [2,2,1,4,2,0,0]],
+  ["",[0,0,2,0,1,0,1,1,1],
+   [0,0,0,0,3,0,0,1,0,2,0,0,0],
+   [0,3,0,2,1,0,0]],
+  ["",[0,1,1,1,0,0,0,3,0],
+   [1,0,0,1,0,0,0,1,0,2,0,0,1],
+   [2,0,1,2,0,0,1]],
+  ["",[0,1,0,0,0,0,1,0,0],
+   [0,0,0,0,1,0,0,0,0,0,0,0,1],
+   [0,1,1,0,0,0,0]]
 ];
 const STORE_KEY = 'classDiscipline_8w_v2';
 /* 旧版本残留的存档 key，启动后一次性清理 */
@@ -1636,7 +1982,7 @@ function dataFingerprint(){
          RAW.reduce(function(a,r){ return a + r[1].reduce(function(x,y){return x+y;},0); }, 0);
 }
 
-let S = RAW.map(function(r){ return {name:r[0], w:r[1].slice(), sub:r[2].slice()}; });
+let S = RAW.map(function(r){ return {name:r[0], w:r[1].slice(), sub:r[2].slice(), dow:(r[3]||[0,0,0,0,0,0,0]).slice()}; });
 let BAD = S.filter(function(s){ return s.w.reduce(function(a,b){return a+b;},0) > 0; });
 let RANK = [], TOTAL = 0, PEAK = 0, weekTotals = [], weekPeople = [], subTotals = [], subPeople = [];
 
@@ -1734,7 +2080,7 @@ function renderKpis(){
   var items = [
     ['累计违纪次数', TOTAL+' 次', RANK.length+' 名同学合计，'+WEEKS[PEAK]+'最高', 'var(--brand)'],
     ['违纪人数占比', RANK.length+' / '+state.classSize, '覆盖率 '+Math.round(RANK.length/state.classSize*100)+'%', 'var(--red)'],
-    ['零违纪人数', zeroCount()+' 人', '八周内无违纪记录', 'var(--green)'],
+    ['零违纪人数', zeroCount()+' 人', '九周内无违纪记录', 'var(--green)'],
     ['全班人均', perClass+' 次', '违纪同学人均 '+perBad+' 次', 'var(--orange)'],
     ['后半程变化', (d>0?'+':'')+d+' 次', '较前四周（W1–W'+HALF+'）'+(d>0?'上升':'下降')+' '+pct+'%', d>0?'var(--red)':'var(--green)'],
     ['最危险学科', SUBS[topSubIdx], subTotals[topSubIdx]+' 次 / '+subPeople[topSubIdx]+' 人', 'var(--brand2)']
@@ -1743,7 +2089,7 @@ function renderKpis(){
     return '<div class="kpi"><div class="bar" style="background:'+it[3]+'"></div>'+
       '<div class="k-label">'+it[0]+'</div><div class="k-val">'+it[1]+'</div><div class="k-sub">'+it[2]+'</div></div>';
   }).join('');
-  $('b1').textContent = '统计周期：八周（W1–W'+NW+'）';
+  $('b1').textContent = '统计周期：九周（W1–W'+NW+'）';
   $('b2').textContent = '违纪 '+RANK.length+' 人 / 班级 '+state.classSize+' 人';
   $('b3').textContent = '累计 '+TOTAL+' 次';
   $('b4').textContent = '维度：周次 × 学科';
@@ -1784,7 +2130,7 @@ function renderWeekBars(){
   el.querySelectorAll('rect[data-w]').forEach(function(r){
     r.addEventListener('click', function(){
       state.week = +r.getAttribute('data-w');
-      document.querySelector('.tab[data-t=week]').click(); render();
+      render(); anaGo('week');
     });
   });
 }
@@ -1820,7 +2166,7 @@ function renderDonut(){
     d.addEventListener('click', function(){
       var k = d.getAttribute('data-go');
       state.filter = (k==='zero') ? 'all' : k;
-      render(); document.querySelector('.tab[data-t=rank]').click();
+      render(); anaGo('rank');
     });
   });
 }
@@ -1831,8 +2177,8 @@ function renderCompare(){
   var sh = sumW(weekTotals,HALF,NW);
   var d = sh-fh;
   $('cmpStat').innerHTML =
-    '<div class="stat"><b>'+fh+'</b><span>前四周（W1–W4）</span></div>'+
-    '<div class="stat"><b>'+sh+'</b><span>后四周（W5–W8）</span></div>'+
+    '<div class="stat"><b>'+fh+'</b><span>前四周（W1–W'+HALF+'）</span></div>'+
+    '<div class="stat"><b>'+sh+'</b><span>后五周（W5–W'+NW+'）</span></div>'+
     '<div class="stat"><b style="color:'+(d>0?'#e11d48':'#10b981')+'">'+(d>0?'+':'')+d+'</b><span>净变化'+(d>0?'（扩散）':'（收敛）')+'</span></div>';
   var arr = RANK.slice().sort(function(a,b){return Math.abs(b.delta)-Math.abs(a.delta) || b.total-a.total;}).slice(0,10);
   var max = Math.max.apply(null, arr.map(function(s){return Math.abs(s.delta);})) || 1;
@@ -1861,7 +2207,7 @@ function renderFocus(){
                 .sort(function(a,b){return (b.w[L]*2+b.w[L2])-(a.w[L]*2+a.w[L2]);});
   var html = '<div style="font-size:12.5px;color:var(--muted);margin-bottom:8px">累计 Top 5</div><div class="chips">';
   top.forEach(function(s){ html += '<span class="pill red" data-n="'+esc(s.name)+'">'+esc(s.name)+' · '+s.total+' 次</span>'; });
-  html += '</div><div style="font-size:12.5px;color:var(--muted);margin:16px 0 8px">第七–八周仍在违纪（'+active.length+' 人）</div><div class="chips">';
+  html += '</div><div style="font-size:12.5px;color:var(--muted);margin:16px 0 8px">第八–九周仍在违纪（'+active.length+' 人）</div><div class="chips">';
   active.forEach(function(s){ html += '<span class="pill" data-n="'+esc(s.name)+'">'+esc(s.name)+' · '+SHORT[L2]+' '+s.w[L2]+' / '+SHORT[L]+' '+s.w[L]+'</span>'; });
   html += '</div>';
   var el = $('focus');
@@ -1884,7 +2230,7 @@ function renderWeather(){
   var w = map.filter(function(m){return v<=m.max;})[0];
   var cmp = v - weekTotals[L2];
   var html = '<div class="wx"><div class="em">'+w.em+'</div><div class="tx"><b>本周天气：'+w.t+'（'+v+' 次 / '+p+' 人）</b>'+
-    '<div>'+w.d+'<br>较上周 '+(cmp>0?'增加 '+cmp+' 次':(cmp<0?'减少 '+(-cmp)+' 次':'持平'))+' · 八周均值 '+(TOTAL/NW).toFixed(1)+' 次</div></div></div>';
+    '<div>'+w.d+'<br>较上周 '+(cmp>0?'增加 '+cmp+' 次':(cmp<0?'减少 '+(-cmp)+' 次':'持平'))+' · 九周均值 '+(TOTAL/NW).toFixed(1)+' 次</div></div></div>';
   $('wxBox').innerHTML = html;
 }
 
@@ -1948,7 +2294,7 @@ function renderWeek(){
   if(!rows.length){ html += '<div class="desc">该周无违纪记录。</div>'; }
   else{
     html += '<table><thead><tr><th style="width:52px">#</th><th>姓名</th><th style="width:80px" class="num">本周</th>'+
-            '<th style="width:80px" class="num">累计</th><th style="width:150px">八周分布</th></tr></thead><tbody>';
+            '<th style="width:80px" class="num">累计</th><th style="width:150px">九周分布</th></tr></thead><tbody>';
     rows.forEach(function(s,idx){
       var mini = s.w.map(function(v,j){
         return '<i title="'+SHORT[j]+'" style="display:inline-block;width:13px;height:13px;margin-right:2px;border-radius:3px;background:'+
@@ -2083,7 +2429,7 @@ function renderPattern(){
     '已收敛型': BAD.filter(function(s){return s.first>0 && (sumW(s.w,HALF,HALF+2)===0);})
   };
   var tips = {
-    '持续型':'八周中有 4 周以上违纪，习惯性问题，需长期跟踪',
+    '持续型':'九周中有 4 周以上违纪，习惯性问题，需长期跟踪',
     '集中爆发型':'次数集中在 1–2 周内，多为偶发冲突或特定事件',
     '新增/复发型':'前期有过、近期又出现，需要及时提醒',
     '已收敛型':'第四周起已归零，干预见效或已自行改正'
@@ -2142,12 +2488,12 @@ function openSheet(name){
   $('sheet').innerHTML =
     '<button class="close" id="cls">✕</button>'+
     '<h2>'+esc(s.name)+'<span style="font-size:13px;color:var(--muted);font-weight:600;margin-left:10px">班级第 '+s.rank+' / '+RANK.length+' 位</span></h2>'+
-    '<div class="sub">八周累计 <b>'+s.total+'</b> 次 · 活跃 '+s.spread+' / 7 周 · 单周最高 '+s.maxw+' 次 · 涉及 '+s.subSpread+' 门学科</div>'+
+    '<div class="sub">九周累计 <b>'+s.total+'</b> 次 · 活跃 '+s.spread+' / '+NW+' 周 · 单周最高 '+s.maxw+' 次 · 涉及 '+s.subSpread+' 门学科</div>'+
     '<div style="margin-top:10px">'+tags.map(function(t){return '<span class="tag" style="background:'+t[1]+';color:'+t[2]+'">'+t[0]+'</span>';}).join('')+'</div>'+
     '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;margin-top:12px">'+g+'</svg>'+
     '<div class="statgrid">'+
-      '<div class="stat"><b>'+s.first+'</b><span>前四周 W1–W4</span></div>'+
-      '<div class="stat"><b>'+s.last+'</b><span>后四周 W5–W8</span></div>'+
+      '<div class="stat"><b>'+s.first+'</b><span>前四周 W1–W'+HALF+'</span></div>'+
+      '<div class="stat"><b>'+s.last+'</b><span>后五周 W5–W'+NW+'</span></div>'+
       '<div class="stat"><b style="color:'+(s.delta>0?'#e11d48':'#10b981')+'">'+(s.delta>0?'+':'')+s.delta+'</b><span>后半程变化</span></div>'+
       '<div class="stat"><b>'+Math.round(s.total/(TOTAL||1)*100)+'%</b><span>占全班违纪</span></div></div>'+
     '<div style="font-size:12.5px;color:var(--muted);margin:6px 0">学科明细（主战场：'+s.topSub+' '+s.maxSub+' 次）</div>'+
@@ -2163,15 +2509,15 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeShee
 /* ============ 徽章 ============ */
 function badgesOf(s){
   var b = [];
-  if(s.spread===NW) b.push({t:'八周全勤',d:'八周全部上榜，一次没落下'});
-  else if(s.spread>=5) b.push({t:'高频常客',d:'八周里 '+s.spread+' 周有记录'});
+  if(s.spread===NW) b.push({t:'九周全勤',d:'九周全部上榜，一次没落下'});
+  else if(s.spread>=5) b.push({t:'高频常客',d:'九周里 '+s.spread+' 周有记录'});
   if(s.maxw>=4) b.push({t:'单周四杀',d:'单周最高 '+s.maxw+' 次'});
   if(s.streak>=4) b.push({t:'连续 '+s.streak+' 连',d:'连续 '+s.streak+' 周违纪，习惯性强'});
   if(s.first>0 && s.last===0) b.push({t:'浪子回头',d:'后半程完全归零'});
   if(s.first===0 && s.last>0) b.push({t:'后半程新秀',d:'前半程干净，后半程开始出现'});
   if(s.delta<=-3) b.push({t:'急速刹车',d:'后半程减少 '+(-s.delta)+' 次'});
   if(s.delta>=3) b.push({t:'油门踩到底',d:'后半程增加 '+s.delta+' 次'});
-  if(s.total===1) b.push({t:'差一点就完美',d:'八周只出现过 1 次'});
+  if(s.total===1) b.push({t:'差一点就完美',d:'九周只出现过 1 次'});
   if(s.w[0]>0 && s.total===s.w[0] && s.total>0) b.push({t:'开局即巅峰',d:'所有违纪都发生在第一周'});
   if(s.w[L]>0 && s.w[L2]===0) b.push({t:'突然袭击',d:WEEKS[L2]+'安静，'+WEEKS[L]+'又出现'});
   if(s.total>=9) b.push({t:'榜单常青树',d:'累计 '+s.total+' 次，位居前列'});
@@ -2236,15 +2582,15 @@ function buildAwards(){
   }
   var a;
   a = top1(BAD, function(s){return s.total;});
-  if(a) A.push({ico:'👑', ttl:'终身成就奖', who:a.name, why:'八周累计 '+a.total+' 次，全班的「天花板」', rib:'累计最高', bg:'linear-gradient(135deg,#f43f5e,#f97316)'});
+  if(a) A.push({ico:'👑', ttl:'终身成就奖', who:a.name, why:'九周累计 '+a.total+' 次，全班的「天花板」', rib:'累计最高', bg:'linear-gradient(135deg,#f43f5e,#f97316)'});
   a = top1(BAD, function(s){return s.maxw;});
   if(a) A.push({ico:'💥', ttl:'单周爆发奖', who:a.name, why:'单周最高 '+a.maxw+' 次，'+WEEKS[a.w.indexOf(a.maxw)]+'火力全开', rib:'单周峰值', bg:'linear-gradient(135deg,#dc2626,#a855f7)'});
   a = top1(BAD, function(s){return s.spread;});
-  if(a) A.push({ico:'📆', ttl:'全勤上榜奖', who:a.name, why:'八周里 '+a.spread+' 周都有记录，稳定得让人心疼', rib:'活跃周数', bg:'linear-gradient(135deg,#7c3aed,#4f46e5)'});
+  if(a) A.push({ico:'📆', ttl:'全勤上榜奖', who:a.name, why:'九周里 '+a.spread+' 周都有记录，稳定得让人心疼', rib:'活跃周数', bg:'linear-gradient(135deg,#7c3aed,#4f46e5)'});
   a = top1(BAD, function(s){return s.subSpread;});
   if(a) A.push({ico:'🎨', ttl:'全面开花奖', who:a.name, why:'横跨 '+a.subSpread+' 门学科，主战场是'+a.topSub, rib:'学科广度', bg:'linear-gradient(135deg,#db2777,#f59e0b)'});
   a = top1(BAD.filter(function(s){return s.first>0 && s.last===0;}), function(s){return s.first;});
-  if(a) A.push({ico:'🕊️', ttl:'浪子回头奖', who:a.name, why:'前四周 '+a.first+' 次，后四周直接归零', rib:'最强反转', bg:'linear-gradient(135deg,#10b981,#3b82f6)'});
+  if(a) A.push({ico:'🕊️', ttl:'浪子回头奖', who:a.name, why:'前四周 '+a.first+' 次，后五周直接归零', rib:'最强反转', bg:'linear-gradient(135deg,#10b981,#3b82f6)'});
   a = top1(BAD.filter(function(s){return s.delta>0;}), function(s){return s.delta;});
   if(a) A.push({ico:'📈', ttl:'反弹之星奖', who:a.name, why:'后半程比前半程多了 '+a.delta+' 次，需要重新关注', rib:'后半程上升', bg:'linear-gradient(135deg,#f59e0b,#ef4444)'});
   a = top1(BAD.filter(function(s){return s.delta<0;}), function(s){return -s.delta;});
@@ -2252,9 +2598,9 @@ function buildAwards(){
   a = top1(BAD.filter(function(s){return s.w[L]>0;}), function(s){return s.w[L];});
   if(a) A.push({ico:'⚡', ttl:'闪电侠奖', who:a.name, why:WEEKS[L]+'就有 '+a.w[L]+' 次，收尾还在冲', rib:'最近一周', bg:'linear-gradient(135deg,#0ea5e9,#6366f1)'});
   var one = BAD.filter(function(s){return s.total===1;});
-  if(one.length) A.push({ico:'🎯', ttl:'差一点就完美奖', who:one[0].name+' 等 '+one.length+' 人', why:'八周只出现过 1 次，四舍五入就是没犯过', rib:'最轻微', bg:'linear-gradient(135deg,#64748b,#94a3b8)'});
+  if(one.length) A.push({ico:'🎯', ttl:'差一点就完美奖', who:one[0].name+' 等 '+one.length+' 人', why:'九周只出现过 1 次，四舍五入就是没犯过', rib:'最轻微', bg:'linear-gradient(135deg,#64748b,#94a3b8)'});
   a = top1(BAD.filter(function(s){return s.first===0 && s.last>0;}), function(s){return s.last;});
-  if(a) A.push({ico:'🌱', ttl:'后半程新秀奖', who:a.name, why:'前半程零记录，后四周出现 '+a.last+' 次，需要及时提醒', rib:'新出现', bg:'linear-gradient(135deg,#db2777,#f59e0b)'});
+  if(a) A.push({ico:'🌱', ttl:'后半程新秀奖', who:a.name, why:'前半程零记录，后五周出现 '+a.last+' 次，需要及时提醒', rib:'新出现', bg:'linear-gradient(135deg,#db2777,#f59e0b)'});
   a = top1(BAD.filter(function(s){return s.streak>=3;}), function(s){return s.streak;});
   if(a) A.push({ico:'🔥', ttl:'连续剧奖', who:a.name, why:'最长连续 '+a.streak+' 周违纪，堪称连续剧主角', rib:'连续周数', bg:'linear-gradient(135deg,#b91c1c,#7c3aed)'});
   var sci = BAD.filter(function(s){return s.sub[1]>0;});
@@ -2267,8 +2613,8 @@ function buildAwards(){
   a = top1(BAD.filter(function(s){return s.sub[12]>0;}), function(s){return s.sub[12];});
   if(a) A.push({ico:'❓', ttl:'神秘失踪奖', who:a.name, why:'有 '+a.sub[12]+' 次违纪连科目都没记清', rib:'不详', bg:'linear-gradient(135deg,#475569,#94a3b8)'});
   var zc = zeroCount();
-  A.push({ico:'🛡️', ttl:'集体免疫奖', who:zc+' 位零违纪同学', why:'八周一次没上榜，班级的稳定器', rib:'零违纪', bg:'linear-gradient(135deg,#059669,#0d9488)'});
-  A.push({ico:'🌋', ttl:'最疯狂一周', who:WEEKS[PEAK], why:'全班 '+weekTotals[PEAK]+' 次、涉及 '+weekPeople[PEAK]+' 人，占八周总量 '+Math.round(weekTotals[PEAK]/(TOTAL||1)*100)+'%', rib:'峰值周', bg:'linear-gradient(135deg,#7c2d12,#dc2626)'});
+  A.push({ico:'🛡️', ttl:'集体免疫奖', who:zc+' 位零违纪同学', why:'九周一次没上榜，班级的稳定器', rib:'零违纪', bg:'linear-gradient(135deg,#059669,#0d9488)'});
+  A.push({ico:'🌋', ttl:'最疯狂一周', who:WEEKS[PEAK], why:'全班 '+weekTotals[PEAK]+' 次、涉及 '+weekPeople[PEAK]+' 人，占九周总量 '+Math.round(weekTotals[PEAK]/(TOTAL||1)*100)+'%', rib:'峰值周', bg:'linear-gradient(135deg,#7c2d12,#dc2626)'});
   var si = subTotals.indexOf(Math.max.apply(null,subTotals));
   A.push({ico:'📚', ttl:'最难hold住的课', who:SUBS[si], why:'全班 '+subTotals[si]+' 次、'+subPeople[si]+' 人在这一科翻过车', rib:'学科重灾区', bg:'linear-gradient(135deg,#4338ca,#7c3aed)'});
   return A;
@@ -2399,7 +2745,7 @@ function spin(){
       focus:'本周重点关注对象',
       lucky:'今日幸运儿，奖励一次提问机会'
     }[state.wheelMode];
-    var extraTxt = s ? '<br><span style="font-size:12.5px;color:var(--muted)">八周累计 '+s.total+' 次 · 最近一周 '+s.w[L]+' 次 · 主战场 '+s.topSub+'</span>' : '';
+    var extraTxt = s ? '<br><span style="font-size:12.5px;color:var(--muted)">九周累计 '+s.total+' 次 · 最近一周 '+s.w[L]+' 次 · 主战场 '+s.topSub+'</span>' : '';
     var el = $('wheelResult');
     el.innerHTML = modeTxt+'<b>🎉 '+esc(winner)+'</b><span>'+(new Date()).toLocaleString('zh-CN')+'</span>'+extraTxt;
     el.classList.add('on');
@@ -2513,6 +2859,129 @@ $('tPairBtn').addEventListener('click', function(){
   }).join('') + '<div style="font-size:11.5px;color:var(--muted);margin-top:4px">共 '+pairs.length+' 组</div>');
 });
 
+
+
+/* ================= 小组榜 ================= */
+var grpSort = 'avg';
+var grpSel = 0;
+function grpStat(){
+  var listed = {};
+  GROUPS.forEach(function(g){ g.m.forEach(function(n){ listed[n]=1; }); });
+  var unlisted = S.filter(function(s){ return !listed[s.name]; }).map(function(s){ return s.name; });
+  var rows = GROUPS.map(function(g){
+    var mem = g.m.map(function(n){ return byName(n); }).filter(Boolean);
+    var tot = mem.reduce(function(a,s){ return a + s.total; },0);
+    var zero = mem.filter(function(s){ return s.total===0; }).length;
+    var act  = mem.filter(function(s){ return s.total>0; }).length;
+    var subT = SUBS.map(function(_,i){ return mem.reduce(function(a,s){ return a + s.sub[i]; },0); });
+    var topI = 0; subT.forEach(function(v,i){ if(v>subT[topI]) topI=i; });
+    var star = mem.slice().sort(function(a,b){ return b.total-a.total; })[0];
+    return {g:g.g, name:'第 '+g.g+' 组', mem:mem, n:mem.length, total:tot,
+            avg: mem.length? tot/mem.length : 0, zero:zero, act:act,
+            topSub: subT[topI]>0 ? SUBS[topI] : '—', topSubN: subT[topI],
+            star: star, subT: subT};
+  });
+  if(unlisted.length){
+    var ms = unlisted.map(function(n){ return byName(n); }).filter(Boolean);
+    var t2 = ms.reduce(function(a,s){ return a+s.total; },0);
+    rows.push({g:0, name:'未编组', mem:ms, n:ms.length, total:t2,
+      avg: ms.length? t2/ms.length:0, zero:ms.filter(function(s){return s.total===0;}).length,
+      act:ms.filter(function(s){return s.total>0;}).length, topSub:'—', topSubN:0,
+      star: ms.slice().sort(function(a,b){return b.total-a.total;})[0]||null, subT:null});
+  }
+  return rows;
+}
+function grpSorted(){
+  var r = grpStat();
+  if(grpSort==='total') r.sort(function(a,b){ return b.total-a.total; });
+  else if(grpSort==='zero') r.sort(function(a,b){ return b.zero-a.zero || a.avg-b.avg; });
+  else r.sort(function(a,b){ return b.avg-a.avg; });
+  return r;
+}
+function grpPct(r){
+  var mx = Math.max.apply(null, grpStat().map(function(x){ return grpSort==='total'? x.total : (grpSort==='zero'? x.n : x.avg); })) || 1;
+  var v = grpSort==='total'? r.total : (grpSort==='zero'? r.zero : r.avg);
+  return v/mx*100;
+}
+function renderGrp(){
+  try{ renderAGrpRank(); }catch(e){}
+  var rows = grpSorted();
+  var medal = ['🥇','🥈','🥉'];
+  var html = '<div class="grpgrid">';
+  rows.forEach(function(r,i){
+    var v = grpSort==='total'? r.total+' 次' : (grpSort==='zero'? r.zero+' 人' : (Math.round(r.avg*100)/100)+' 次/人');
+    var col = r.g===0 ? 'var(--muted)' : (i===0 ? 'var(--red)' : (i===1 ? 'var(--orange)' : (i===2 ? 'var(--gold)' : 'var(--brand)')));
+    html += '<div class="grpcell'+(grpSel===r.g?' on':'')+'" data-g="'+r.g+'">'+
+      '<div class="gh"><span class="gm">'+(r.g===0?'—':(medal[i]||''))+'</span>'+
+      '<b>'+r.name+'</b><span class="gn">'+r.n+' 人</span></div>'+
+      '<div class="gv" style="color:'+col+'">'+v+'</div>'+
+      '<div class="gbar"><i style="width:'+grpPct(r).toFixed(1)+'%;background:'+col+'"></i></div>'+
+      '<div class="gd">总 '+r.total+' 次 · 有记录 '+r.act+' 人 · 零违纪 '+r.zero+' 人</div>'+
+      '<div class="gd">高发学科：'+r.topSub+(r.topSubN?('（'+r.topSubN+' 次）'):'')+'</div>'+
+      '</div>';
+  });
+  html += '</div>';
+  $('grpBoard').innerHTML = html;
+
+  /* 对比条形 */
+  var bars = grpSorted().slice().sort(function(a,b){ return b.total-a.total; });
+  var mx = Math.max.apply(null, bars.map(function(x){ return x.total; })) || 1;
+  var bh = '<div style="margin-top:4px">' + bars.map(function(r){
+    return '<div class="subbar"><span style="font-weight:700">'+r.name+'</span>'+
+      '<div class="bar"><i style="width:'+(r.total/mx*100).toFixed(1)+'%;background:linear-gradient(90deg,var(--brand),var(--brand2))"></i></div>'+
+      '<span class="num" style="text-align:right">'+r.total+' 次</span></div>';
+  }).join('') + '</div>';
+  $('grpBars').innerHTML = bh;
+
+  /* 组内科代表 */
+  var st = grpStat().filter(function(r){ return r.g>0 && r.star; });
+  $('grpStar').innerHTML = '<div style="display:grid;gap:7px">' + st.map(function(r){
+    return '<div class="grp"><i>'+r.name+'</i>'+
+      (r.star.total>0 ? '<b>'+esc(r.star.name)+'</b> '+r.star.total+' 次 · 主战场 '+r.star.topSub : '全组零违纪 🎉')+
+      '</div>';
+  }).join('') + '</div>';
+
+  /* 明细 */
+  if(!grpSel){ $('grpDetail').innerHTML = '<div style="color:var(--muted);font-size:12.5px">选一个小组查看成员明细。</div>'; return; }
+  var cur = grpStat().filter(function(r){ return r.g===grpSel; })[0];
+  if(!cur){ return; }
+  var mem = cur.mem.slice().sort(function(a,b){ return b.total-a.total; });
+  $('grpDetail').innerHTML =
+    '<div style="font-size:13px;font-weight:700;margin-bottom:8px">'+cur.name+' · '+cur.n+' 人 · 合计 '+cur.total+' 次 · 人均 '+(Math.round(cur.avg*100)/100)+' 次</div>'+
+    '<div class="grpgrid2">' + mem.map(function(s){
+      return '<div class="grpitem" data-nm="'+esc(s.name)+'">'+
+        '<b>'+esc(s.name)+'</b>'+
+        '<span>'+(s.total>0 ? s.total+' 次 · '+s.topSub : '零违纪 ✓')+'</span>'+
+        '<span class="mini">'+s.w.map(function(v,i){ return v? ('W'+(i+1)+':'+v) : ''; }).filter(Boolean).join(' ') + (s.total? '' : '九周全勤')+'</span>'+
+      '</div>';
+    }).join('') + '</div>';
+}
+function grpBind(){
+  var box = $('grpSort');
+  if(box) box.querySelectorAll('.chip').forEach(function(c){
+    c.addEventListener('click', function(){
+      box.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('on'); });
+      c.classList.add('on');
+      grpSort = c.getAttribute('data-gs');
+      renderGrp();
+    });
+  });
+  var bd = $('grpBoard');
+  if(bd) bd.addEventListener('click', function(e){
+    var cell = e.target.closest('.grpcell');
+    if(!cell) return;
+    grpSel = parseInt(cell.getAttribute('data-g'),10)||0;
+    renderGrp();
+  });
+  var dt = $('grpDetail');
+  if(dt) dt.addEventListener('click', function(e){
+    var it = e.target.closest('.grpitem');
+    if(!it) return;
+    var nm = it.getAttribute('data-nm');
+    var s = byName(nm);
+    if(s) openProfile(s);
+  });
+}
 
 /* ===== 趣味实验室：大富翁 ===== */
 /* 棋盘按每个人的违纪记录定制：违纪越少 → 好格子越多、步子越大 → 越容易走到终点 */
@@ -2731,6 +3200,622 @@ $('mpReset').addEventListener('click', function(){
 var mpWhoSel = $('mpWho');
 if(mpWhoSel) mpWhoSel.addEventListener('change', function(){ mpStart(); });
 
+
+/* ================= 分析实验室 ================= */
+var ANA_KEY = 'kb_ana_v1';
+var anOpen = {}, anCur = null, anDone = {};
+
+var ANA_FN = {
+  aDow:'renderADow', aDowSub:'renderADowSub', aDaily:'renderADaily',
+  aWkDow:'renderAWkDow', aCum:'renderACum',
+  aGrpWk:'renderAGrpWk', aGrpSub:'renderAGrpSub', aGrpDow:'renderAGrpDow', aGrpRank:'renderAGrpRank',
+  aSubDow:'renderASubDow', aSubWk:'renderASubWk', aSubDeep:'renderASubDeep',
+  aCombo:'renderACombo', aFirst:'renderAFirst', aStreak:'renderAStreak',
+  /* 以下 5 项由 render() 统一渲染，展开时不重复执行 */
+  rank:'', week:'', subj:'', heat:'', grp:''
+};
+
+/* ---------- 通用小工具 ---------- */
+function anBar(label, val, max, color, right){
+  var w = max>0 ? (val/max*100) : 0;
+  return '<div class="anbar"><span class="anl">'+label+'</span>'+
+    '<div class="ant"><i style="width:'+w.toFixed(1)+'%;background:'+color+'"></i></div>'+
+    '<span class="anv">'+right+'</span></div>';
+}
+function anColor(i){
+  var C=['#6366f1','#8b5cf6','#ec4899','#f43f5e','#f59e0b','#10b981','#3b82f6','#14b8a6',
+         '#a855f7','#ef4444','#22c55e','#0ea5e9','#eab308','#f97316','#06b6d4','#84cc16'];
+  return C[i % C.length];
+}
+/* 简单多线折线 SVG */
+function anLines(series, labels, opt){
+  opt = opt || {};
+  var W=700, H=opt.h||210, PL=44, PR=12, PT=14, PB=28;
+  var iw = W-PL-PR, ih = H-PT-PB;
+  var mx = 0;
+  series.forEach(function(s){ s.data.forEach(function(v){ if(v>mx) mx=v; }); });
+  if(mx<=0) mx=1;
+  var step = labels.length>1 ? iw/(labels.length-1) : 0;
+  var g='';
+  /* 网格 */
+  for(var k=0;k<=4;k++){
+    var y = PT + ih*k/4;
+    g += '<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" style="stroke:var(--line)" stroke-width="1"/>';
+    g += '<text x="'+(PL-6)+'" y="'+(y+4)+'" font-size="10" style="fill:var(--muted)" text-anchor="end">'+Math.round(mx*(4-k)/4)+'</text>';
+  }
+  labels.forEach(function(lb,i){
+    var x = PL + step*i;
+    g += '<text x="'+x+'" y="'+(H-8)+'" font-size="10" style="fill:var(--muted)" text-anchor="middle">'+lb+'</text>';
+  });
+  series.forEach(function(s){
+    var pts = s.data.map(function(v,i){ return (PL+step*i).toFixed(1)+','+(PT+ih-ih*v/mx).toFixed(1); });
+    g += '<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+s.color+'" stroke-width="2" stroke-linejoin="round"/>';
+    s.data.forEach(function(v,i){
+      g += '<circle cx="'+(PL+step*i).toFixed(1)+'" cy="'+(PT+ih-ih*v/mx).toFixed(1)+'" r="2.6" fill="'+s.color+'"/>';
+    });
+  });
+  var leg = series.map(function(s){
+    return '<span style="display:inline-flex;align-items:center;gap:5px;margin:0 10px 4px 0;font-size:11.5px">'+
+      '<i style="width:11px;height:4px;border-radius:2px;background:'+s.color+'"></i>'+s.name+'</span>';
+  }).join('');
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block">'+g+'</svg>'+
+    '<div style="margin-top:2px;flex-wrap:wrap;display:flex">'+leg+'</div>';
+}
+/* 矩阵热力表 */
+function anMatrix(rows, cols, getv, opt){
+  opt = opt || {};
+  var mx = 0;
+  rows.forEach(function(r,ri){ cols.forEach(function(c,ci){ var v=getv(ri,ci); if(v>mx) mx=v; }); });
+  var h = '<div style="overflow:auto"><table class="anmat"><thead><tr><th style="text-align:left">'+(opt.corner||'')+'</th>';
+  cols.forEach(function(c){ h += '<th>'+c+'</th>'; });
+  h += '</tr></thead><tbody>';
+  rows.forEach(function(r,ri){
+    h += '<tr><th style="text-align:left">'+r+'</th>';
+    cols.forEach(function(c,ci){
+      var v = getv(ri,ci);
+      var bg = v>0 ? color(v) : 'var(--soft3)';
+      var fg = v>0 ? '#fff' : 'var(--muted)';
+      var op = mx>0 ? (0.35 + 0.65*v/mx) : 0.35;
+      h += '<td style="background:'+bg+';opacity:'+op.toFixed(2)+';color:'+fg+'" title="'+r+' · '+c+'：'+v+' 次">'+(v||'·')+'</td>';
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table></div>';
+  return h;
+}
+
+
+/* ---------- 分析实验室：容器与展开 ---------- */
+function anaBuild(){
+  document.querySelectorAll('[data-an]').forEach(function(b){
+    var pid = b.getAttribute('data-an');
+    if(document.getElementById('ana-'+pid) || document.getElementById(pid)) return;
+    var t = b.querySelector('b');
+    var box = document.createElement('div');
+    box.className = 'anbox';
+    box.id = 'ana-' + pid;
+    box.style.display = 'none';
+    box.setAttribute('data-fn', ANA_FN[pid] || '');
+    box.innerHTML = '<div class="card"><h3>' + (t ? t.textContent : pid) +
+      '<button class="fold" data-afold="' + pid + '" title="收起">✕</button></h3>' +
+      '<div class="anbody"></div></div>';
+    var pb = b.closest ? b.closest('.playbtns') : null;
+    var zone = pb ? pb.nextElementSibling : null;
+    if(zone && zone.className.indexOf('anazone') >= 0) zone.appendChild(box);
+    else { var p = document.getElementById('ana'); if(p) p.appendChild(box); }
+  });
+  document.querySelectorAll('[data-afold]').forEach(function(x){
+    x.addEventListener('click', function(){ anSet(x.getAttribute('data-afold'), false); });
+  });
+}
+function anLoad(){
+  try{ anOpen = JSON.parse(localStorage.getItem(ANA_KEY)) || {}; }catch(e){ anOpen = {}; }
+  var ks = Object.keys(anOpen).filter(function(k){ return anOpen[k]; });
+  anCur = ks.length ? ks[ks.length-1] : null;
+  anOpen = {}; if(anCur) anOpen[anCur] = true;
+}
+function anSave(){
+  anOpen = {}; if(anCur) anOpen[anCur] = true;
+  try{ localStorage.setItem(ANA_KEY, JSON.stringify(anOpen)); }catch(e){}
+}
+function anRun(pid){
+  var box = document.getElementById('ana-'+pid) || document.getElementById(pid);
+  if(!box) return;
+  var fn = box.getAttribute('data-fn');
+  if(fn && !anDone[pid]){
+    anDone[pid] = 1;
+    try{ if(typeof window[fn] === 'function') window[fn](); }catch(e){}
+  }
+}
+function anSet(pid, on, noScroll){
+  var box = document.getElementById('ana-'+pid) || document.getElementById(pid);
+  if(!box) return;
+  if(on){
+    if(anCur && anCur !== pid) anSet(anCur, false, true);
+    anCur = pid;
+  }else{
+    if(anCur === pid) anCur = null;
+  }
+  anOpen = {}; if(anCur) anOpen[anCur] = true;
+  box.style.display = on ? '' : 'none';
+  var btn = document.querySelector('[data-an="'+pid+'"]');
+  if(btn) btn.classList.toggle('on', !!on);
+  if(on){
+    anRun(pid);
+    if(!noScroll){ try{ box.scrollIntoView({behavior:'smooth', block:'start'}); }catch(e){} }
+  }
+  anSave();
+  anCount();
+}
+/* 从其它板块跳转到分析实验室的某一项 */
+function anaGo(pid){
+  var t = document.querySelector('.tab[data-t=ana]');
+  if(t) t.click();
+  try{ anSet(pid, true); }catch(e){}
+}
+
+function anCount(){
+  var el = document.getElementById('anaCount');
+  if(!el) return;
+  if(!anCur){ el.textContent = '当前未展开任何分析'; return; }
+  var btn = document.querySelector('[data-an="'+anCur+'"] b');
+  el.textContent = '当前展开：' + (btn ? btn.textContent.replace(/^\s*\S+\s*/,'') : anCur);
+}
+function anaBind(){
+  document.querySelectorAll('[data-an]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var pid = b.getAttribute('data-an');
+      anSet(pid, !anOpen[pid]);
+    });
+  });
+  var nb = document.getElementById('anaNone');
+  if(nb) nb.addEventListener('click', function(){ if(anCur) anSet(anCur, false); });
+}
+function anaRestore(){
+  if(!anCur){ anCount(); return; }
+  var box = document.getElementById('ana-'+anCur);
+  if(!box){ anCur = null; anCount(); return; }
+  box.style.display = '';
+  var btn = document.querySelector('[data-an="'+anCur+'"]');
+  if(btn) btn.classList.add('on');
+  anRun(anCur);
+  anCount();
+}
+
+/* ---------- 1. 星期几分布 ---------- */
+function renderADow(){
+  var mx = Math.max.apply(null, DOWTOT) || 1;
+  var tot = DOWTOT.reduce(function(a,b){return a+b;},0) || 1;
+  var worst = DOWTOT.indexOf(mx);
+  var best = 99, bestI = 0;
+  DOWTOT.forEach(function(v,i){ if(v<best){ best=v; bestI=i; } });
+  var h = '<div class="statgrid">'+
+    '<div class="stat"><b style="color:var(--red)">'+DOWCN[worst]+'</b><span>最危险的一天 · '+mx+' 次</span></div>'+
+    '<div class="stat"><b style="color:var(--green)">'+DOWCN[bestI]+'</b><span>最安静的一天 · '+best+' 次</span></div>'+
+    '<div class="stat"><b>'+tot+'</b><span>九周总次数</span></div>'+
+    '</div>';
+  h += '<div style="margin-top:10px">';
+  for(var i=0;i<7;i++){
+    var pct = Math.round(DOWTOT[i]/tot*100);
+    h += anBar(DOWCN[i], DOWTOT[i], mx, anColor(i), DOWTOT[i]+' 次 · '+DOWPEO[i]+' 人 · '+pct+'%');
+  }
+  h += '</div>';
+  /* 每天的学科 Top3 */
+  h += '<div style="font-size:12.5px;font-weight:700;margin:14px 0 6px">每天的学科 Top 3</div><div style="display:grid;gap:6px">';
+  for(var i=0;i<7;i++){
+    var arr = DOWSUB[i].map(function(v,j){ return {s:SUBS[j], v:v}; }).filter(function(x){return x.v>0;})
+      .sort(function(a,b){ return b.v-a.v; }).slice(0,3);
+    h += '<div style="font-size:12.5px"><b style="display:inline-block;width:42px">'+DOWCN[i]+'</b>'+
+      (arr.length? arr.map(function(x){ return x.s+' '+x.v+' 次'; }).join(' · ') : '<span style="color:var(--muted)">无</span>')+'</div>';
+  }
+  h += '</div>';
+  $('ana-aDow').querySelector('.anbody').innerHTML = h;
+}
+
+/* ---------- 2. 星期几 × 学科 ---------- */
+function renderADowSub(){
+  var h = anMatrix(DOWCN, SUBS, function(ri,ci){ return DOWSUB[ri][ci]; }, {corner:'星期 ╲ 学科'});
+  var combos = [];
+  for(var i=0;i<7;i++) for(var j=0;j<NS;j++) if(DOWSUB[i][j]>0) combos.push({d:i,s:j,v:DOWSUB[i][j]});
+  combos.sort(function(a,b){ return b.v-a.v; });
+  h += '<div style="font-size:12.5px;font-weight:700;margin:14px 0 6px">最高发的组合</div><div style="display:grid;gap:5px">'+
+    combos.slice(0,6).map(function(c,i){
+      return '<div style="font-size:12.5px"><b>'+(i+1)+'. '+DOWCN[c.d]+' · '+SUBS[c.s]+'</b> — '+c.v+' 次</div>';
+    }).join('')+'</div>';
+  $('ana-aDowSub').querySelector('.anbody').innerHTML = h;
+}
+
+/* ---------- 3. 逐日流水 ---------- */
+function renderADaily(){
+  var days = dailyAgg();
+  var h = '<div style="font-size:12.5px;color:var(--muted);margin-bottom:8px">共 '+days.length+' 个违纪日 · '+EV.length+' 条记录 · 165 人次</div>';
+  var lastW = 0;
+  days.forEach(function(d){
+    if(d.w !== lastW){
+      lastW = d.w;
+      h += '<div class="anwk">'+WEEKS[d.w-1]+'</div>';
+    }
+    var subs = Object.keys(d.subs).map(function(k){ return SUBS[k]+' '+d.subs[k]+' 次'; }).join(' · ');
+    h += '<div class="anday">'+
+      '<div class="andh"><b>'+d.date+'</b><span class="andw">周'+DOWSH[d.dow]+'</span>'+
+      '<span class="andn">'+d.n+' 次 / '+d.names.length+' 人</span></div>'+
+      '<div class="ands">'+subs+'</div>'+
+      '<div class="andp">'+d.names.map(esc).join('、')+'</div>'+
+    '</div>';
+  });
+  $('ana-aDaily').querySelector('.anbody').innerHTML = h;
+}
+
+/* ---------- 4. 周次 × 星期几 ---------- */
+function renderAWkDow(){
+  var h = anMatrix(WEEKS.map(function(w){ return w.replace('第',''); }), DOWSH, function(ri,ci){ return WKDow[ri][ci]; }, {corner:'周 ╲ 星期'});
+  var mx=0, mi=0, mj=0;
+  WKDow.forEach(function(r,i){ r.forEach(function(v,j){ if(v>mx){ mx=v; mi=i; mj=j; } }); });
+  h += '<div class="ok" style="margin-top:10px">最炸的一天：<b>'+WEEKS[mi]+' 周'+DOWSH[mj]+'</b>，单日 '+mx+' 次。'+
+    (mj===0||mj===1 ? '这一周的开局就没绷住。' : '')+'</div>';
+  $('ana-aWkDow').querySelector('.anbody').innerHTML = h;
+}
+
+/* ---------- 5. 累计曲线 ---------- */
+function renderACum(){
+  var days = dailyAgg();
+  var cum = [], acc = 0;
+  days.forEach(function(d){ acc += d.n; cum.push(acc); });
+  var series = [{name:'累计违纪次数', color:'#6366f1', data:cum}];
+  var labels = days.map(function(d,i){ return (i%4===0||i===days.length-1) ? d.date : ''; });
+  var h = anLines(series, labels, {h:210});
+  var half = Math.floor(days.length/2);
+  var fHalf = cum[half-1]||0, sHalf = cum[cum.length-1] - fHalf;
+  h += '<div class="statgrid" style="margin-top:10px">'+
+    '<div class="stat"><b>'+fHalf+'</b><span>前半段（'+days[0].date+' 起 '+half+' 个违纪日）</span></div>'+
+    '<div class="stat"><b>'+sHalf+'</b><span>后半段（'+days[half].date+' 起）</span></div>'+
+    '<div class="stat"><b style="color:'+(sHalf<fHalf?'var(--green)':'var(--red)')+'">'+(sHalf<fHalf?'减速':'加速')+'</b><span>整体趋势</span></div>'+
+    '</div>';
+  $('ana-aCum').querySelector('.anbody').innerHTML = h;
+}
+
+/* ---------- 6. 小组 × 周次 ---------- */
+function renderAGrpWk(){
+  var series = GROUPS.map(function(g,i){
+    return {name:'第'+g.g+'组', color:anColor(i), data:GRPWK[i].slice()};
+  });
+  var h = anLines(series, SHORT, {h:230});
+  h += '<div style="font-size:12.5px;font-weight:700;margin:14px 0 6px">各组逐周明细</div>';
+  h += '<div style="overflow:auto"><table class="anmat"><thead><tr><th style="text-align:left">组</th>'+
+    SHORT.map(function(s){ return '<th>'+s+'</th>'; }).join('')+'<th>合计</th></tr></thead><tbody>';
+  GROUPS.forEach(function(g,i){
+    h += '<tr><th style="text-align:left">第'+g.g+'组</th>'+
+      GRPWK[i].map(function(v){ return '<td style="background:'+(v?color(v):'var(--soft3)')+';color:'+(v?'#fff':'var(--muted)')+'">'+(v||'·')+'</td>'; }).join('')+
+      '<td style="font-weight:800">'+GRPWK[i].reduce(function(a,b){return a+b;},0)+'</td></tr>';
+  });
+  h += '</tbody></table></div>';
+  $('ana-aGrpWk').querySelector('.anbody').innerHTML = h;
+}
+
+/* ---------- 7. 小组 × 学科 ---------- */
+function renderAGrpSub(){
+  var h = anMatrix(GROUPS.map(function(g){ return g.g+'组'; }), SUBS, function(ri,ci){ return GRPSUB[ri][ci]; }, {corner:'组 ╲ 学科'});
+  h += '<div style="font-size:12.5px;font-weight:700;margin:14px 0 6px">每组的问题集中在哪科</div><div style="display:grid;gap:5px">';
+  GROUPS.forEach(function(g,i){
+    var arr = GRPSUB[i].map(function(v,j){ return {s:SUBS[j], v:v}; }).filter(function(x){return x.v>0;})
+      .sort(function(a,b){ return b.v-a.v; });
+    var tot = GRPSUB[i].reduce(function(a,b){return a+b;},0);
+    var top = arr[0];
+    var pct = top && tot ? Math.round(top.v/tot*100) : 0;
+    h += '<div style="font-size:12.5px"><b style="display:inline-block;width:48px">第'+g.g+'组</b>'+
+      (top ? '最集中在 <b>'+top.s+'</b>（'+top.v+' 次，占本组 '+pct+'%）' : '全组零违纪 🎉')+'</div>';
+  });
+  h += '</div>';
+  $('ana-aGrpSub').querySelector('.anbody').innerHTML = h;
+}
+
+/* ---------- 8. 小组 × 星期几 ---------- */
+function renderAGrpDow(){
+  var h = anMatrix(GROUPS.map(function(g){ return g.g+'组'; }), DOWSH, function(ri,ci){ return GRPDOW[ri][ci]; }, {corner:'组 ╲ 星期'});
+  h += '<div style="font-size:12.5px;font-weight:700;margin:14px 0 6px">每组最高发的一天</div><div style="display:grid;gap:5px">';
+  GROUPS.forEach(function(g,i){
+    var mx=0, mi=0;
+    GRPDOW[i].forEach(function(v,j){ if(v>mx){ mx=v; mi=j; } });
+    h += '<div style="font-size:12.5px"><b style="display:inline-block;width:48px">第'+g.g+'组</b>'+
+      (mx ? '周'+DOWSH[mi]+'（'+mx+' 次）' : '无记录')+'</div>';
+  });
+  h += '</div>';
+  $('ana-aGrpDow').querySelector('.anbody').innerHTML = h;
+}
+
+/* ---------- 9. 小组排名变化 ---------- */
+function renderAGrpRank(){
+  var h = '<div style="overflow:auto"><table class="anmat"><thead><tr><th style="text-align:left">组</th>'+
+    SHORT.map(function(s){ return '<th>'+s+'</th>'; }).join('')+'<th>走势</th></tr></thead><tbody>';
+  var ranks = GROUPS.map(function(g,i){
+    var r = [];
+    for(var w=0; w<NW; w++){
+      var arr = GROUPS.map(function(_,j){ return {g:j+1, v:GRPWK[j][w]}; }).sort(function(a,b){ return b.v-a.v || a.g-b.g; });
+      var pos = arr.findIndex(function(x){ return x.g===g.g; })+1;
+      r.push(pos);
+    }
+    return {g:g.g, r:r};
+  });
+  ranks.forEach(function(x){
+    var first = (x.r[0]+x.r[1]+x.r[2]+x.r[3])/4;
+    var last  = (x.r[4]+x.r[5]+x.r[6]+x.r[7]+x.r[8])/5;
+    var delta = last - first;
+    var trend = delta < -0.3 ? '<span style="color:var(--green)">↑ 变好</span>' :
+                (delta > 0.3 ? '<span style="color:var(--red)">↓ 变差</span>' : '<span style="color:var(--muted)">— 平稳</span>');
+    h += '<tr><th style="text-align:left">第'+x.g+'组</th>'+
+      x.r.map(function(p){ return '<td style="background:'+(p<=2?'var(--red)':(p>=7?'var(--green)':'var(--soft3)'))+';color:'+(p<=2||p>=7?'#fff':'var(--ink)')+'">'+p+'</td>'; }).join('')+
+      '<td>'+trend+'</td></tr>';
+  });
+  h += '</tbody></table></div>';
+  h += '<div style="font-size:11.5px;color:var(--muted);margin-top:8px">数字为该周违纪次数排名（1 = 次数最多）。红色＝前两名，绿色＝后两名。</div>';
+  var out = $('grpRankBox'); if(out) out.innerHTML = h;
+}
+
+/* ---------- 10. 学科 × 星期几 ---------- */
+function renderASubDow(){
+  var subs = SUBS.map(function(s,i){ return {s:s, i:i, tot:SUBWK[i].reduce(function(a,b){return a+b;},0)}; })
+    .filter(function(x){ return x.tot>0; }).sort(function(a,b){ return b.tot-a.tot; });
+  var h = anMatrix(subs.map(function(x){ return x.s; }), DOWSH, function(ri,ci){ return DOWSUB[ci][subs[ri].i]; }, {corner:'学科 ╲ 星期'});
+  h += '<div style="font-size:12.5px;font-weight:700;margin:14px 0 6px">每科集中在哪天</div><div style="display:grid;gap:5px">';
+  subs.forEach(function(x){
+    var col = DOWSUB.map(function(r){ return r[x.i]; });
+    var mx=0, mi=0; col.forEach(function(v,j){ if(v>mx){ mx=v; mi=j; } });
+    var conc = mx>0 ? Math.round(mx/x.tot*100) : 0;
+    h += '<div style="font-size:12.5px"><b style="display:inline-block;width:44px">'+x.s+'</b>'+
+      (mx? '周'+DOWSH[mi]+' 最集中（'+mx+' 次，占本科 '+conc+'%）' : '无')+'</div>';
+  });
+  h += '</div>';
+  $('ana-aSubDow').querySelector('.anbody').innerHTML = h;
+}
+
+/* ---------- 11. 学科 × 周次 ---------- */
+function renderASubWk(){
+  var subs = SUBS.map(function(s,i){ return {s:s, i:i, tot:SUBWK[i].reduce(function(a,b){return a+b;},0)}; })
+    .filter(function(x){ return x.tot>0; }).sort(function(a,b){ return b.tot-a.tot; }).slice(0,6);
+  var series = subs.map(function(x,k){ return {name:x.s+'（'+x.tot+'）', color:anColor(k), data:SUBWK[x.i].slice()}; });
+  var h = anLines(series, SHORT, {h:230});
+  h += '<div style="font-size:11.5px;color:var(--muted);margin-top:6px">只画次数最高的 6 门课，避免线条太挤。</div>';
+  h += '<div style="font-size:12.5px;font-weight:700;margin:14px 0 6px">各科后半程变化</div><div style="display:grid;gap:5px">';
+  SUBS.forEach(function(s,si){
+    var tot = SUBWK[si].reduce(function(a,b){return a+b;},0);
+    if(!tot) return;
+    var f = SUBWK[si].slice(0,4).reduce(function(a,b){return a+b;},0);
+    var l = SUBWK[si].slice(4).reduce(function(a,b){return a+b;},0);
+    var d = l - f;
+    h += '<div style="font-size:12.5px"><b style="display:inline-block;width:44px">'+s+'</b>'+
+      '前四周 '+f+' → 后五周 '+l+'　'+
+      (d>0 ? '<span style="color:var(--red)">+'+d+' 恶化</span>' : (d<0 ? '<span style="color:var(--green)">'+d+' 好转</span>' : '<span style="color:var(--muted)">持平</span>'))+'</div>';
+  });
+  h += '</div>';
+  $('ana-aSubWk').querySelector('.anbody').innerHTML = h;
+}
+
+/* ---------- 12. 单科深度 ---------- */
+function renderASubDeep(){
+  var box = $('ana-aSubDeep').querySelector('.anbody');
+  var opts = SUBS.map(function(s,i){
+    var tot = SUBWK[i].reduce(function(a,b){return a+b;},0);
+    return '<option value="'+i+'">'+s+'（'+tot+' 次）</option>';
+  }).join('');
+  box.innerHTML = '<div class="ctrl"><select id="sdSub" style="width:160px">'+opts+'</select>'+
+    '<button class="btn" id="sdGo">查看</button></div><div id="sdOut"></div>';
+  var sel = $('sdSub');
+  var peak = SUBS.map(function(s,i){ return {i:i, v:SUBWK[i].reduce(function(a,b){return a+b;},0)}; })
+    .sort(function(a,b){ return b.v-a.v; })[0];
+  if(sel) sel.value = String(peak.i);
+  function go(){ sdRender(); }
+  var b = $('sdGo'); if(b) b.addEventListener('click', go);
+  if(sel) sel.addEventListener('change', go);
+  sdRender();
+}
+function sdRender(){
+  var si = parseInt(($('sdSub')||{}).value,10) || 0;
+  var tot = SUBWK[si].reduce(function(a,b){return a+b;},0);
+  var people = S.filter(function(s){ return s.sub[si]>0; }).sort(function(a,b){ return b.sub[si]-a.sub[si]; });
+  var dowArr = DOWSUB.map(function(r){ return r[si]; });
+  var dowTot = dowArr.reduce(function(a,b){return a+b;},0)||1;
+  var mxd=0, mdi=0; dowArr.forEach(function(v,j){ if(v>mxd){ mxd=v; mdi=j; } });
+  var gsub = GROUPS.map(function(g,i){ return {g:g.g, v:GRPSUB[i][si]}; }).sort(function(a,b){ return b.v-a.v; });
+  var h = '<div class="statgrid">'+
+    '<div class="stat"><b>'+tot+'</b><span>'+SUBS[si]+' · 总次数</span></div>'+
+    '<div class="stat"><b>'+people.length+'</b><span>涉及人数</span></div>'+
+    '<div class="stat"><b>'+DOWCN[mdi]+'</b><span>最高发的一天 · '+mxd+' 次</span></div>'+
+    '</div>';
+  /* 周趋势 */
+  h += '<div style="font-size:12.5px;font-weight:700;margin:14px 0 6px">九周走势</div>'+
+    anLines([{name:SUBS[si], color:'#6366f1', data:SUBWK[si].slice()}], SHORT, {h:170});
+  /* 星期几 */
+  h += '<div style="font-size:12.5px;font-weight:700;margin:14px 0 6px">星期几分布</div>';
+  var mx = Math.max.apply(null, dowArr)||1;
+  for(var i=0;i<7;i++){
+    h += anBar(DOWCN[i], dowArr[i], mx, anColor(i), dowArr[i]+' 次 · '+Math.round(dowArr[i]/dowTot*100)+'%');
+  }
+  /* 小组分布 */
+  h += '<div style="font-size:12.5px;font-weight:700;margin:14px 0 6px">小组分布</div>';
+  var gm = Math.max.apply(null, gsub.map(function(x){return x.v;}))||1;
+  gsub.forEach(function(x){
+    h += anBar('第'+x.g+'组', x.v, gm, anColor(x.g-1), x.v+' 次');
+  });
+  /* 人物 */
+  h += '<div style="font-size:12.5px;font-weight:700;margin:14px 0 6px">谁的这门课最多</div><div style="display:flex;flex-wrap:wrap;gap:6px">';
+  people.slice(0,12).forEach(function(s){
+    h += '<span class="pill" data-nm="'+esc(s.name)+'" style="cursor:pointer">'+esc(s.name)+' '+s.sub[si]+' 次</span>';
+  });
+  if(!people.length) h += '<span style="color:var(--muted);font-size:12.5px">这门课九周零违纪 🎉</span>';
+  h += '</div>';
+  $('sdOut').innerHTML = h;
+  $('sdOut').querySelectorAll('[data-nm]').forEach(function(p){
+    p.addEventListener('click', function(){ var s=byName(p.getAttribute('data-nm')); if(s) openProfile(s); });
+  });
+}
+
+/* ---------- 13. 高危组合 ---------- */
+function renderACombo(){
+  var combos = [];
+  for(var i=0;i<7;i++) for(var j=0;j<NS;j++) if(DOWSUB[i][j]>0) combos.push({d:i,s:j,v:DOWSUB[i][j]});
+  combos.sort(function(a,b){ return b.v-a.v; });
+  var mx = combos[0].v || 1;
+  var h = '<div style="font-size:12.5px;color:var(--muted);margin-bottom:8px">把「星期几」和「学科」叠在一起，看哪个组合最容易出事。共 '+combos.length+' 种有记录的组合。</div>';
+  combos.slice(0,12).forEach(function(c,i){
+    h += anBar(DOWCN[c.d]+'·'+SUBS[c.s], c.v, mx, i<3?'var(--red)':(i<6?'var(--orange)':'var(--brand)'), c.v+' 次');
+  });
+  /* 人也参与的三元组合 */
+  h += '<div style="font-size:12.5px;font-weight:700;margin:16px 0 6px">谁在什么时间、什么课上最容易出事（Top 8）</div>';
+  var trip = {};
+  EV.forEach(function(e){
+    e.n.forEach(function(p){
+      var k = p+'|'+e.dow+'|'+e.sub;
+      trip[k] = (trip[k]||0)+1;
+    });
+  });
+  var tl = Object.keys(trip).map(function(k){
+    var a=k.split('|'); return {n:a[0], d:parseInt(a[1],10), s:parseInt(a[2],10), v:trip[k]};
+  }).filter(function(x){ return x.v>=2; }).sort(function(a,b){ return b.v-a.v; }).slice(0,8);
+  if(!tl.length){ h += '<div style="color:var(--muted);font-size:12.5px">没有人在同一「星期几 + 学科」组合下出现 2 次以上。</div>'; }
+  else{
+    h += '<div style="display:grid;gap:5px">';
+    tl.forEach(function(x,i){
+      h += '<div style="font-size:12.5px"><b>'+(i+1)+'. '+esc(x.n)+'</b> — 周'+DOWSH[x.d]+' 的 '+SUBS[x.s]+'课，'+x.v+' 次</div>';
+    });
+    h += '</div>';
+  }
+  $('ana-aCombo').querySelector('.anbody').innerHTML = h;
+}
+
+/* ---------- 14. 首次 / 末次 ---------- */
+function renderAFirst(){
+  var rec = {};
+  EV.forEach(function(e){
+    e.n.forEach(function(p){
+      if(!rec[p]) rec[p] = {first:e, last:e, cnt:0};
+      rec[p].cnt++;
+      if(e.w < rec[p].first.w || (e.w===rec[p].first.w && e.date < rec[p].first.date)) rec[p].first = e;
+      if(e.w > rec[p].last.w  || (e.w===rec[p].last.w  && e.date > rec[p].last.date))  rec[p].last  = e;
+    });
+  });
+  var arr = Object.keys(rec).map(function(p){ return {n:p, r:rec[p]}; })
+    .sort(function(a,b){ return (a.r.first.w-b.r.first.w) || (a.r.first.date<b.r.first.date?-1:1); });
+  var h = '<div style="font-size:12.5px;color:var(--muted);margin-bottom:8px">按首次上榜时间排序。共 '+arr.length+' 人曾上榜。</div>';
+  h += '<div style="overflow:auto"><table class="anmat"><thead><tr>'+
+    '<th style="text-align:left">同学</th><th>首次</th><th>首次科目</th><th>最近</th><th>最近科目</th><th>跨度</th><th>次数</th></tr></thead><tbody>';
+  arr.forEach(function(x){
+    var span = x.r.last.w - x.r.first.w;
+    h += '<tr><th style="text-align:left;cursor:pointer" data-nm="'+esc(x.n)+'">'+esc(x.n)+'</th>'+
+      '<td>W'+x.r.first.w+' '+x.r.first.date+'</td><td>'+SUBS[x.r.first.sub]+'</td>'+
+      '<td>W'+x.r.last.w+' '+x.r.last.date+'</td><td>'+SUBS[x.r.last.sub]+'</td>'+
+      '<td>'+(span===0?'同周':span+' 周')+'</td><td style="font-weight:800">'+x.r.cnt+'</td></tr>';
+  });
+  h += '</tbody></table></div>';
+  var late = arr.filter(function(x){ return x.r.first.w>=5; });
+  if(late.length){
+    h += '<div class="ok" style="margin-top:10px"><b>'+late.length+' 位同学</b>是第五周之后才第一次上榜：'+
+      late.map(function(x){ return esc(x.n); }).join('、')+'。</div>';
+  }
+  var quiet = arr.filter(function(x){ return x.r.last.w<=4; });
+  if(quiet.length){
+    h += '<div class="ok" style="margin-top:8px"><b>'+quiet.length+' 位同学</b>最近一次上榜还在第四周或更早（已连续多周没出现）：'+
+      quiet.map(function(x){ return esc(x.n); }).join('、')+'。</div>';
+  }
+  $('ana-aFirst').querySelector('.anbody').innerHTML = h;
+  $('ana-aFirst').querySelectorAll('[data-nm]').forEach(function(p){
+    p.addEventListener('click', function(){ var s=byName(p.getAttribute('data-nm')); if(s) openProfile(s); });
+  });
+}
+
+/* ---------- 15. 连续上榜 ---------- */
+function renderAStreak(){
+  var longest = S.map(function(s){
+    var best=0, cur=0, bs=0, be=0, cs=0;
+    for(var i=0;i<NW;i++){
+      if(s.w[i]>0){ if(cur===0) cs=i; cur++; if(cur>best){ best=cur; bs=cs; be=i; } }
+      else cur=0;
+    }
+    return {s:s, best:best, bs:bs, be:be};
+  }).filter(function(x){ return x.best>0; }).sort(function(a,b){ return b.best-a.best || b.s.total-a.s.total; });
+  var h = '<div style="font-size:12.5px;font-weight:700;margin-bottom:6px">最长连续上榜周数</div>';
+  var mx = longest[0]?longest[0].best:1;
+  longest.slice(0,14).forEach(function(x,i){
+    var rng = x.best>1 ? ('W'+(x.bs+1)+'–W'+(x.be+1)) : ('W'+(x.bs+1));
+    h += anBar(esc(x.s.name), x.best, mx, x.best>=4?'var(--red)':(x.best>=3?'var(--orange)':'var(--brand)'), x.best+' 周（'+rng+'）');
+  });
+  /* 当前连续未上榜 */
+  var cur0 = S.filter(function(s){ return s.total>0; }).map(function(s){
+    var k=0; for(var i=NW-1;i>=0;i--){ if(s.w[i]>0) break; k++; }
+    return {s:s, k:k};
+  }).sort(function(a,b){ return b.k-a.k; });
+  h += '<div style="font-size:12.5px;font-weight:700;margin:16px 0 6px">已连续几周没上榜（越长越好）</div>';
+  var kmax = cur0[0]?cur0[0].k:1;
+  cur0.filter(function(x){ return x.k>0; }).slice(0,12).forEach(function(x){
+    h += anBar(esc(x.s.name), x.k, kmax, 'var(--green)', x.k+' 周');
+  });
+  var still = S.filter(function(s){ return s.total>0 && s.w[L]>0; });
+  h += '<div class="ok" style="margin-top:12px">最近一周（第九周）仍在榜上的有 <b>'+still.length+' 人</b>：'+
+    still.map(function(s){ return esc(s.name); }).join('、')+'。</div>';
+  $('ana-aStreak').querySelector('.anbody').innerHTML = h;
+  $('ana-aStreak').querySelectorAll('[data-nm]').forEach(function(p){
+    p.addEventListener('click', function(){ var s=byName(p.getAttribute('data-nm')); if(s) openProfile(s); });
+  });
+}
+
+/* ===== 趣味实验室：小组对抗赛 ===== */
+function gdFill(){
+  var a=$('gdA'), b=$('gdB');
+  if(!a||!b) return;
+  var rows = grpStat().filter(function(r){ return r.g>0; });
+  var opts = rows.map(function(r){ return '<option value="'+r.g+'">'+r.name+'（'+r.n+' 人 / '+r.total+' 次）</option>'; }).join('');
+  if(a.options.length!==rows.length){ a.innerHTML=opts; b.innerHTML=opts; }
+  if(a.options.length>1 && a.selectedIndex===b.selectedIndex){ b.selectedIndex = (a.selectedIndex+1)%a.options.length; }
+}
+function gdStat(r){
+  var subs = r.mem.reduce(function(a,s){ return a + s.subSpread; },0);
+  var recent = r.mem.reduce(function(a,s){ return a + s.w[L]; },0);
+  return {total:r.total, avg:r.avg, zero:r.zero, spread:subs, recent:recent};
+}
+function grpDuelInit(){
+  gdFill();
+  var b=$('gdGo'); if(b) b.click();
+}
+function gdRender(){
+  var ra = grpStat().filter(function(r){ return r.g===parseInt($('gdA').value,10); })[0];
+  var rb = grpStat().filter(function(r){ return r.g===parseInt($('gdB').value,10); })[0];
+  if(!ra||!rb){ $('gdOut').innerHTML='<div class="tout">请选择两个小组。</div>'; return; }
+  if(ra.g===rb.g){ $('gdOut').innerHTML='<div class="tout">请选两个不同的小组。</div>'; return; }
+  var A=gdStat(ra), B=gdStat(rb);
+  var items = [
+    {k:'总次数',  a:A.total,  b:B.total,  low:true,  unit:'次'},
+    {k:'人均次数',a:Math.round(A.avg*100)/100, b:Math.round(B.avg*100)/100, low:true, unit:'次/人'},
+    {k:'零违纪人数',a:A.zero, b:B.zero, low:false, unit:'人'},
+    {k:'学科广度',a:A.spread, b:B.spread, low:true, unit:'科次'},
+    {k:'最近一周',a:A.recent, b:B.recent, low:true, unit:'次'}
+  ];
+  var sa=0, sb=0, rows='';
+  items.forEach(function(it){
+    var aw=false, bw=false;
+    if(it.a===it.b){}
+    else if(it.low){ aw = it.a<it.b; bw = it.b<it.a; }
+    else { aw = it.a>it.b; bw = it.b>it.a; }
+    if(aw) sa++; if(bw) sb++;
+    rows += '<div class="gdrow">'+
+      '<span class="gdl'+(aw?' win':'')+'">'+(aw?'🏆 ':'')+it.a+it.unit+'</span>'+
+      '<span class="gdk">'+it.k+'</span>'+
+      '<span class="gdr'+(bw?' win':'')+'">'+it.b+it.unit+(bw?' 🏆':'')+'</span>'+
+    '</div>';
+  });
+  var verdict;
+  if(sa===sb) verdict = ra.name+' 与 '+rb.name+' 打成平手，两组「难分伯仲」。';
+  else{
+    var win = sa>sb? ra : rb, lose = sa>sb? rb : ra, ws=Math.max(sa,sb), ls=Math.min(sa,sb);
+    var gap = win.name;
+    verdict = gap+' 以 '+ws+' : '+ls+' 胜出 —— '+
+      (ws>=4 ? '优势明显，'+lose.name+' 需要加把劲。' : (ws===3 ? '略占上风，差距不大。' : '险胜，基本算是五五开。'));
+  }
+  $('gdOut').innerHTML =
+    '<div class="gdhead"><b>'+ra.name+'</b><span>'+sa+' : '+sb+'</span><b>'+rb.name+'</b></div>'+
+    rows+
+    '<div class="ok" style="margin-top:10px">'+verdict+'</div>'+
+    '<div style="font-size:11.5px;color:var(--muted);margin-top:6px">说明：总次数、人均、学科广度、最近一周都是「少者胜」；零违纪人数是「多者胜」。</div>';
+}
+
 /* ===== 趣味实验室：战力对决 ===== */
 function powerOf(s){
   return [
@@ -2816,12 +3901,12 @@ $('tmPlay').addEventListener('click', function(){
 
 /* ===== 趣味实验室：段位赛 ===== */
 var DW = [
-  {t:'纪律王者',  min:0,  max:0,      c:'#f59e0b', e:'👑', d:'八周零违纪，全班最强'},
+  {t:'纪律王者',  min:0,  max:0,      c:'#f59e0b', e:'👑', d:'九周零违纪，全班最强'},
   {t:'秩序钻石',  min:1,  max:2,      c:'#0ea5e9', e:'💎', d:'偶有闪失，整体很稳'},
   {t:'规矩铂金',  min:3,  max:5,      c:'#10b981', e:'🛡️', d:'需要偶尔提醒一下'},
   {t:'活跃黄金',  min:6,  max:8,      c:'#eab308', e:'🥇', d:'已经进入观察名单'},
   {t:'重点白银',  min:9,  max:12,     c:'#94a3b8', e:'🥈', d:'频次偏高，得盯一盯'},
-  {t:'传说青铜',  min:13, max:9999,   c:'#b45309', e:'🏺', d:'八周累计上两位数，传说级'}
+  {t:'传说青铜',  min:13, max:9999,   c:'#b45309', e:'🏺', d:'九周累计上两位数，传说级'}
 ];
 function dwOf(n){
   var t = (typeof n === 'number') ? n : 0;
@@ -2843,7 +3928,7 @@ function renderDuanwei(){
   var list = '<div class="dwlist">' + S.slice().sort(function(a,b){return a.total-b.total;}).map(function(s){
     var d = dwOf(s.total);
     return '<div class="dwcard" data-n="' + esc(s.name) + '"><b>' + esc(s.name) + '</b>' +
-      '<span>' + s.total + ' 次 · ' + (s.total ? '主战场 ' + s.topSub : '八周全勤零违纪') + '</span>' +
+      '<span>' + s.total + ' 次 · ' + (s.total ? '主战场 ' + s.topSub : '九周全勤零违纪') + '</span>' +
       '<span class="dwbadge" style="background:' + d.c + '">' + d.e + ' ' + d.t + '</span></div>';
   }).join('') + '</div>';
   var el = $('dwOut');
@@ -2871,8 +3956,8 @@ $('guessBtn').addEventListener('click', function(){
   $('guessOut').innerHTML =
     '<div class="statgrid"><div class="stat"><b>'+ref+'</b><span>系统参考值</span></div>'+
     '<div class="stat"><b>'+lo+'–'+hi+'</b><span>合理区间</span></div>'+
-    '<div class="stat"><b>'+Math.round(avg*10)/10+'</b><span>八周均值</span></div></div>'+
-    '<div class="ok">'+comment+'<br><span style="font-size:11.5px">参考值＝近四周均值×50% ＋ 近两周均值×30% ＋ 八周均值×20%</span></div>';
+    '<div class="stat"><b>'+Math.round(avg*10)/10+'</b><span>九周均值</span></div></div>'+
+    '<div class="ok">'+comment+'<br><span style="font-size:11.5px">参考值＝近四周均值×50% ＋ 近两周均值×30% ＋ 九周均值×20%</span></div>';
 });
 
 /* ============ 换算器 ============ */
@@ -2970,7 +4055,7 @@ function forecastRisk(){
     var why=[];
     if(s.w[L]>0) why.push(WEEKS[L]+'仍在榜（'+s.w[L]+' 次）');
     if(s.w[L2]>0) why.push(WEEKS[L2]+'有过记录');
-    if(s.spread>=4) why.push('八周里活跃 '+s.spread+' 周，习惯性强');
+    if(s.spread>=4) why.push('九周里活跃 '+s.spread+' 周，习惯性强');
     if(s.delta>0) why.push('后半程呈上升（+'+s.delta+'）');
     if(s.subSpread>=4) why.push('横跨 '+s.subSpread+' 门学科，覆盖面广');
     if(!why.length) why.push('近期安静，属低风险观察对象');
@@ -2992,7 +4077,7 @@ function renderForecast(){
       '<div style="font-size:12px;color:var(--ink2)">'+x.why.join(' · ')+'</div></div>';
   });
   var safe=S.filter(function(s){return s.total===0;}).length;
-  html+='<div class="ok" style="margin-top:8px">班级里还有 <b>'+safe+'</b> 位同学八周零违纪，'+
+  html+='<div class="ok" style="margin-top:8px">班级里还有 <b>'+safe+'</b> 位同学九周零违纪，'+
     '他们才是「下周一定不上榜」的稳选。</div>';
   $('fcOut').innerHTML=html;
 }
@@ -3059,14 +4144,14 @@ function renderTicket(whoId, outId){
     '<div class="tn">编号 '+tkNo(s.name)+' 　班级记录专用</div>'+
     '<div class="ln"><span>当事人</span><b>'+esc(s.name)+'</b></div>'+
     '<div class="ln"><span>所属班级</span>本班（全员 '+S.length+' 人）</div>'+
-    '<div class="ln"><span>统计周期</span>八周（W1–W'+NW+'）</div>'+
+    '<div class="ln"><span>统计周期</span>九周（W1–W'+NW+'）</div>'+
     '<div class="ln"><span>累计次数</span><b>'+s.total+' 次</b>　危险等级：'+level+'</div>'+
     '<div class="ln"><span>主要阵地</span>'+s.topSub+'课（'+s.maxSub+' 次）</div>'+
-    '<div class="ln"><span>活跃周数</span>'+s.spread+' / 7 周</div>'+
+    '<div class="ln"><span>活跃周数</span>'+s.spread+' / '+NW+' 周</div>'+
     '<div class="ln"><span>涉及学科</span>'+s.subSpread+' 门</div>'+
-    '<div class="ln" style="border:0"><span>违法事实</span>'+(facts.length? facts.join('；') : '八周内无违纪记录')+'</div>'+
+    '<div class="ln" style="border:0"><span>违法事实</span>'+(facts.length? facts.join('；') : '九周内无违纪记录')+'</div>'+
     '<div class="rule"><b>处罚决定：</b>'+(s.total===0
-      ? '经核查，该同学八周内无任何违纪记录，不予处罚，特此表扬 🎉'
+      ? '经核查，该同学九周内无任何违纪记录，不予处罚，特此表扬 🎉'
       : pun+'。<br>另处「纪律分」扣减 '+s.total+' 分，折合虚拟罚金 '+fine+' 元。')+'</div>'+
     '<div class="sign">班级纪律委员会　签发日期：'+new Date().toLocaleDateString('zh-CN')+'</div>'+
     '</div>'+
@@ -3116,10 +4201,10 @@ function slotResult(r){
     : (hitS ? '🎯 <b>命中学科！</b>'+esc(who.name)+'在'+r[1]+'课有 '+who.sub[si]+' 次记录，但'+r[0]+'那周很安分。'
     : '😌 <b>虚惊一场。</b>'+esc(who.name)+'在'+r[0]+'和'+r[1]+'课都没有违纪记录。'));
   out.innerHTML='<div class="'+cls+'">'+txt+'<br><span style="font-size:11.5px">组合：'+esc(r[0])+' × '+esc(r[1])+' × '+esc(who.name)+
-    ' · 该同学八周累计 '+who.total+' 次</span></div>';
+    ' · 该同学九周累计 '+who.total+' 次</span></div>';
 }
 
-/* ===== 趣味实验室：八周年度回忆 ===== */
+/* ===== 趣味实验室：九周年度回忆 ===== */
 function yearWord(s){
   if(s.total===0) return ['零帧起手','#10b981'];
   if(s.spread>=5) return ['常驻嘉宾','#e11d48'];
@@ -3141,7 +4226,7 @@ function renderYear(whoId, outId){
   if(firstIdx<0){ for(var q=0;q<NW;q++){ if(s.w[q]>0){ firstIdx=q; break; } } }
   box.innerHTML=
     '<div style="text-align:center;padding:12px;border-radius:12px;background:var(--soft3);margin-bottom:10px">'+
-      '<div style="font-size:12px;color:var(--muted)">'+esc(s.name)+' 的八周违纪年度报告</div>'+
+      '<div style="font-size:12px;color:var(--muted)">'+esc(s.name)+' 的九周违纪年度报告</div>'+
       '<div style="font-size:26px;font-weight:800;color:'+w[1]+';margin:4px 0">'+w[0]+'</div>'+
       '<div style="font-size:12px;color:var(--ink2)">年度累计 '+s.total+' 次 · 班级第 '+(s.rank||'-')+' 位</div>'+
     '</div>'+
@@ -3152,18 +4237,18 @@ function renderYear(whoId, outId){
       '<div class="stat"><b>'+s.subSpread+'</b><span>涉及学科</span></div>'+
     '</div>'+
     (s.total===0
-      ? '<div class="ok">🎉 <b>全年无违纪。</b>八周共 52 × 8 个格子里，你的名字一次都没出现过。这是全班 '+zeroCount()+' 位「零帧起手」同学之一。</div>'
+      ? '<div class="ok">🎉 <b>全年无违纪。</b>九周共 52 × 8 个格子里，你的名字一次都没出现过。这是全班 '+zeroCount()+' 位「零帧起手」同学之一。</div>'
       : '<div class="grp" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:7px;background:var(--soft2)">'+
         '<b>📌 高光时刻</b><br>'+WEEKS[peakIdx]+'，单周 '+s.maxw+' 次，占个人全年 '+Math.round(s.maxw/s.total*100)+'%。<br>'+
         '<span style="color:var(--muted)">首次上榜于'+WEEKS[firstIdx<0?0:firstIdx]+'，主战场是'+s.topSub+'课（'+s.maxSub+' 次）。</span></div>'+
         '<div class="grp" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:7px;background:var(--soft2)">'+
         '<b>📊 vs 班级</b><br>你占全班违纪总量的 '+(TOTAL? Math.round(s.total/TOTAL*100):0)+'%，'+
         '高于全班 '+(S.length-Math.round(s.total/(TOTAL||1)*S.length))+' 位同学。<br>'+
-        '<span style="color:var(--muted)">'+(quiet.length? ('你在'+quiet.map(function(i){return WEEKS[i];}).join('、')+'完全消失过。') : '八周里没有一周是完全干净的。')+'</span></div>'+
+        '<span style="color:var(--muted)">'+(quiet.length? ('你在'+quiet.map(function(i){return WEEKS[i];}).join('、')+'完全消失过。') : '九周里没有一周是完全干净的。')+'</span></div>'+
         '<div class="ok"><b>年度评语：</b>'+yearComment(s)+'</div>');
 }
 function yearComment(s){
-  if(s.spread>=5) return '八周里有 '+s.spread+' 周都能看到你，稳定得像课程设置的一部分。';
+  if(s.spread>=5) return '九周里有 '+s.spread+' 周都能看到你，稳定得像课程设置的一部分。';
   if(s.maxw>=4) return '你的违纪不分散，一出手就是'+WEEKS[s.w.indexOf(s.maxw)]+'那种集中爆发。';
   if(s.subSpread>=4) return '横跨 '+s.subSpread+' 门学科，这份「雨露均沾」也是种本事。';
   if(s.delta>0) return '后半程比前半程多了 '+s.delta+' 次，趋势是向上的 —— 这里指的是次数。';
@@ -3180,18 +4265,18 @@ function rdScript(){
   var guest=BAD[rnd(BAD.length)] || S[0];
   var zeroN=zeroCount();
   return [
-    ['开场','各位同学中午好，这里是「班级纪律之声」，我是自动播报员。今天是第八周播报日，我们先来看本周要闻。'],
+    ['开场','各位同学中午好，这里是「班级纪律之声」，我是自动播报员。今天是第九周播报日，我们先来看本周要闻。'],
     ['本周要闻','本周全班违纪 <b>'+weekTotals[L]+' 次</b>，涉及 <b>'+weekPeople[L]+' 人</b>，较上周'+
-      (cmp>0?('增加 '+cmp+' 次'):(cmp<0?('减少 '+(-cmp)+' 次'):'持平'))+'。八周累计 <b>'+TOTAL+' 次</b>，人均 '+(TOTAL/state.classSize).toFixed(2)+' 次。'],
-    ['学科快讯','本周最热闹的板块依然是<b>'+SUBS[si]+'课</b>，八周累计 '+subTotals[si]+' 次、'+subPeople[si]+' 人涉案。'+
+      (cmp>0?('增加 '+cmp+' 次'):(cmp<0?('减少 '+(-cmp)+' 次'):'持平'))+'。九周累计 <b>'+TOTAL+' 次</b>，人均 '+(TOTAL/state.classSize).toFixed(2)+' 次。'],
+    ['学科快讯','本周最热闹的板块依然是<b>'+SUBS[si]+'课</b>，九周累计 '+subTotals[si]+' 次、'+subPeople[si]+' 人涉案。'+
       (subTotals[2]===0? '值得一提的是，英语课至今零违纪，请保持。' : '')+
       (subTotals[11]===0? '体育课同样零记录，值得表扬。' : '')],
-    ['人物专访','本期专访对象：<b>'+esc(guest.name)+'</b>。八周累计 '+guest.total+' 次，主战场'+guest.topSub+''+
+    ['人物专访','本期专访对象：<b>'+esc(guest.name)+'</b>。九周累计 '+guest.total+' 次，主战场'+guest.topSub+''+
       (guest.maxSub>0? '课（'+guest.maxSub+' 次）' : '')+'，活跃 '+guest.spread+' 周。'+
-      (guest.total===0? '这位同学八周零违纪，是本次专访的正能量代表。' : '')],
+      (guest.total===0? '这位同学九周零违纪，是本次专访的正能量代表。' : '')],
     ['气象预报','纪律气象台发布：本周班级天气为<b>'+wxWord(weekTotals[L])+'</b>。'+
       '请同学们注意，峰值为'+WEEKS[PEAK]+'的 '+weekTotals[PEAK]+' 次，是全周期最高，那周的天气是暴雨。'],
-    ['红榜时间','截至目前，全班有 <b>'+zeroN+'</b> 位同学八周零违纪，占班级 '+Math.round(zeroN/state.classSize*100)+'%。'+
+    ['红榜时间','截至目前，全班有 <b>'+zeroN+'</b> 位同学九周零违纪，占班级 '+Math.round(zeroN/state.classSize*100)+'%。'+
       '他们是班级的稳定器，掌声送给他们。'],
     ['结束语','以上就是本周播报的全部内容。数据来自班级真实登记，播报词由程序自动生成。我们下周同一时间再见。']
   ];
@@ -3226,14 +4311,14 @@ var BINGO_POOL=[
   {t:'英语课 0 次违纪',          f:function(){ return subTotals[2]===0; }},
   {t:'体育课 0 次违纪',          f:function(){ return subTotals[11]===0; }},
   {t:'第四周全班 ≥ 45 次',       f:function(){ return weekTotals[3]>=45; }},
-  {t:'第八周全班 ≥ 25 次',       f:function(){ return weekTotals[L]>=25; }},
-  {t:'第八周是次高峰',           f:function(){ return weekTotals[L]>weekTotals[L2]; }},
+  {t:'第九周全班 ≥ 25 次',       f:function(){ return weekTotals[L]>=25; }},
+  {t:'第九周是次高峰',           f:function(){ return weekTotals[L]>weekTotals[L2]; }},
   {t:'零违纪同学 ≥ 25 人',       f:function(){ return zeroCount()>=25; }},
   {t:'违纪人数 ≥ 30 人',         f:function(){ return BAD.length>=30; }},
   {t:'有人横跨 ≥ 6 门学科',      f:function(){ return BAD.filter(function(s){return s.subSpread>=6;}).length>0; }},
   {t:'有人横跨 ≥ 10 门学科',     f:function(){ return BAD.filter(function(s){return s.subSpread>=10;}).length>0; }},
   {t:'有人连续 ≥ 5 周违纪',      f:function(){ return BAD.filter(function(s){return s.streak>=5;}).length>0; }},
-  {t:'有人八周周周上榜',         f:function(){ return BAD.filter(function(s){return s.spread===NW;}).length>0; }},
+  {t:'有人九周周周上榜',         f:function(){ return BAD.filter(function(s){return s.spread===NW;}).length>0; }},
   {t:'存在「不详」学科记录',     f:function(){ return subTotals[12]>0; }},
   {t:'有人后半程完全归零',       f:function(){ return BAD.filter(function(s){return s.first>0&&s.last===0;}).length>0; }},
   {t:'有人后半程增加 ≥ 3 次',    f:function(){ return BAD.filter(function(s){return s.delta>=3;}).length>0; }},
@@ -3329,13 +4414,20 @@ $('exportJson').addEventListener('click', function(){
 $('print').addEventListener('click', function(){ window.print(); });
 var nmLockBtn = $('nmLock'); if(nmLockBtn) nmLockBtn.addEventListener('click', doLock);
 
-$('hardReset').addEventListener('click', function(){
-  if(!confirm('清空本机存档并恢复原始表格？')) return;
-  try{ localStorage.removeItem(STORE_KEY); OLD_STORE_KEYS.forEach(function(k){ localStorage.removeItem(k); }); }catch(e){}
-  state.classSize = 52;
-  applyNames(); render();
-  $('saveState').textContent = '已恢复原始表格';
-});
+
+/* 小组对抗赛 */
+(function(){
+  var a=$('gdA'), b=$('gdB'), go=$('gdGo'), rd=$('gdRand');
+  if(go) go.addEventListener('click', gdRender);
+  if(a) a.addEventListener('change', gdRender);
+  if(b) b.addEventListener('change', gdRender);
+  if(rd) rd.addEventListener('click', function(){
+    var n=8, x=1+Math.floor(Math.random()*n), y=1+Math.floor(Math.random()*n);
+    if(y===x) y = (x%n)+1;
+    if(a) a.value=String(x); if(b) b.value=String(y);
+    gdRender();
+  });
+})();
 
 /* ============ 全局交互 ============ */
 document.querySelectorAll('.tab').forEach(function(t){
@@ -3405,11 +4497,11 @@ function toast(msg){
 var dtCase = null, dtScore = {win:0, lose:0, streak:0, best:0};
 function dtCluePool(s){
   var pool = [
-    {ico:'📅', t:'活跃周数', d:'这位同学八周里有 '+s.spread+' 周上过榜。'},
+    {ico:'📅', t:'活跃周数', d:'这位同学九周里有 '+s.spread+' 周上过榜。'},
     {ico:'🎨', t:'学科广度', d:'违纪记录一共涉及 '+s.subSpread+' 门学科。'},
     {ico:'📚', t:'主战场', d:'最常出状况的是「'+s.topSub+'」课，共 '+s.maxSub+' 次。'},
     {ico:'💥', t:'峰值周', d:'火力最猛的是'+WEEKS[s.w.indexOf(s.maxw)]+'，单周 '+s.maxw+' 次。'},
-    {ico:'📈', t:'前后对比', d:'前四周 '+s.first+' 次，后四周 '+s.last+' 次 —— '+(s.delta>0?'后半程加重':(s.delta<0?'后半程好转':'前后持平'))+'。'},
+    {ico:'📈', t:'前后对比', d:'前四周 '+s.first+' 次，后五周 '+s.last+' 次 —— '+(s.delta>0?'后半程加重':(s.delta<0?'后半程好转':'前后持平'))+'。'},
     {ico:'🔤', t:'姓名线索', d:'姓名以「'+s.name.charAt(0)+'」开头，一共 '+s.name.length+' 个字。'},
     {ico:'🔢', t:'次数区间', d:'累计违纪在 '+Math.max(1,s.total-2)+' – '+(s.total+2)+' 次之间。'},
     {ico:'🏅', t:'排名区间', d:'在违纪榜上大约排第 '+Math.max(1,s.rank-2)+' – '+(s.rank+2)+' 名。'},
@@ -3459,7 +4551,7 @@ function dtReveal(win){
     el.innerHTML = '<div class="'+(win?'ok':'warn')+'" style="margin-top:12px">'+
       '<b style="font-size:15px">'+(win?'🎉 答对了！就是 '+esc(s.name):'🫣 答案是 '+esc(s.name))+'</b><br>'+
       '用了 '+used+' 条线索'+(win?(' · 本局得分 <b>'+gain+'</b> 分'+(dtScore.streak>1?(' · 连胜 '+dtScore.streak+' 局 🔥'):'')):' · 本局 0 分')+
-      '<br><span style="font-size:11.5px">八周累计 '+s.total+' 次 · 主战场 '+s.topSub+' · 峰值 '+WEEKS[s.w.indexOf(s.maxw)]+'</span>'+
+      '<br><span style="font-size:11.5px">九周累计 '+s.total+' 次 · 主战场 '+s.topSub+' · 峰值 '+WEEKS[s.w.indexOf(s.maxw)]+'</span>'+
       '<div style="margin-top:8px"><button class="btn ghost" id="dtNext">再来一局</button></div></div>';
     var nx = $('dtNext');
     if(nx) nx.addEventListener('click', dtNewCase);
@@ -3485,7 +4577,7 @@ function dtFillGuess(){
 
 /* --- 2. 违纪诊断书 --- */
 var EVO = [
-  {max:0,  e:'🥚', t:'纪律之卵', r:'0 次',  d:'八周零违纪，纯净状态'},
+  {max:0,  e:'🥚', t:'纪律之卵', r:'0 次',  d:'九周零违纪，纯净状态'},
   {max:1,  e:'🌱', t:'初犯萌芽', r:'1 次',  d:'只出现过一次，几乎可以忽略'},
   {max:3,  e:'🍃', t:'轻度走神', r:'2–3 次', d:'偶发范围，属于正常波动'},
   {max:6,  e:'🔥', t:'活跃分子', r:'4–6 次', d:'已进入老师的常规视线'},
@@ -3516,8 +4608,8 @@ function renderDiag(whoId, outId){
       : (s.delta>0
         ? '【处方一】排查近期座位与同伴变动 【处方二】主战场「'+s.topSub+'」课提前预习 10 分钟 【处方三】设定「连续两周为 0」小目标'
         : '【处方一】一般性口头提醒即可，不必单独施压 【处方二】纳入常规观察名单 【处方三】见效后及时正向反馈'));
-  var verdict = '查 '+esc(s.name)+'，八周之内违纪 '+s.total+' 次，尤以「'+dept+'」课为甚。'+
-    (s.total===0 ? '念其八周守纪、始终如一，着即通报表扬，免除一切"用药"。'
+  var verdict = '查 '+esc(s.name)+'，九周之内违纪 '+s.total+' 次，尤以「'+dept+'」课为甚。'+
+    (s.total===0 ? '念其九周守纪、始终如一，着即通报表扬，免除一切"用药"。'
       : (s.delta<0 ? '念其后期收敛、确有悔改之意，着以观后效，暂不追加处置。'
         : (s.delta>0 ? '然其后半程反有加重之势，着令重点关注，限期整改。'
           : '念其前后如一、未见恶化，着以常规提醒，记录在案。')));
@@ -3526,7 +4618,7 @@ function renderDiag(whoId, outId){
       '<b>就诊人</b><span>'+esc(s.name)+'</span>'+
       '<b>科室</b><span>'+dept+'科</span>'+
       '<b>当前形态</b><span>'+ev.e.e+' '+ev.e.t+'（'+ev.e.r+'）</span>'+
-      '<b>主诉</b><span>'+(s.total===0?'八周内无任何违纪主诉':'近八周于「'+dept+'」等课出现注意力脱离共 '+s.total+' 次')+'</span>'+
+      '<b>主诉</b><span>'+(s.total===0?'九周内无任何违纪主诉':'近九周于「'+dept+'」等课出现注意力脱离共 '+s.total+' 次')+'</span>'+
       '<b>既往史</b><span>'+SHORT.map(function(w,i){return w+' '+s.w[i];}).join(' / ')+'</span>'+
       '<b>症状</b><span>'+sym.join('；')+'</span>'+
       '<b>诊断</b><span>'+ev.e.t+(s.subSpread>=4?' · 伴跨科扩散':(s.subSpread===1&&s.total>0?' · 单科局限型':''))+'</span>'+
@@ -3550,12 +4642,12 @@ var MOMENT_TPL = {
     '这 {n} 次里至少有两次是被冤枉的（大概）。'
   ],
   low:[
-    '七年……啊不，八周就 {n} 次，四舍五入等于没有吧。',
+    '七年……啊不，九周就 {n} 次，四舍五入等于没有吧。',
     '被记了 {n} 次，老师可能只是想记住我的名字。',
     '我的违纪记录少得可怜，但我还是想发个朋友圈纪念一下。'
   ],
   zero:[
-    '八周零违纪，低调，勿cue。',
+    '九周零违纪，低调，勿cue。',
     '名单上没有我，这很合理。',
     '老师说要表扬零违纪的同学，我先提前高兴一下。'
   ]
@@ -3580,7 +4672,7 @@ function renderMoment(whoId, outId){
   var likes = s.total===0 ? (10 + rnd(30)) : Math.max(2, Math.min(state.classSize, state.classSize - s.rank + rnd(8)));
   $(__out).innerHTML =
     '<div class="moment"><div class="hd"><div class="av">'+esc(s.name.charAt(0))+'</div>'+
-    '<div class="who"><b>'+esc(s.name)+'</b><span>八周累计 '+s.total+' 次 · '+evoOf(s).e.t+'</span></div></div>'+
+    '<div class="who"><b>'+esc(s.name)+'</b><span>九周累计 '+s.total+' 次 · '+evoOf(s).e.t+'</span></div></div>'+
     '<div class="body">'+esc(text)+'</div>'+
     '<div class="like">❤️ '+likes+' 人点赞</div>'+cmts+'</div>';
 }
@@ -3655,7 +4747,7 @@ function renderCo(){
 var ACHS = [
   {e:'👑', t:'违纪之王', d:'累计次数全班第一', f:function(s){return s.rank===1;}},
   {e:'💥', t:'单周四杀', d:'某一周违纪 4 次及以上', f:function(s){return s.maxw>=4;}},
-  {e:'📆', t:'八周全勤', d:'八周每周都有上榜记录', f:function(s){return s.spread===NW;}},
+  {e:'📆', t:'九周全勤', d:'九周每周都有上榜记录', f:function(s){return s.spread===NW;}},
   {e:'🎨', t:'五科开花', d:'违纪涉及 5 门及以上学科', f:function(s){return s.subSpread>=5;}},
   {e:'🎯', t:'一科专精', d:'违纪全部集中在 1 门学科', f:function(s){return s.subSpread===1 && s.total>0;}},
   {e:'🔥', t:'连续剧主角', d:'最长连续 3 周及以上违纪', f:function(s){return s.streak>=3;}},
@@ -3842,6 +4934,7 @@ function render(){
   renderTopSub(); renderWeather(); renderRank(); renderWeek();
   renderSubBars(); renderSubKings(); renderSubSpread(); renderSubHeat();
   renderHeat(); renderPattern(); renderBadges(); renderHonor(); renderAwards();
+  if($('grpBoard')) renderGrp();
   renderCo(); renderAch(); renderDuanwei();
   renderWheelStat(); renderSim();
   drawWheel(wheelNames());
@@ -4087,6 +5180,9 @@ function initTheme(){
 function init(){
   initTheme();
   initNames();
+  buildDow();
+  grpBind();
+  anaBuild(); anLoad(); anaBind(); anaRestore();
   load(); labLoad();
   $('simRange').max = Math.max(1, RANK.length);
   renderQuiz(); render();
@@ -4102,9 +5198,10 @@ function init(){
   var wsumv = S.reduce(function(a,s){return a+s.total;},0);
   var ssumv = S.reduce(function(a,s){return a+s.subTotal;},0);
   $('dataNote').innerHTML =
-    '· 数据来自两份《课堂违纪》登记表（周次分类 + 学科分类），全班 '+S.length+' 人已全部录入，累计 '+TOTAL+' 次违纪。<br>'+
-    '· 周次口径合计 '+wsumv+' 次、学科口径 '+ssumv+' 次，两表完全对齐；两侧互为补充：周次看时间分布，学科看课堂归属。<br>'+
-    '· 「不详」指原表中未注明学科的违纪记录。<br>'+
+    '· 数据来自班级<b>逐日违纪记录流水</b>（含日期、星期、学科、姓名），共 '+EV.length+' 条记录、'+TOTAL+' 人次，全班 '+S.length+' 人已全部录入。<br>'+
+    '· 页面中的周次、学科、星期几、小组等所有维度，均由这一份流水实时统计生成，周次口径合计 '+wsumv+' 次、学科口径 '+ssumv+' 次，两者完全对齐。<br>'+
+    '· 统计区间：2026.9.3 – 2026.10.30，共九周；全班分为 8 个小组。<br>'+
+    '· 「不详」指原记录中未注明学科的违纪。<br>'+
     '· 姓名为脱敏形式（姓氏 + 首字母），导出与打印时保持原样。';
 }
 init();
