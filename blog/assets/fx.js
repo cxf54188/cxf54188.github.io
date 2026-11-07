@@ -1,29 +1,24 @@
-/* ===== cxf54188.github.io 全站特效 =====
-   包含：粒子连线背景 / 鼠标光晕 / 点击涟漪 /
-        Konami 彩蛋 / 每日一词 / 成就系统
-   用法：页面 </body> 前引入 <script src="/blog/assets/fx.js"></script>
+/* ===== 全站特效 fx.js =====
+   粒子连线背景 / 鼠标光晕 / 点击涟漪 / Konami / 每日一词 / 成就系统
+   引入：<script src="/blog/assets/fx.js"></script>
+   不依赖任何具体游戏，游戏板块可随时增删
 */
 (function () {
   'use strict';
 
   var isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
 
-  /* ---------- 通用：toast ---------- */
+  /* ---------- toast ---------- */
   function toast(msg, sub) {
     var box = document.getElementById('fx-toast-box');
     if (!box) {
       box = document.createElement('div');
       box.id = 'fx-toast-box';
-      box.style.cssText =
-        'position:fixed;right:18px;bottom:18px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
+      box.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
       document.body.appendChild(box);
     }
     var el = document.createElement('div');
-    el.style.cssText =
-      'background:rgba(10,16,28,.92);border:1px solid rgba(34,211,238,.45);' +
-      'color:#dbe6f5;padding:11px 16px;border-radius:12px;font-size:13px;' +
-      'box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transform:translateY(10px);' +
-      'transition:.3s;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;';
+    el.style.cssText = 'background:rgba(10,16,28,.92);border:1px solid rgba(34,211,238,.45);color:#dbe6f5;padding:11px 16px;border-radius:12px;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transform:translateY(10px);transition:.3s;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;';
     el.innerHTML = msg + (sub ? '<div style="color:#7c8aa5;font-size:11px;margin-top:3px;letter-spacing:1px">' + sub + '</div>' : '');
     box.appendChild(el);
     requestAnimationFrame(function () { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
@@ -34,18 +29,15 @@
   }
   window.fxToast = toast;
 
-  /* ---------- 成就系统 ---------- */
+  /* ---------- 成就系统（通用，不含游戏专属） ---------- */
   var ACH = {
     first_visit: { name: '初次见面', desc: '第一次来到这里' },
     night_owl:   { name: '夜猫子',   desc: '凌晨 0–5 点访问' },
     konami:      { name: '上上下下', desc: '触发 Konami 秘籍' },
-    all_games:   { name: '全能玩家', desc: '玩过全部 4 个游戏' },
-    clear_one:   { name: '初尝胜果', desc: '通关任意一个游戏' },
-    clear_all:   { name: '全数通关', desc: '通关全部 4 个游戏' },
     wanderer:    { name: '漫游者',   desc: '访问过 5 个不同页面' },
     clicker:     { name: '手速惊人', desc: '单页点击 50 次' },
     daily:       { name: '今日份',   desc: '查看过每日一词' },
-    secret:      { name: '发现了',   desc: '找到隐藏入口' }
+    gamer:       { name: '爱玩的人', desc: '进过一次游戏大厅' }
   };
   var KEY_ACH = 'fx_ach_v1';
   var KEY_VISIT = 'fx_visits_v1';
@@ -62,16 +54,16 @@
     toast('🏆 解锁成就：' + meta.name, meta.desc);
   }
   window.fxUnlock = unlock;
+  window.fxAchList = ACH;
 
-  // 初次访问
   if (!localStorage.getItem('fx_seen')) {
     localStorage.setItem('fx_seen', '1');
     setTimeout(function () { unlock('first_visit'); }, 900);
   }
-  // 夜猫子
+
   var h = new Date().getHours();
   if (h >= 0 && h < 5) unlock('night_owl');
-  // 漫游者
+
   (function () {
     var v;
     try { v = JSON.parse(localStorage.getItem(KEY_VISIT) || '[]'); } catch (e) { v = []; }
@@ -79,7 +71,7 @@
     if (v.indexOf(p) < 0) { v.push(p); localStorage.setItem(KEY_VISIT, JSON.stringify(v)); }
     if (v.length >= 5) unlock('wanderer');
   })();
-  // 点击狂魔
+
   (function () {
     var n = 0;
     document.addEventListener('click', function () {
@@ -88,23 +80,25 @@
     }, { passive: true });
   })();
 
+  // 进过游戏目录就解锁（不依赖具体游戏）
+  if (/\/blog\/game/.test(location.pathname)) unlock('gamer');
+
   /* ---------- 粒子连线背景 ---------- */
   function initParticles() {
     if (document.getElementById('fx-canvas')) return;
     var cv = document.createElement('canvas');
     cv.id = 'fx-canvas';
-    cv.style.cssText =
-      'position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.85;';
+    cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.85;';
     document.body.insertBefore(cv, document.body.firstChild);
 
     var ctx = cv.getContext('2d');
-    var W, H, dots = [], mouse = { x: -9999, y: -9999 };
+    var dots = [], mouse = { x: -9999, y: -9999 };
     var COUNT = isMobile ? 26 : 64;
     var LINK = isMobile ? 90 : 130;
 
     function resize() {
-      W = cv.width = window.innerWidth * devicePixelRatio;
-      H = cv.height = window.innerHeight * devicePixelRatio;
+      cv.width = window.innerWidth * devicePixelRatio;
+      cv.height = window.innerHeight * devicePixelRatio;
       cv.style.width = window.innerWidth + 'px';
       cv.style.height = window.innerHeight + 'px';
       ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
@@ -135,7 +129,6 @@
       var w = window.innerWidth, h = window.innerHeight;
       ctx.clearRect(0, 0, w, h);
 
-      // 连线
       for (var i = 0; i < dots.length; i++) {
         for (var j = i + 1; j < dots.length; j++) {
           var dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
@@ -151,7 +144,6 @@
         }
       }
 
-      // 点 + 鼠标连线
       for (var k = 0; k < dots.length; k++) {
         var p = dots[k];
         p.x += p.vx; p.y += p.vy;
@@ -185,10 +177,7 @@
   /* ---------- 鼠标光晕 + 点击涟漪 ---------- */
   if (!isMobile) {
     var glow = document.createElement('div');
-    glow.style.cssText =
-      'position:fixed;width:340px;height:340px;border-radius:50%;pointer-events:none;z-index:-1;' +
-      'background:radial-gradient(circle,rgba(34,211,238,.10),transparent 70%);' +
-      'transform:translate(-50%,-50%);transition:opacity .3s;left:-999px;top:-999px;';
+    glow.style.cssText = 'position:fixed;width:340px;height:340px;border-radius:50%;pointer-events:none;z-index:-1;background:radial-gradient(circle,rgba(34,211,238,.10),transparent 70%);transform:translate(-50%,-50%);left:-999px;top:-999px;';
     document.body.appendChild(glow);
     window.addEventListener('mousemove', function (e) {
       glow.style.left = e.clientX + 'px';
@@ -197,11 +186,7 @@
 
     document.addEventListener('click', function (e) {
       var r = document.createElement('div');
-      r.style.cssText =
-        'position:fixed;left:' + e.clientX + 'px;top:' + e.clientY + 'px;' +
-        'width:10px;height:10px;border-radius:50%;pointer-events:none;z-index:99998;' +
-        'border:1.5px solid rgba(34,211,238,.7);transform:translate(-50%,-50%) scale(1);' +
-        'transition:transform .5s ease-out,opacity .5s ease-out;opacity:1;';
+      r.style.cssText = 'position:fixed;left:' + e.clientX + 'px;top:' + e.clientY + 'px;width:10px;height:10px;border-radius:50%;pointer-events:none;z-index:99998;border:1.5px solid rgba(34,211,238,.7);transform:translate(-50%,-50%) scale(1);transition:transform .5s ease-out,opacity .5s ease-out;opacity:1;';
       document.body.appendChild(r);
       requestAnimationFrame(function () {
         r.style.transform = 'translate(-50%,-50%) scale(9)';
@@ -211,17 +196,14 @@
     });
   }
 
-  /* ---------- Konami 彩蛋 ---------- */
+  /* ---------- Konami 秘籍 ---------- */
   (function () {
     var seq = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
     var idx = 0;
     document.addEventListener('keydown', function (e) {
       if (e.keyCode === seq[idx]) {
         idx++;
-        if (idx === seq.length) {
-          idx = 0;
-          konamiBoom();
-        }
+        if (idx === seq.length) { idx = 0; konamiBoom(); }
       } else {
         idx = (e.keyCode === seq[0]) ? 1 : 0;
       }
@@ -229,16 +211,11 @@
 
     function konamiBoom() {
       unlock('konami');
-      // 粒子爆炸
       var colors = ['#22d3ee', '#a78bfa', '#fbbf24', '#c084fc', '#fff'];
       for (var i = 0; i < 90; i++) {
         var p = document.createElement('div');
         var size = Math.random() * 7 + 3;
-        p.style.cssText =
-          'position:fixed;left:50%;top:50%;width:' + size + 'px;height:' + size + 'px;' +
-          'border-radius:50%;pointer-events:none;z-index:99997;' +
-          'background:' + colors[(Math.random() * colors.length) | 0] + ';' +
-          'transform:translate(-50%,-50%);transition:transform 1s cubic-bezier(.2,.8,.3,1),opacity 1s;';
+        p.style.cssText = 'position:fixed;left:50%;top:50%;width:' + size + 'px;height:' + size + 'px;border-radius:50%;pointer-events:none;z-index:99997;background:' + colors[(Math.random() * colors.length) | 0] + ';transform:translate(-50%,-50%);transition:transform 1s cubic-bezier(.2,.8,.3,1),opacity 1s;';
         document.body.appendChild(p);
         (function (el) {
           var ang = Math.random() * Math.PI * 2;
@@ -274,16 +251,8 @@
 
     var box = document.createElement('div');
     box.id = 'fx-daily';
-    box.style.cssText =
-      'position:fixed;left:18px;bottom:18px;z-index:99996;cursor:pointer;' +
-      'background:rgba(10,16,28,.85);border:1px solid rgba(255,255,255,.09);' +
-      'border-radius:14px;padding:12px 16px;max-width:300px;' +
-      'font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;' +
-      'transition:.25s;backdrop-filter:blur(8px);';
-    box.innerHTML =
-      '<div style="font-size:10px;letter-spacing:3px;color:#7c8aa5;margin-bottom:6px">每日一词 · DAILY</div>' +
-      '<div style="font-size:13px;line-height:1.7;color:#dbe6f5">' + w[0] + '</div>' +
-      '<div style="font-size:10px;letter-spacing:2px;color:#4d5a70;margin-top:6px">' + w[1] + '</div>';
+    box.style.cssText = 'position:fixed;left:18px;bottom:18px;z-index:99996;cursor:pointer;background:rgba(10,16,28,.85);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:12px 16px;max-width:300px;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;transition:.25s;backdrop-filter:blur(8px);';
+    box.innerHTML = '<div style="font-size:10px;letter-spacing:3px;color:#7c8aa5;margin-bottom:6px">每日一词 · DAILY</div><div style="font-size:13px;line-height:1.7;color:#dbe6f5">' + w[0] + '</div><div style="font-size:10px;letter-spacing:2px;color:#4d5a70;margin-top:6px">' + w[1] + '</div>';
     box.onmouseenter = function () { box.style.borderColor = 'rgba(34,211,238,.5)'; };
     box.onmouseleave = function () { box.style.borderColor = 'rgba(255,255,255,.09)'; };
     box.onclick = function () { unlock('daily'); };
