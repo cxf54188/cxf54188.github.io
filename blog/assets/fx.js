@@ -1,12 +1,16 @@
 /* ===== 全站特效 fx.js =====
    粒子连线背景 / 鼠标光晕 / 点击涟漪 / Konami / 每日一词 / 成就系统
    引入：<script src="/blog/assets/fx.js"></script>
-   不依赖任何具体游戏，游戏板块可随时增删
+   关闭粒子背景：<body data-fx-particles="off">
+   不依赖具体游戏，游戏板块可随时增删
 */
 (function () {
   'use strict';
 
   var isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+  /* 主页等已有背景的页面可关闭粒子 */
+  var NO_PARTICLES = document.body.getAttribute('data-fx-particles') === 'off';
 
   /* ---------- toast ---------- */
   function toast(msg, sub) {
@@ -18,8 +22,8 @@
       document.body.appendChild(box);
     }
     var el = document.createElement('div');
-    el.style.cssText = 'background:rgba(10,16,28,.92);border:1px solid rgba(34,211,238,.45);color:#dbe6f5;padding:11px 16px;border-radius:12px;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transform:translateY(10px);transition:.3s;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;';
-    el.innerHTML = msg + (sub ? '<div style="color:#7c8aa5;font-size:11px;margin-top:3px;letter-spacing:1px">' + sub + '</div>' : '');
+    el.style.cssText = 'background:rgba(5,5,16,.94);border:1px solid rgba(0,240,255,.5);color:#e0e0ff;padding:11px 16px;border-radius:6px;font-size:13px;box-shadow:0 0 24px rgba(0,240,255,.18);opacity:0;transform:translateY(10px);transition:.3s;font-family:"JetBrains Mono","PingFang SC","Microsoft YaHei",monospace;';
+    el.innerHTML = msg + (sub ? '<div style="color:rgba(200,200,255,.6);font-size:11px;margin-top:3px;letter-spacing:1px">' + sub + '</div>' : '');
     box.appendChild(el);
     requestAnimationFrame(function () { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
     setTimeout(function () {
@@ -29,7 +33,7 @@
   }
   window.fxToast = toast;
 
-  /* ---------- 成就系统（通用，不含游戏专属） ---------- */
+  /* ---------- 成就系统 ---------- */
   var ACH = {
     first_visit: { name: '初次见面', desc: '第一次来到这里' },
     night_owl:   { name: '夜猫子',   desc: '凌晨 0–5 点访问' },
@@ -47,11 +51,12 @@
   }
   function unlock(id) {
     var a = getAch();
-    if (a[id]) return;
+    if (a[id]) return;                       /* 已解锁过，不重复触发 */
     a[id] = Date.now();
     localStorage.setItem(KEY_ACH, JSON.stringify(a));
     var meta = ACH[id] || { name: id, desc: '' };
     toast('🏆 解锁成就：' + meta.name, meta.desc);
+    if (window.fxAchRefresh) window.fxAchRefresh();
   }
   window.fxUnlock = unlock;
   window.fxAchList = ACH;
@@ -80,7 +85,6 @@
     }, { passive: true });
   })();
 
-  // 进过游戏目录就解锁（不依赖具体游戏）
   if (/\/blog\/game/.test(location.pathname)) unlock('gamer');
 
   /* ---------- 粒子连线背景 ---------- */
@@ -95,6 +99,8 @@
     var dots = [], mouse = { x: -9999, y: -9999 };
     var COUNT = isMobile ? 26 : 64;
     var LINK = isMobile ? 110 : 165;
+    var SPEED = 1.0;                          /* 速度，想更快调大 */
+    var MOUSE_LINK = 210;
 
     function resize() {
       cv.width = window.innerWidth * devicePixelRatio;
@@ -110,8 +116,8 @@
       dots.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        vx: (Math.random() - .5) * 1.0,
-        vy: (Math.random() - .5) * 1.0,
+        vx: (Math.random() - .5) * SPEED,
+        vy: (Math.random() - .5) * SPEED,
         r: Math.random() * 1.6 + .8
       });
     }
@@ -134,7 +140,7 @@
           var dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
           var d = Math.sqrt(dx * dx + dy * dy);
           if (d < LINK) {
-            ctx.strokeStyle = 'rgba(34,211,238,' + (0.16 * (1 - d / LINK)) + ')';
+            ctx.strokeStyle = 'rgba(0,240,255,' + (0.18 * (1 - d / LINK)) + ')';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(dots[i].x, dots[i].y);
@@ -151,15 +157,15 @@
         if (p.y < 0 || p.y > h) p.vy *= -1;
 
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(125,211,252,.75)';
+        ctx.fillStyle = 'rgba(0,240,255,.8)';
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
 
         if (mouse.x > -9999) {
           var mdx = p.x - mouse.x, mdy = p.y - mouse.y;
           var md = Math.sqrt(mdx * mdx + mdy * mdy);
-          if (md < 210) {
-            ctx.strokeStyle = 'rgba(34,211,238,' + (0.32 * (1 - md / 170)) + ')';
+          if (md < MOUSE_LINK) {
+            ctx.strokeStyle = 'rgba(0,240,255,' + (0.35 * (1 - md / MOUSE_LINK)) + ')';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
@@ -172,12 +178,12 @@
     }
     loop();
   }
-  initParticles();
+  if (!NO_PARTICLES) initParticles();
 
   /* ---------- 鼠标光晕 + 点击涟漪 ---------- */
   if (!isMobile) {
     var glow = document.createElement('div');
-    glow.style.cssText = 'position:fixed;width:340px;height:340px;border-radius:50%;pointer-events:none;z-index:-1;background:radial-gradient(circle,rgba(34,211,238,.10),transparent 70%);transform:translate(-50%,-50%);left:-999px;top:-999px;';
+    glow.style.cssText = 'position:fixed;width:340px;height:340px;border-radius:50%;pointer-events:none;z-index:-1;background:radial-gradient(circle,rgba(0,240,255,.10),transparent 70%);transform:translate(-50%,-50%);left:-999px;top:-999px;';
     document.body.appendChild(glow);
     window.addEventListener('mousemove', function (e) {
       glow.style.left = e.clientX + 'px';
@@ -186,7 +192,7 @@
 
     document.addEventListener('click', function (e) {
       var r = document.createElement('div');
-      r.style.cssText = 'position:fixed;left:' + e.clientX + 'px;top:' + e.clientY + 'px;width:10px;height:10px;border-radius:50%;pointer-events:none;z-index:99998;border:1.5px solid rgba(34,211,238,.7);transform:translate(-50%,-50%) scale(1);transition:transform .5s ease-out,opacity .5s ease-out;opacity:1;';
+      r.style.cssText = 'position:fixed;left:' + e.clientX + 'px;top:' + e.clientY + 'px;width:10px;height:10px;border-radius:50%;pointer-events:none;z-index:99998;border:1.5px solid rgba(0,240,255,.75);box-shadow:0 0 10px rgba(0,240,255,.5);transform:translate(-50%,-50%) scale(1);transition:transform .5s ease-out,opacity .5s ease-out;opacity:1;';
       document.body.appendChild(r);
       requestAnimationFrame(function () {
         r.style.transform = 'translate(-50%,-50%) scale(9)';
@@ -211,11 +217,11 @@
 
     function konamiBoom() {
       unlock('konami');
-      var colors = ['#22d3ee', '#a78bfa', '#fbbf24', '#c084fc', '#fff'];
+      var colors = ['#00f0ff', '#7b2ff7', '#ff006e', '#ffffff'];
       for (var i = 0; i < 90; i++) {
         var p = document.createElement('div');
         var size = Math.random() * 7 + 3;
-        p.style.cssText = 'position:fixed;left:50%;top:50%;width:' + size + 'px;height:' + size + 'px;border-radius:50%;pointer-events:none;z-index:99997;background:' + colors[(Math.random() * colors.length) | 0] + ';transform:translate(-50%,-50%);transition:transform 1s cubic-bezier(.2,.8,.3,1),opacity 1s;';
+        p.style.cssText = 'position:fixed;left:50%;top:50%;width:' + size + 'px;height:' + size + 'px;border-radius:50%;pointer-events:none;z-index:99997;background:' + colors[(Math.random() * colors.length) | 0] + ';box-shadow:0 0 12px currentColor;transform:translate(-50%,-50%);transition:transform 1s cubic-bezier(.2,.8,.3,1),opacity 1s;';
         document.body.appendChild(p);
         (function (el) {
           var ang = Math.random() * Math.PI * 2;
@@ -251,10 +257,10 @@
 
     var box = document.createElement('div');
     box.id = 'fx-daily';
-    box.style.cssText = 'position:fixed;left:18px;bottom:18px;z-index:99996;cursor:pointer;background:rgba(10,16,28,.85);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:12px 16px;max-width:300px;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;transition:.25s;backdrop-filter:blur(8px);';
-    box.innerHTML = '<div style="font-size:10px;letter-spacing:3px;color:#7c8aa5;margin-bottom:6px">每日一词 · DAILY</div><div style="font-size:13px;line-height:1.7;color:#dbe6f5">' + w[0] + '</div><div style="font-size:10px;letter-spacing:2px;color:#4d5a70;margin-top:6px">' + w[1] + '</div>';
-    box.onmouseenter = function () { box.style.borderColor = 'rgba(34,211,238,.5)'; };
-    box.onmouseleave = function () { box.style.borderColor = 'rgba(255,255,255,.09)'; };
+    box.style.cssText = 'position:fixed;left:18px;bottom:18px;z-index:99996;cursor:pointer;background:rgba(5,5,16,.88);border:1px solid rgba(0,240,255,.22);border-radius:6px;padding:12px 16px;max-width:300px;font-family:"JetBrains Mono","PingFang SC","Microsoft YaHei",monospace;transition:.25s;backdrop-filter:blur(8px);';
+    box.innerHTML = '<div style="font-size:10px;letter-spacing:3px;color:rgba(0,240,255,.6);margin-bottom:6px">每日一词 · DAILY</div><div style="font-size:13px;line-height:1.7;color:#e0e0ff">' + w[0] + '</div><div style="font-size:10px;letter-spacing:2px;color:rgba(200,200,255,.45);margin-top:6px">' + w[1] + '</div>';
+    box.onmouseenter = function () { box.style.borderColor = 'rgba(0,240,255,.6)'; box.style.boxShadow = '0 0 16px rgba(0,240,255,.18)'; };
+    box.onmouseleave = function () { box.style.borderColor = 'rgba(0,240,255,.22)'; box.style.boxShadow = 'none'; };
     box.onclick = function () { unlock('daily'); };
     document.body.appendChild(box);
   })();
