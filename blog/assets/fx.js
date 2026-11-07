@@ -94,7 +94,7 @@
     var ctx = cv.getContext('2d');
     var dots = [], mouse = { x: -9999, y: -9999 };
     var COUNT = isMobile ? 26 : 64;
-    var LINK = isMobile ? 90 : 130;
+    var LINK = isMobile ? 110 : 165;
 
     function resize() {
       cv.width = window.innerWidth * devicePixelRatio;
@@ -110,8 +110,8 @@
       dots.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        vx: (Math.random() - .5) * .35,
-        vy: (Math.random() - .5) * .35,
+        vx: (Math.random() - .5) * 1.0,
+        vy: (Math.random() - .5) * 1.0,
         r: Math.random() * 1.6 + .8
       });
     }
@@ -158,7 +158,7 @@
         if (mouse.x > -9999) {
           var mdx = p.x - mouse.x, mdy = p.y - mouse.y;
           var md = Math.sqrt(mdx * mdx + mdy * mdy);
-          if (md < 170) {
+          if (md < 210) {
             ctx.strokeStyle = 'rgba(34,211,238,' + (0.32 * (1 - md / 170)) + ')';
             ctx.lineWidth = 1;
             ctx.beginPath();
