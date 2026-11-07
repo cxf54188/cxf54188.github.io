@@ -87,10 +87,6 @@ body{margin:0;background:linear-gradient(180deg,var(--body-bg1) 0%,var(--body-bg
 header.hero{background:linear-gradient(135deg,var(--hero1),var(--hero2) 50%,var(--hero3));
   color:var(--hero-ink);border-radius:20px;padding:26px 28px;box-shadow:0 12px 30px rgba(79,70,229,.25);position:relative;overflow:hidden}
 header.hero:after{content:"";position:absolute;right:-60px;top:-70px;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,.10)}
-.themebtn{position:absolute;top:18px;right:18px;z-index:5;
-  width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.35);
-  background:rgba(255,255,255,.16);color:inherit;font-size:18px;line-height:1;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:all .18s ease;backdrop-filter:blur(4px)}
 .themebtn:hover{background:rgba(255,255,255,.30);transform:scale(1.08)}
 .themebtn:active{transform:scale(.94)}
 
@@ -1039,13 +1035,130 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
 .lab-nav .ana-grp-h{letter-spacing:.3px}
 [data-theme="dark"] .lab-stagebody .play .card{background:#1f2632}
 
+
+/* ================================================================
+ * 主页：终端 / 极客风落地页
+ * 借鉴 cxf54188.github.io 的「系统就绪 + 等宽标签 + 在线状态 +
+ * GitHub Pages 驱动」调性，改成班级看板：深蓝终端底、荧光青、
+ * 命令行式快捷入口、窗口状态条、实时时钟。
+ * 只在 .wrap.home-mode 下生效 —— 切到其它板块立刻恢复常规看板样式。
+ * 亮色主题另给一套「浅色终端」，保证深色/亮色开关都协调。
+ * ================================================================ */
+.home-mode{
+  --hz-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --hz-bg:#0b1120; --hz-bg2:#111d34; --hz-card:rgba(255,255,255,.035);
+  --hz-line:rgba(130,165,255,.17); --hz-ink:#e9f0ff; --hz-mut:#8ea0c2;
+  --hz-acc:#5eead4; --hz-acc2:#a5b4fc; --hz-ok:#34d399;
+  --hz-glow:rgba(94,234,212,.14); --hz-grid:rgba(130,165,255,.05);
+  --hz-chip:rgba(255,255,255,.045); --hz-on:#08131f;
+}
+/* 顶栏：换成终端窗口标题条 */
+.home-mode header.hero{
+  background:linear-gradient(135deg,var(--hz-bg2),var(--hz-bg));
+  border:1px solid var(--hz-line);color:var(--hz-ink);
+  box-shadow:0 12px 34px rgba(0,0,0,.16)}
+.home-mode header.hero:after{background:var(--hz-glow)}
+.home-mode header.hero h1{font-family:var(--hz-mono);letter-spacing:.6px}
+.home-mode header.hero p{color:var(--hz-mut);opacity:1}
+.home-mode .ai-tag,.home-mode .hero-badges span{
+  background:var(--hz-chip);border-color:var(--hz-line);color:var(--hz-mut)}
+.home-mode .home-mode .lockbar{background:var(--hz-chip);border-color:var(--hz-line);color:var(--hz-ink)}
+.home-mode .lockbar.lock{background:rgba(225,29,72,.13);border-color:rgba(225,29,72,.38)}
+.home-mode .lockbar .lb-txt{color:var(--hz-mut);opacity:1}
+.home-mode .lockbar .lb-btn{background:var(--hz-acc);color:var(--hz-on)}
+.home-mode .hitlab{color:var(--hz-mut);opacity:1}
+.home-mode .hitimg{background:var(--hz-chip)}
+/* 导航：命令行 tab */
+.home-mode .tab{border-radius:8px;background:var(--hz-chip);border-color:var(--hz-line);
+  color:var(--hz-mut);font-family:var(--hz-mono);font-size:12.3px}
+.home-mode .tab:hover{color:var(--hz-acc);border-color:var(--hz-acc)}
+.home-mode .tab.on{background:var(--hz-acc);color:var(--hz-on);border-color:transparent;
+  box-shadow:0 4px 18px var(--hz-glow)}
+/* 主页只保留终端框本身：框外的顶栏、导航、全局 KPI 全部隐藏 */
+.home-mode{padding-top:16px}
+.home-mode>header.hero,.home-mode>nav.tabs{display:none}
+/* 全局那排 KPI 在主页隐藏，改由终端读数条呈现 */
+.home-mode>.kpis{display:none}
+/* 主体 */
+.home-mode #home{
+  padding:0;border:1px solid var(--hz-line);border-radius:18px;overflow:hidden;
+  color:var(--hz-ink);box-shadow:0 14px 40px rgba(0,0,0,.16);
+  background-color:var(--hz-bg);
+  background-image:
+    radial-gradient(760px 360px at 6% -12%,var(--hz-glow),transparent 70%),
+    linear-gradient(var(--hz-grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--hz-grid) 1px,transparent 1px);
+  background-size:auto,26px 26px,26px 26px;
+  background-position:0 0,0 0,0 0}
+.hz-bar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:11px 18px;
+  border-bottom:1px solid var(--hz-line);background:var(--hz-card);
+  font-family:var(--hz-mono);font-size:11.5px;color:var(--hz-mut)}
+.hz-dots{display:flex;gap:5px;margin-right:6px}
+.hz-dots i{width:9px;height:9px;border-radius:50%;display:block;background:var(--hz-line)}
+.hz-dots i:nth-child(1){background:#fb7185}.hz-dots i:nth-child(2){background:#fbbf24}
+.hz-dots i:nth-child(3){background:var(--hz-ok)}
+.hz-path{color:var(--hz-acc2);font-weight:700}
+.hz-online{margin-left:auto;color:var(--hz-ok);font-weight:700}
+.hz-clock{color:var(--hz-mut)}
+.hz-hero{padding:34px 30px 12px}
+.hz-kicker{font-family:var(--hz-mono);font-size:11.5px;letter-spacing:1.6px;
+  color:var(--hz-acc);text-transform:uppercase;margin-bottom:12px}
+.hz-title{font-size:clamp(26px,4.4vw,44px);font-weight:800;line-height:1.22;
+  letter-spacing:-.6px;margin:0;color:var(--hz-ink)}
+.hz-title em{font-style:normal;color:var(--hz-acc)}
+.hz-sub{margin:12px 0 0;font-size:13.5px;line-height:1.85;color:var(--hz-mut);max-width:720px}
+.hz-boot{margin-top:15px;font-family:var(--hz-mono);font-size:11.8px;color:var(--hz-mut);
+  display:flex;flex-wrap:wrap;gap:6px 14px}
+.hz-boot b{color:var(--hz-ok);font-weight:700}
+.hz-tags{display:flex;flex-wrap:wrap;gap:8px;padding:8px 30px 20px}
+.hz-tag{font-family:var(--hz-mono);font-size:11.5px;padding:6px 12px;border-radius:7px;
+  border:1px solid var(--hz-line);background:var(--hz-chip);color:var(--hz-mut)}
+.hz-tag b{color:var(--hz-acc2);font-weight:700}
+.hz-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;
+  padding:0 30px 22px}
+.hz-stat{border:1px solid var(--hz-line);border-radius:10px;background:var(--hz-card);padding:12px 14px}
+.hz-stat span{display:block;font-family:var(--hz-mono);font-size:10.5px;letter-spacing:.8px;color:var(--hz-mut)}
+.hz-stat b{display:block;margin-top:6px;font-family:var(--hz-mono);font-size:20px;color:var(--hz-acc)}
+.hz-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:12px;padding:0 30px 22px}
+.hz-card{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;
+  padding:17px 18px;border:1px solid var(--hz-line);border-radius:12px;
+  background:var(--hz-card);transition:.18s}
+.hz-card:hover{transform:translateY(-4px);border-color:var(--hz-acc);
+  box-shadow:0 12px 28px var(--hz-glow)}
+.hz-num{font-family:var(--hz-mono);font-size:10.5px;letter-spacing:1.4px;color:var(--hz-acc)}
+.hz-ico{font-size:27px;line-height:1}
+.hz-t{font-size:16px;font-weight:800;color:var(--hz-ink)}
+.hz-d{font-size:12px;line-height:1.75;color:var(--hz-mut);flex:1}
+.hz-f{display:flex;justify-content:space-between;gap:8px;align-items:center;
+  border-top:1px solid var(--hz-line);padding-top:10px;
+  font-family:var(--hz-mono);font-size:11px;color:var(--hz-mut)}
+.hz-f i{font-style:normal;color:var(--hz-acc);font-weight:800}
+.hz-cmd{margin:0 30px 22px;border:1px solid var(--hz-line);border-radius:12px;
+  background:var(--hz-card);padding:14px 16px}
+.hz-cmd-h{font-family:var(--hz-mono);font-size:12px;color:var(--hz-acc);margin-bottom:11px}
+.hz-links{display:flex;flex-wrap:wrap;gap:7px}
+.hz-links a{font-family:var(--hz-mono);font-size:11.5px;font-weight:600;
+  text-decoration:none;color:var(--hz-mut);border:1px solid var(--hz-line);
+  border-radius:6px;padding:6px 11px;background:var(--hz-chip);transition:.16s}
+.hz-links a:before{content:"> ";color:var(--hz-acc)}
+.hz-links a:hover{color:var(--hz-acc);border-color:var(--hz-acc);transform:translateY(-2px)}
+.hz-foot{border-top:1px solid var(--hz-line);padding:14px 30px 18px;
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  font-family:var(--hz-mono);font-size:11.2px;color:var(--hz-mut)}
+.hz-foot b{color:var(--hz-acc2);font-weight:700}
+@media(max-width:640px){
+  .hz-hero{padding:26px 18px 10px}.hz-tags,.hz-stats,.hz-cards{padding-left:18px;padding-right:18px}
+  .hz-cmd{margin-left:18px;margin-right:18px}.hz-foot{padding:14px 18px 18px}
+  .hz-online{margin-left:0}
+}
+.hz-f em{font-style:normal}
+
 </style>
 </head>
 <body>
 <div id="gateMask" class="gatmask"></div>
 <div class="wrap">
   <header class="hero">
-    <button class="themebtn" id="themeBtn" title="切换深色 / 亮色">🌙</button>
     <h1>课堂违纪互动看板</h1>
     <div class="ai-tag">✨ 本界面由元宝AI分析生成</div>
     <p>十周 × 十三学科 × 星期几 × 八个小组</p>
@@ -1055,7 +1168,7 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
     </div>
     <div class="hitrow">
       <span class="hitlab">👀 访问计数</span>
-      <img class="hitimg" src="https://count.getloli.com/@cxf54188?name=cxf54188&amp;theme=3d-num&amp;padding=7&amp;offset=0&amp;align=top&amp;scale=1&amp;pixelated=1&amp;darkmode=auto" alt="访问计数器" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      <img class="hitimg" src="https://count.getloli.com/@cxf54188?name=cxf54188&amp;theme=3d-num&amp;padding=7&amp;offset=0&amp;align=top&amp;scale=1&amp;pixelated=1&amp;darkmode=auto" alt="访问计数器" referrerpolicy="no-referrer-when-downgrade">
     </div>
     <div class="lockbar lock" id="lockbar">
       <span id="lockIcon">🔒</span>
@@ -1070,15 +1183,107 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
   <section class="kpis" id="kpis"></section>
 
   <nav class="tabs">
-    <div class="tab on" data-t="overview">总览</div>
+    <div class="tab on" data-t="home">🏠 主页</div>
+    <div class="tab" data-t="overview">总览</div>
     <div class="tab" data-t="ana">📊 分析实验室</div>
     <div class="tab" data-t="lab">🎪 趣味实验室</div>
     <div class="tab" data-t="set">⚙️ 数据与设置</div>
   </nav>
 
   <main>
+    <!-- 主页 -->
+    <div class="panel on" id="home">
+      <div class="hz-bar">
+        <span class="hz-dots"><i></i><i></i><i></i></span>
+        <span class="hz-path">~/class-board/index.html</span>
+        <span>● 系统就绪</span>
+        <span class="hz-online">● 在线</span>
+        <span class="hz-clock" id="hzClock">—</span>
+      </div>
+
+      <div class="hz-hero">
+        <div class="hz-kicker">CLASS-BOARD / DATA CONSOLE</div>
+        <h2 class="hz-title">一个班、<em id="hzTitleNum">十周 · 175 次记录</em></h2>
+        <p class="hz-sub">数据来自班级逐日违纪流水，按周次、学科、星期几、小组、个人等维度整理成可交互的看板。姓名以 AES-256 加密，答对随机抽出的 3 道班级题后才会显示；从下面挑一个方向进去看。</p>
+        <div class="hz-boot">
+          <span>$ load events.log → <b>OK</b></span>
+          <span>$ build matrix → <b>OK</b></span>
+          <span>$ decrypt names.aes → <b>需要 3 道班级题</b></span>
+        </div>
+      </div>
+
+      <div class="hz-tags">
+        <span class="hz-tag">{ } <b>逐日流水</b></span>
+        <span class="hz-tag">⚡ <b>十周追踪</b></span>
+        <span class="hz-tag">📊 <b id="hzTagAna">20 个视角</b></span>
+        <span class="hz-tag">🎪 <b id="hzTagFun">27 个玩法</b></span>
+      </div>
+
+      <div class="hz-stats">
+        <div class="hz-stat"><span>TOTAL</span><b id="hzTotal">175</b></div>
+        <div class="hz-stat"><span>BAD / CLASS</span><b id="hzPeople">36/52</b></div>
+        <div class="hz-stat"><span>ZERO</span><b id="hzZero">16</b></div>
+        <div class="hz-stat"><span>WEEKS</span><b id="hzWeeks">10</b></div>
+        <div class="hz-stat"><span>SUBJECTS</span><b id="hzSubs">13</b></div>
+        <div class="hz-stat"><span>GROUPS</span><b id="hzGroups">8</b></div>
+        <div class="hz-stat"><span>PEAK WEEK</span><b id="hzPeak">第四周</b></div>
+        <div class="hz-stat"><span>TOP SUBJECT</span><b id="hzTopSub">政治</b></div>
+      </div>
+
+      <div class="hz-cards">
+        <a class="hz-card" href="#" data-go="overview">
+          <span class="hz-num">01</span>
+          <span class="hz-ico">📈</span>
+          <span class="hz-t">总览</span>
+          <span class="hz-d">关键数字、每周走势、违纪分层、前后半程对比、重点关注与班级气象台。</span>
+          <span class="hz-f"><em>6 张图表</em><i>进入 →</i></span>
+        </a>
+        <a class="hz-card" href="#" data-go="ana">
+          <span class="hz-num">02</span>
+          <span class="hz-ico">📊</span>
+          <span class="hz-t">分析实验室</span>
+          <span class="hz-d">整体归一类，五个单维度各自一类；任意两方面组合成热力表，每个维度都有深度剖析。</span>
+          <span class="hz-f"><em><span id="hzNAna">20 个视角</span></em><i>进入 →</i></span>
+        </a>
+        <a class="hz-card" href="#" data-go="lab">
+          <span class="hz-num">03</span>
+          <span class="hz-ico">🎪</span>
+          <span class="hz-t">趣味实验室</span>
+          <span class="hz-d">转盘、颁奖、大富翁、侦探、老虎机、宾果、单人剧场……全部基于本班真实数据。</span>
+          <span class="hz-f"><em><span id="hzNFun">27 个玩法</span></em><i>进入 →</i></span>
+        </a>
+        <a class="hz-card" href="#" data-go="set">
+          <span class="hz-num">04</span>
+          <span class="hz-ico">⚙️</span>
+          <span class="hz-t">数据与设置</span>
+          <span class="hz-d">导出 CSV / JSON、打印存 PDF、查看数据说明与加密状态。</span>
+          <span class="hz-f"><em>导出与外观</em><i>进入 →</i></span>
+        </a>
+      </div>
+
+      <div class="hz-cmd">
+        <div class="hz-cmd-h">⚡ 快捷直达 · 点一条直接打开对应的分析 / 玩法</div>
+        <div class="hz-links">
+          <a href="#" data-go="ana:aPivot">🧮 联合透视表</a>
+          <a href="#" data-go="ana:rank">🏅 学生排行榜</a>
+          <a href="#" data-go="ana:grp">👥 小组总览</a>
+          <a href="#" data-go="ana:dWeek">🔍 单周深度剖析</a>
+          <a href="#" data-go="ana:aDaily">📆 逐日流水</a>
+          <a href="#" data-go="lab:wheel">🎡 幸运转盘</a>
+          <a href="#" data-go="lab:awards">🏆 颁奖典礼</a>
+          <a href="#" data-go="lab:bingo">🎯 违纪宾果</a>
+        </div>
+      </div>
+
+      <div class="hz-foot">
+        <span>© 2026 <b>CLASS-BOARD</b> · ⚙ 由 GITHUB PAGES 驱动</span>
+        <span>🔒 AES-256 / 答题解锁　·　🌙 全站固定深色模式</span>
+      </div>
+    </div>
+
+
     <!-- 总览 -->
-    <div class="panel on" id="overview">
+    <div class="panel" id="overview">
       <div class="grid2">
         <div class="card">
           <h3>每周违纪走势</h3>
@@ -1134,12 +1339,13 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
       <!-- 下面这一条会由 app.js 的 anaRelayout() 重排成「左侧目录 + 右侧舞台」两栏 -->
       <div class="labintro"><div class="li-t"><b>📊 分析实验室</b><span>20 个视角 · 左侧选视角，右侧看结果</span></div><div class="li-r"><button class="btn ghost" id="anaNone">收起当前</button><span id="anaCount" class="lic"></span></div></div>
 
-      <div class="sec" data-g="g0" data-panel="ana" title="点击展开 / 收起这一组"><span class="sec-i">🌐</span><b>整体情况</b><em>跨维度的全局视图，不偏向某一个方面</em><span class="sec-n">4 项</span><span class="chev">▸</span></div>
+      <div class="sec" data-g="g0" data-panel="ana" title="点击展开 / 收起这一组"><span class="sec-i">🌐</span><b>整体情况</b><em>跨维度的全局视图，以及全班层面的时间线与形态</em><span class="sec-n">5 项</span><span class="chev">▸</span></div>
       <div class="playbtns" data-gbody="g0" data-panel="ana">
         <button class="pbtn" data-an="aPivot" title="一张总表切换星期几 / 周次 / 学科 / 小组 / 个人五种主视角，每行联合各维度的结果。可排序、筛选、导出，点名字下钻。"><i>🧮</i><b>联合透视表</b><em>一张总表切换星期几 / 周次 / 学科 / 小组 / 个人五种主视角，每行联合各维度的结果。可排序、筛选、导出，点名字下钻。</em></button>
         <button class="pbtn" data-an="aDaily" title="按日期还原每一个违纪日：周次、星期、科目、涉及人数与名单。"><i>📆</i><b>逐日流水</b><em>按日期还原每一个违纪日：周次、星期、科目、涉及人数与名单。</em></button>
         <button class="pbtn" data-an="aCum" title="按违纪日累积的折线，看班级整体是加速还是减速，并给出前后半段对比。"><i>📈</i><b>累计增长曲线</b><em>按违纪日累积的折线，看班级整体是加速还是减速，并给出前后半段对比。</em></button>
         <button class="pbtn" data-an="aCombo" title="找出「某个星期 × 某门学科」这类高频组合，以及人 × 时间 × 科目的三元组合。"><i>⚠️</i><b>高危组合 Top</b><em>找出「某个星期 × 某门学科」这类高频组合，以及人 × 时间 × 科目的三元组合。</em></button>
+        <button class="pbtn" data-an="aTimeline" title="全班首次 / 末次上榜、连续上榜追踪、形态分类，三张全班层面的时间线表。"><i>📇</i><b>全班时间线与形态</b><em>全班首次 / 末次上榜、连续上榜追踪、形态分类，三张全班层面的时间线表。</em></button>
       </div>
       <div class="anazone" id="anaZone0">
       </div>
@@ -1249,12 +1455,11 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
               </div>
             </div>
       </div>
-      <div class="sec" data-g="g5" data-panel="ana" title="点击展开 / 收起这一组"><span class="sec-i">👤</span><b>个人</b><em>排行榜、与其它维度的组合、单人深度剖析、全班时间线与形态</em><span class="sec-n">4 项</span><span class="chev">▸</span></div>
+      <div class="sec" data-g="g5" data-panel="ana" title="点击展开 / 收起这一组"><span class="sec-i">👤</span><b>个人</b><em>排行榜、与其它维度的组合、个人深度剖析</em><span class="sec-n">3 项</span><span class="chev">▸</span></div>
       <div class="playbtns" data-gbody="g5" data-panel="ana">
         <button class="pbtn" data-an="rank" title="点击任意一行查看完整档案；支持搜索、排序与分层筛选。"><i>🏅</i><b>学生违纪排行榜</b><em>点击任意一行查看完整档案；支持搜索、排序与分层筛选。</em></button>
         <button class="pbtn" data-an="xPerson" title="以上榜同学为行，切换列维度：星期几 / 周次 / 学科 / 小组，生成热力交叉表。"><i>🔀</i><b>个人 × 其它维度</b><em>以上榜同学为行，切换列维度：星期几 / 周次 / 学科 / 小组，生成热力交叉表。</em></button>
         <button class="pbtn" data-an="dPerson" title="选一位同学，看他本人的首次 / 末次上榜、最长连续、各维度热力分布与逐日流水。"><i>🔍</i><b>个人深度剖析</b><em>选一位同学，看他本人的首次 / 末次上榜、最长连续、各维度热力分布与逐日流水。</em></button>
-        <button class="pbtn" data-an="aTimeline" title="全班首次 / 末次上榜、连续上榜追踪、形态分类，三张全班层面的时间线表。"><i>📇</i><b>全班时间线与形态</b><em>全班首次 / 末次上榜、连续上榜追踪、形态分类，三张全班层面的时间线表。</em></button>
       </div>
       <div class="anazone" id="anaZone5">
         <div class="anbox" id="rank" style="display:none">
@@ -1283,7 +1488,7 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
       </div>
       </div>
     <div class="panel" id="lab">
-      <div class="labintro"><div class="li-t"><b>🎪 趣味实验室</b><span>28 个玩法 · 按分类查看 · 一次只展开一个</span></div><div class="li-r"><button class="btn ghost" id="labNone">收起当前</button><span id="labCount" class="lic"></span></div></div>
+      <div class="labintro"><div class="li-t"><b>🎪 趣味实验室</b><span>27 个玩法 · 按分类查看 · 一次只展开一个</span></div><div class="li-r"><button class="btn ghost" id="labNone">收起当前</button><span id="labCount" class="lic"></span></div></div>
 
       <div class="sec" data-g="l1" data-panel="lab" title="点击展开 / 收起这一组"><span class="sec-i">🏆</span><b>颁奖与称号</b><em>奖项、徽章、荣誉、段位与班级成就，全部由数据自动生成</em><span class="sec-n">5 项</span><span class="chev">▸</span></div>
       <div class="playbtns" data-gbody="l1" data-panel="lab">
@@ -1605,12 +1810,11 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
       </div></div>
       </div>
 
-      <div class="sec" data-g="l6" data-panel="lab" title="点击展开 / 收起这一组"><span class="sec-i">🧩</span><b>单人档案与换算</b><em>进化链、共犯雷达、违纪类型测试与换算器</em><span class="sec-n">4 项</span><span class="chev">▸</span></div>
+      <div class="sec" data-g="l6" data-panel="lab" title="点击展开 / 收起这一组"><span class="sec-i">🧩</span><b>单人档案与换算</b><em>进化链、共犯雷达、违纪类型测试与换算器</em><span class="sec-n">3 项</span><span class="chev">▸</span></div>
       <div class="playbtns" data-gbody="l6" data-panel="lab">
         <button class="pbtn" data-play="evo" title="按累计次数看一个人「进化」到了哪个阶段，以及离下一阶段还差几次。"><i>🧬</i><b>违纪进化链</b><em>按累计次数看一个人「进化」到了哪个阶段，以及离下一阶段还差几次。</em></button>
-        <button class="pbtn" data-play="co" title="谁和谁在同一周、同一科一起上过榜？关联越强，越像「同桌连坐」。点击名"><i>🤝</i><b>共犯雷达</b><em>谁和谁在同一周、同一科一起上过榜？关联越强，越像「同桌连坐」。点击名</em></button>
+        <button class="pbtn" data-play="co" title="谁和谁在同一周、同一科一起上过榜？关联越强，越像约好了一样。点击名"><i>🤝</i><b>共犯雷达</b><em>谁和谁在同一周、同一科一起上过榜？关联越强，越像约好了一样。点击名</em></button>
         <button class="pbtn" data-play="calc" title="把累计违纪次数换算成跑步圈数、作业页数等别的单位，换个角度看数据"><i>🧮</i><b>违纪换算器</b><em>把累计违纪次数换算成跑步圈数、作业页数等别的单位，换个角度看数据</em></button>
-        <button class="pbtn" data-play="quiz" title="四道小题，测出你的违纪画像，并给出对应的建议"><i>🎭</i><b>你是哪种违纪类型</b><em>四道小题，测出你的违纪画像，并给出对应的建议</em></button>
       </div>
       <div class="playzone">
         <div class="play" id="play-evo" data-fn="renderEvo" style="display:none"><div class="card">
@@ -1626,7 +1830,7 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
       </div></div>
         <div class="play" id="play-co" data-fn="renderCo" style="display:none"><div class="card">
         <h3>🤝 共犯雷达<button class="fold" data-fold="co" title="收起">✕</button></h3>
-        <div class="desc">谁和谁在同一周、同一科一起上过榜？关联越强，越像「同桌连坐」。点击名字看档案。</div>
+        <div class="desc">谁和谁在同一周、同一科一起上过榜？关联越强，越像约好了一样。点击名字看档案。</div>
         <div id="coOut"></div>
       </div></div>
         <div class="play" id="play-calc" data-fn="calcInit" style="display:none"><div class="card">
@@ -1640,13 +1844,7 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
           </div>
           <div id="calcOut"></div>
         </div></div>
-        <div class="play" id="play-quiz" data-fn="renderQuiz" style="display:none"><div class="card">
-          <h3>🎭 你是哪种违纪类型<button class="fold" data-fold="quiz" title="收起">✕</button></h3>
-          <div class="desc">四道小题，测出你的违纪画像，并给出对应的改进建议。</div>
-          <div id="quiz"></div>
-          <button class="btn" id="quizBtn" style="margin-top:10px">看看结果</button>
-          <div id="quizOut"></div>
-        </div></div>
+        
       </div>
     </div>
 
@@ -1661,14 +1859,6 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
           <button class="btn ghost" id="print">打印 / 存为 PDF</button>
         </div>
         <div id="saveState" class="ok" style="margin-top:6px">—</div>
-      </div>
-      <div class="card">
-        <h3>🎨 外观</h3>
-        <div class="desc">在深色与亮色之间切换。选择会记在这台电脑上，换设备不同步。</div>
-        <div class="ctrl">
-          <button class="btn ghost" id="themeBtn2">🌙 切换深色 / 亮色</button>
-          <span id="themeNow" style="font-size:12.5px;color:var(--muted)">—</span>
-        </div>
       </div>
       <div class="card">
         <h3>🔒 姓名加密与显示</h3>
@@ -1694,7 +1884,7 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
         <h3>📊 访问计数</h3>
         <div class="desc">页面访问次数由第三方计数器图片统计，图片会显示累计访问量。计数器位于页面顶部标题栏下方。</div>
         <div class="hitbox">
-          <img src="https://count.getloli.com/@cxf54188?name=cxf54188&amp;theme=3d-num&amp;padding=7&amp;offset=0&amp;align=top&amp;scale=1&amp;pixelated=1&amp;darkmode=auto" alt="访问计数器" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+          <img src="https://count.getloli.com/@cxf54188?name=cxf54188&amp;theme=3d-num&amp;padding=7&amp;offset=0&amp;align=top&amp;scale=1&amp;pixelated=1&amp;darkmode=auto" alt="访问计数器" referrerpolicy="no-referrer-when-downgrade">
         </div>
         <div class="warn" style="margin-top:10px">
           · 计数器由 count.getloli.com 提供，是一张外部图片，需要联网才会显示；断网或用 file:// 本地打开时可能不显示数字，不影响页面其它功能。<br>
@@ -2558,6 +2748,23 @@ function renderKpis(){
   $('b4').textContent = '维度：周次 × 学科';
   $('b5').textContent = '全员 '+S.length+' 人已录入 · 零违纪 '+zeroCount()+' 人' +
     (unknownCount() ? '（另有未录入 '+unknownCount()+' 人）' : '');
+  /* 主页：标题、入口数量与终端读数跟着数据走，不写死 */
+  function hzSet(id, txt){ var e = $(id); if(e !== FAKE) e.textContent = txt; }
+  hzSet('hzTitleNum', xWeeksTxt() + ' · ' + TOTAL + ' 次记录');
+  var hzNa = document.querySelectorAll('#ana .ana-item[data-an]').length;
+  var hzNf = document.querySelectorAll('#lab .ana-item[data-play]').length;
+  hzSet('hzNAna', hzNa + ' 个视角');
+  hzSet('hzNFun', hzNf + ' 个玩法');
+  hzSet('hzTagAna', hzNa + ' 个视角');
+  hzSet('hzTagFun', hzNf + ' 个玩法');
+  hzSet('hzTotal', TOTAL);
+  hzSet('hzPeople', RANK.length + '/' + state.classSize);
+  hzSet('hzZero', zeroCount());
+  hzSet('hzWeeks', NW);
+  hzSet('hzSubs', NS);
+  hzSet('hzGroups', GROUPS.length);
+  hzSet('hzPeak', WEEKS[PEAK]);
+  hzSet('hzTopSub', SUBS[topSubIdx]);
 }
 
 /* ============ 每周柱状 + 折线 ============ */
@@ -4085,7 +4292,7 @@ var ANA_DIM_NAME = {dow:'星期几', week:'周次', sub:'学科', grp:'小组', 
 
 /* ================================================================
  * 趣味实验室：与分析实验室同款「左侧常驻目录 + 右侧单一展示区」
- * 原来要「点分类 → 展开按钮网格 → 再点按钮」三级操作，现在 28 个玩法
+ * 原来要「点分类 → 展开按钮网格 → 再点按钮」三级操作，现在 27 个玩法
  * 全部常驻左侧（可搜索），右侧一次只显示一个，舞台条显示当前项。
  * ================================================================ */
 function labRelayout(){
@@ -5430,7 +5637,8 @@ function renderTimeMachine(){
     for(var i=0;i<upto;i++) t += s.w[i];
     return {name:s.name, t:t, cur:s.w[upto-1]};
   }).filter(function(x){return x.t>0;}).sort(function(a,b){return b.t-a.t;});
-  var mx = Math.max.apply(null, arr.map(function(x){return x.t;}).concat([1]));
+  /* 固定基准 = 全班十周累计最高次数，拖到早期时柱子自然变短 */
+  var mx = Math.max.apply(null, S.map(function(s){return s.total;}).concat([1]));
   var html = '<div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">截至 W' + upto + '：' + arr.length + ' 人有违纪记录，累计 ' +
     arr.reduce(function(a,b){return a+b.t;},0) + ' 次</div>';
   html += arr.slice(0,10).map(function(x,i){
@@ -5540,43 +5748,6 @@ $('calcBtn').addEventListener('click', function(){
     '<div class="ok">换算依据：'+TOTAL+' 次 × '+per+' 分钟。如果每次违纪都要写下 '+words+' 字的说明，全班累计要写 '+ (words/1000).toFixed(1) +' 万字，约等于 '+Math.round(words/800)+' 篇 800 字作文。</div>';
 });
 
-/* ============ 性格小测试 ============ */
-var TYPEQUIZ = [
-  {q:'上课走神被提醒时，你通常？', a:['马上回神','过两分钟才回神','完全没听见','其实我只是看窗外']},
-  {q:'一周里你最容易出现状况的是？', a:['周一','周三','周五','随机，看心情']},
-  {q:'被点名后的反应是？', a:['立刻改正','嘴上答应心里不服','一脸无辜','下次还敢']},
-  {q:'你觉得违纪的主要原因是？', a:['同桌太有趣','课太无聊','昨天没睡好','说不清楚']}
-];
-var quizAns = [0,0,0,0];
-function renderQuiz(){
-  $('quiz').innerHTML = TYPEQUIZ.map(function(item,i){
-    return '<div class="quiz-q">'+(i+1)+'. '+item.q+'</div>'+
-      item.a.map(function(a,j){
-        return '<div class="quiz-a'+(quizAns[i]===j?' on':'')+'" data-i="'+i+'" data-j="'+j+'">'+String.fromCharCode(65+j)+'. '+a+'</div>';
-      }).join('');
-  }).join('');
-  document.querySelectorAll('.quiz-a').forEach(function(d){
-    d.addEventListener('click', function(){
-      var i = +d.getAttribute('data-i'), j = +d.getAttribute('data-j');
-      quizAns[i] = j;
-      document.querySelectorAll('.quiz-a[data-i="'+i+'"]').forEach(function(x){x.classList.remove('on');});
-      d.classList.add('on');
-    });
-  });
-}
-$('quizBtn').addEventListener('click', function(){
-  var sum = quizAns.reduce(function(a,b){return a+b;},0);
-  var types = [
-    {t:'🫥 梦游型', d:'人坐在教室里，灵魂在窗外飘。建议：坐前排 + 多喝水。'},
-    {t:'🗣️ 话痨型', d:'同桌是你的最佳听众，可惜老师不同意。建议：换个不爱说话的同桌。'},
-    {t:'🎭 表演型', d:'你大概是班里的气氛组组长。建议：把才华留给文艺汇演。'},
-    {t:'😴 电量不足型', d:'你需要的不是批评，是一顿早睡。建议：晚上少刷十分钟手机。'},
-    {t:'🎲 薛定谔型', d:'谁也说不准你下一节课会不会上榜。建议：给自己定个小目标。'}
-  ];
-  var t = types[Math.min(types.length-1, Math.floor(sum/3))];
-  $('quizOut').innerHTML = '<div class="ok" style="margin-top:12px"><b style="font-size:16px">'+t.t+'</b><br>'+t.d+'</div>';
-});
-
 /* ============ 假如…… ============ */
 function renderSim(){
   var n = state.sim;
@@ -5590,7 +5761,8 @@ function renderSim(){
   }
   var peak = wt.indexOf(Math.max.apply(null,wt));
   $('simLabel').textContent = 'Top '+n+' 人归零';
-  var mx = Math.max.apply(null,wt.concat([1]));
+  /* 固定基准 = 原始每周最大值（不随滑块变化），这样柱子长度能真实体现减少 */
+  var mx = Math.max.apply(null, weekTotals.concat([1]));
   $('simOut').innerHTML =
     '<div class="statgrid"><div class="stat"><b>'+left+'</b><span>剩余违纪次数</span></div>'+
     '<div class="stat"><b style="color:#10b981">-'+cut+'</b><span>减少（'+(TOTAL? Math.round(cut/TOTAL*100):0)+'%）</span></div>'+
@@ -5992,7 +6164,40 @@ var nmLockBtn = $('nmLock'); if(nmLockBtn) nmLockBtn.addEventListener('click', d
   });
 })();
 
+/* 主页终端时钟 */
+function hzTick(){
+  var e = $('hzClock'); if(e === FAKE) return;
+  try{
+    var d = new Date(), p = function(x){ return String(x).padStart(2,'0'); };
+    e.textContent = d.getFullYear() + '/' + p(d.getMonth()+1) + '/' + p(d.getDate()) +
+      ' ' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+  }catch(err){}
+}
+function homeMode(on){
+  var w = document.querySelector('.wrap');
+  if(!w) return;
+  w.classList.toggle('home-mode', !!on);
+  if(on){ hzTick(); }
+}
 /* ============ 全局交互 ============ */
+/* 单文件版主页：入口卡 / 快捷直达统一走这里，切 tab 并可顺带展开某一项。
+   多文件版没有 #home 面板，这套逻辑不会被触发，行为不变。 */
+function homeGo(spec){
+  var a = String(spec || '').split(':'), t = a[0], pid = a[1] || '';
+  var tab = document.querySelector('.tab[data-t="'+t+'"]');
+  if(tab && tab.tagName !== 'A') tab.click();
+  if(pid){
+    if(t === 'ana'){ try{ anSet(pid, true); }catch(e){} }
+    else if(t === 'lab'){ try{ labSet(pid, true); }catch(e){} }
+  }
+  try{ window.scrollTo({top:0, behavior:'smooth'}); }catch(e){}
+}
+document.querySelectorAll('[data-go]').forEach(function(el){
+  el.addEventListener('click', function(e){
+    if(e.preventDefault) e.preventDefault();
+    homeGo(el.getAttribute('data-go'));
+  });
+});
 document.querySelectorAll('.tab').forEach(function(t){
   if(t.tagName === 'A') return;   /* 多页版：导航是链接，交给浏览器跳转 */
   t.addEventListener('click', function(){
@@ -6000,6 +6205,7 @@ document.querySelectorAll('.tab').forEach(function(t){
     t.classList.add('on');
     document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
     $(t.getAttribute('data-t')).classList.add('on');
+    homeMode(t.getAttribute('data-t') === 'home');
     window.scrollTo({top:0, behavior:'smooth'});
   });
 });
@@ -6227,9 +6433,12 @@ function renderMoment(whoId, outId){
   var picks = shuffleArr(others).slice(0, 3 + rnd(2));
   var cmts = picks.map(function(o){
     var t;
-    if(o.total===0) t = ['震惊，我坐你旁边居然没发现','下次带上我（不是）','？我一直以为你是好学生','名单上怎么会有你'][rnd(4)];
+    /* 零违纪同学发朋友圈时，评论统一用正向回应 */
+    if(s.total===0) t = ['稳如泰山 🏔️','向你学习','这波属于凡尔赛了','十周零记录，太强了','低调，别炫耀'][rnd(5)];
+    /* 座位经常调整，评论里不再出现「坐旁边 / 换座位 / 同桌」相关说法 */
+    else if(o.total===0) t = ['下次带上我（不是）','低调点啊','？我一直以为你是好学生','保重'][rnd(4)];
     else if(o.total>=9) t = ['兄弟，同道中人','你这数据还是比我差点','一起罚站啊','懂的都懂 🤝'][rnd(4)];
-    else if(o.total>=4) t = ['保重','我懂你','下次注意点','要不咱俩换个座位'][rnd(4)];
+    else if(o.total>=4) t = ['保重','我懂你','下次注意点','已阅'][rnd(4)];
     else t = ['哈哈哈哈哈哈','还行，就一次','下次别了','已阅'][rnd(4)];
     return '<div class="cmt"><b>'+esc(o.name)+'</b>'+t+'</div>';
   }).join('');
@@ -6718,42 +6927,10 @@ function initNames(){
   }
 }
 
-/* ===== 深色 / 亮色主题 ===== */
-var TH_KEY = 'kb_theme_v1';
-function applyTheme(t){
-  var dark = (t === 'dark');
-  if(dark) document.documentElement.setAttribute('data-theme','dark');
-  else document.documentElement.removeAttribute('data-theme');
-  var b = $('themeBtn');
-  if(b){
-    b.textContent = dark ? '☀️' : '🌙';
-    b.title = dark ? '当前：深色，点一下切亮色' : '当前：亮色，点一下切深色';
-  }
-  var b2 = $('themeBtn2');
-  if(b2) b2.textContent = dark ? '☀️ 切回亮色' : '🌙 切到深色';
-  var tn = $('themeNow');
-  if(tn) tn.textContent = dark ? '当前：深色' : '当前：亮色';
-}
-function toggleTheme(){
-  var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-  var nxt = (cur === 'dark') ? 'light' : 'dark';
-  applyTheme(nxt);
-  try{ localStorage.setItem(TH_KEY, nxt); }catch(e){}
-}
+/* ===== 全站固定深色（不提供切换入口） ===== */
 function initTheme(){
-  var t = null;
-  try{ t = localStorage.getItem(TH_KEY); }catch(e){}
-  if(t !== 'dark' && t !== 'light'){
-    /* 没选过就跟随系统 */
-    try{
-      t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-    }catch(e){ t = 'light'; }
-  }
-  applyTheme(t);
-  var b = $('themeBtn');
-  if(b) b.addEventListener('click', toggleTheme);
-  var b2 = $('themeBtn2');
-  if(b2) b2.addEventListener('click', toggleTheme);
+  document.documentElement.setAttribute('data-theme','dark');
+  try{ localStorage.removeItem('kb_theme_v1'); }catch(e){}
 }
 
 function init(){
@@ -6774,13 +6951,13 @@ function init(){
   $('simRange').max = Math.max(1, RANK.length);
   /* 时光机滑块跟随周数，避免 HTML 里写死 max 导致看不到最新一周 */
   try{ var tmr = $('tmRange'); if(tmr && tmr !== FAKE){ tmr.max = NW; tmr.value = NW; } }catch(e){}
-  renderQuiz(); render();
+  render();
   dtFillGuess(); fillFunSelects(); fillArcadeSelects();
   dtNewCase(); renderEvo(); renderTimeMachine();
   fillPlaySelects(); mpStart();
   renderForecast(); renderScratch(); renderBingo();
   // 玩法默认收起，仅恢复上次展开过的（其它等点开时再渲染）
-  labDone = {awards:1, badges:1, honor:1, duanwei:1, ach:1, wheel:1, evo:1, co:1, quiz:1, sim:1, timemachine:1, forecast:1};
+  labDone = {awards:1, badges:1, honor:1, duanwei:1, ach:1, wheel:1, evo:1, co:1, sim:1, timemachine:1, forecast:1};
   labRestore();
   /* 目录已常驻，不再需要分类折叠；仅在未重排的旧结构下才初始化 */
   if(!document.querySelector('#lab .ana-layout')) secInit('lab');
@@ -6806,7 +6983,13 @@ function init(){
       return;
     }
     setTimeout(function(){
-      if(hs.indexOf('play-') === 0){
+      var isPlay = hs.indexOf('play-') === 0;
+      /* 单文件版有主页：带锚点进来时先离开主页，落到对应实验室 */
+      if(document.getElementById('home')){
+        var tt = document.querySelector('.tab[data-t="'+(isPlay ? 'lab' : 'ana')+'"]');
+        if(tt && tt.tagName !== 'A') tt.click();
+      }
+      if(isPlay){
         var p = hs.slice(5);
         if(document.getElementById('lab')){ try{ labSet(p, true); }catch(e){} }
       }else if(document.getElementById('ana')){
@@ -6820,6 +7003,13 @@ function init(){
     '· 统计区间：2026.9.3 – 2026.11.6，共十周；全班分为 8 个小组。<br>'+
     '· 「不详」指原记录中未注明学科的违纪。<br>'+
     '· 姓名为脱敏形式（姓氏 + 首字母），导出与打印时保持原样。';
+  /* 默认落在主页：整页换成终端风；时钟每秒走一格 */
+  if(document.getElementById('home') && !document.querySelector('.tab.on[data-t]:not([data-t=home])')){
+    homeMode(true);
+  }else{
+    homeMode(document.querySelector('.tab.on') && document.querySelector('.tab.on').getAttribute('data-t') === 'home');
+  }
+  try{ setInterval(hzTick, 1000); }catch(e){}
 }
 init();
 
