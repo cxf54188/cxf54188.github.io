@@ -87,96 +87,60 @@
 
   if (/\/blog\/game/.test(location.pathname)) unlock('gamer');
 
-  /* ---------- 粒子连线背景 ---------- */
+  /* ---------- 粒子连线背景：particles.js 2.0.0 现成模板 ---------- */
   function initParticles() {
-    if (document.getElementById('fx-canvas')) return;
-    var cv = document.createElement('canvas');
-    cv.id = 'fx-canvas';
-    cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.85;';
-    document.body.insertBefore(cv, document.body.firstChild);
+    if (document.getElementById('fx-particles')) return;
 
-    var ctx = cv.getContext('2d');
-    var dots = [], mouse = { x: -9999, y: -9999 };
-    var COUNT = isMobile ? 26 : 64;
-    var LINK = isMobile ? 110 : 165;
-    var SPEED = 1.0;                          /* 速度，想更快调大 */
-    var MOUSE_LINK = 210;
+    var box = document.createElement('div');
+    box.id = 'fx-particles';
+    box.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:-1;';
+    document.body.insertBefore(box, document.body.firstChild);
 
-    function resize() {
-      cv.width = window.innerWidth * devicePixelRatio;
-      cv.height = window.innerHeight * devicePixelRatio;
-      cv.style.width = window.innerWidth + 'px';
-      cv.style.height = window.innerHeight + 'px';
-      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    for (var i = 0; i < COUNT; i++) {
-      dots.push({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        vx: (Math.random() - .5) * SPEED,
-        vy: (Math.random() - .5) * SPEED,
-        r: Math.random() * 1.6 + .8
+    function launch() {
+      if (!window.particlesJS) return;
+      window.particlesJS('fx-particles', {
+        particles: {
+          number: { value: isMobile ? 40 : 90, density: { enable: true, value_area: 900 } },
+          color:  { value: '#00f0ff' },
+          shape:  { type: 'circle' },
+          opacity:{ value: 0.8, random: true },
+          size:   { value: 2.4, random: true },
+          line_linked: {
+            enable: true, distance: 165,
+            color: '#00f0ff', opacity: 0.22, width: 1
+          },
+          move: {
+            enable: true, speed: 4,
+            direction: 'none', random: true, out_mode: 'bounce', bounce: true
+          }
+        },
+        interactivity: {
+          detect_on: 'canvas',
+          events: {
+            onhover: { enable: true, mode: 'grab' },
+            onclick: { enable: true, mode: 'push' },
+            resize: true
+          },
+          modes: {
+            grab: { distance: 220, line_linked: { opacity: 0.5 } },
+            push: { particles_nb: 3 }
+          }
+        },
+        retina_detect: true
       });
     }
 
-    if (!isMobile) {
-      window.addEventListener('mousemove', function (e) {
-        mouse.x = e.clientX; mouse.y = e.clientY;
-      }, { passive: true });
-      window.addEventListener('mouseleave', function () {
-        mouse.x = mouse.y = -9999;
-      });
-    }
-
-    function loop() {
-      var w = window.innerWidth, h = window.innerHeight;
-      ctx.clearRect(0, 0, w, h);
-
-      for (var i = 0; i < dots.length; i++) {
-        for (var j = i + 1; j < dots.length; j++) {
-          var dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
-          var d = Math.sqrt(dx * dx + dy * dy);
-          if (d < LINK) {
-            ctx.strokeStyle = 'rgba(0,240,255,' + (0.18 * (1 - d / LINK)) + ')';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(dots[i].x, dots[i].y);
-            ctx.lineTo(dots[j].x, dots[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      for (var k = 0; k < dots.length; k++) {
-        var p = dots[k];
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > w) p.vx *= -1;
-        if (p.y < 0 || p.y > h) p.vy *= -1;
-
-        ctx.beginPath();
-        ctx.fillStyle = 'rgba(0,240,255,.8)';
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (mouse.x > -9999) {
-          var mdx = p.x - mouse.x, mdy = p.y - mouse.y;
-          var md = Math.sqrt(mdx * mdx + mdy * mdy);
-          if (md < MOUSE_LINK) {
-            ctx.strokeStyle = 'rgba(0,240,255,' + (0.35 * (1 - md / MOUSE_LINK)) + ')';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(mouse.x, mouse.y);
-            ctx.stroke();
-          }
-        }
-      }
-      requestAnimationFrame(loop);
-    }
-    loop();
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js';
+    s.onload = launch;
+    s.onerror = function () {
+      // jsdelivr 抽风时回退 cdnjs
+      var b = document.createElement('script');
+      b.src = 'https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js';
+      b.onload = launch;
+      document.head.appendChild(b);
+    };
+    document.head.appendChild(s);
   }
   if (!NO_PARTICLES) initParticles();
 
