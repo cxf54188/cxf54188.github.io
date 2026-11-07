@@ -87,27 +87,99 @@
 
   if (/\/blog\/game/.test(location.pathname)) unlock('gamer');
 
-  /* ---------- 粒子连线背景：particles.js 2.0.0 现成模板 ---------- */
+  /* ---------- 粒子背景：canvas-nest 原版逻辑，内嵌不依赖 CDN ---------- */
   function initParticles() {
-    if (window.__fxNestLoaded) return;
-    window.__fxNestLoaded = true;
+    if (document.getElementById('fx-nest-canvas')) return;
 
-    function make(url) {
-      var s = document.createElement('script');
-      s.setAttribute('color',   '200,200,200');
-      s.setAttribute('opacity', '0.5');
-      s.setAttribute('zIndex',  '-1');
-      s.setAttribute('count',   '99');
-      s.src = url;
-      // 必须 append 到 body 末尾：这个库靠「最后一个 script 标签」读属性
-      document.body.appendChild(s);
-      return s;
+    /* 照搬 aojunshuo.github.io 的参数 */
+    var COLOR   = '200,200,200';   // 灰白线
+    var COUNT   = 99;              // 99 个点
+    var OPACITY = 0.5;             // 透明度
+    var MAX_D2  = 20000;           // 连线距离「平方」：原版 6000≈77px
+                                   // 20000≈141px，40000≈200px，越大鼠标牵得越远
+
+    var cv = document.createElement('canvas');
+    cv.id = 'fx-nest-canvas';
+    cv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;';
+    document.body.insertBefore(cv, document.body.firstChild);
+
+    var ctx = cv.getContext('2d');
+    var W, H, dpr;
+
+    function resize() {
+      dpr = window.devicePixelRatio || 1;
+      W = window.innerWidth; H = window.innerHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+      cv.style.width = W + 'px'; cv.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
+    resize();
+    window.addEventListener('resize', resize);
 
-    var main = make('https://cdn.jsdelivr.net/npm/canvas-nest.js@1.0.1/dist/canvas-nest.min.js');
-    main.onerror = function () {
-      make('https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/1.0.1/canvas-nest.min.js');
-    };
+    /* 鼠标点：绑 window，不受 canvas 的 z-index / pointer-events 影响 */
+    var mouse = { x: null, y: null, max: MAX_D2 };
+    window.addEventListener('mousemove', function (e) {
+      mouse.x = e.clientX; mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', function () {
+      mouse.x = null; mouse.y = null;
+    });
+
+    var pts = [];
+    for (var i = 0; i < COUNT; i++) {
+      pts.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        xa: 2 * Math.random() - 1,   // 原版速度系数，慢速漂移
+        ya: 2 * Math.random() - 1,
+        max: MAX_D2
+      });
+    }
+    var all = pts.concat([mouse]);   // 关键：鼠标作为最后一个点参与连线
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      for (var i = 0; i < pts.length; i++) {
+        var p = pts[i];
+        p.x += p.xa; p.y += p.ya;
+        if (p.x > W || p.x < 0) p.xa *= -1;
+        if (p.y > H || p.y < 0) p.ya *= -1;
+      }
+
+      for (var a = 0; a < all.length; a++) {
+        var pa = all[a];
+        for (var b = a + 1; b < all.length; b++) {
+          var pb = all[b];
+          if (pa.x === null || pb.x === null) continue;
+          var dx = pa.x - pb.x, dy = pa.y - pb.y;
+          var d2 = dx * dx + dy * dy;
+          if (d2 < pa.max) {
+            ctx.strokeStyle = 'rgba(' + COLOR + ',' + ((1 - d2 / pa.max) * OPACITY) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(pa.x, pa.y);
+            ctx.lineTo(pb.x, pb.y);
+            ctx.stroke();
+
+            /* 原版的「鼠标控制」：靠近边缘时点朝鼠标轻轻偏移 */
+            if (pb === mouse && d2 >= pa.max * 0.8) {
+              pa.x -= 0.03 * dx;
+              pa.y -= 0.03 * dy;
+            }
+          }
+        }
+      }
+
+      ctx.fillStyle = 'rgba(' + COLOR + ',' + OPACITY + ')';
+      for (var k = 0; k < pts.length; k++) {
+        ctx.beginPath();
+        ctx.arc(pts[k].x, pts[k].y, 1.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
   }
   if (!NO_PARTICLES) initParticles();
 
