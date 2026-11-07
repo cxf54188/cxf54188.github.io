@@ -281,7 +281,7 @@
         }
     </style>
 </head>
-<body>
+<body data-fx-particles="off">
 
 <!-- 背景层 -->
 <div class="grid-bg"></div>
@@ -333,6 +333,9 @@
         <a class="btn" href="links/">
             <span>🔗</span> 友情链接
         </a>
+        <a class="btn" href="blog/achievements/">
+            <span>🏆</span> 成就墙
+        </a>
     </div>
 
     <!-- 底部状态栏 -->
@@ -350,6 +353,11 @@
         <div class="status-item">
             <span style="color:var(--purple)">⚙</span>
             <span>由 GITHUB PAGES 驱动</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-item">
+            <span style="color:#fbbf24">🏆</span>
+            <span id="ach-count">成就 0/7</span>
         </div>
     </div>
 
@@ -393,7 +401,7 @@
         "正在初始化系统... 完成 ✅",
         "正在加载用户资料... cxf54188",
         "这里是我的个人空间，欢迎探索 🚀",
-        "热爱编程，热爱生活，持续学习 💻"
+        "while(1+1!=3); 💻"
     ];
     let lineIdx = 0, charIdx = 0;
     const target = document.getElementById("typewriter");
@@ -416,6 +424,18 @@
         });
     }
     tick(); setInterval(tick, 1000);
+
+    /* ========== 成就进度 ========== */
+    function updateAch() {
+        var got = {};
+        try { got = JSON.parse(localStorage.getItem('fx_ach_v1') || '{}'); } catch (e) {}
+        var n = Object.keys(got).length;
+        var total = window.fxAchList ? Object.keys(window.fxAchList).length : 7;
+        var el = document.getElementById('ach-count');
+        if (el) el.textContent = '成就 ' + n + '/' + total;
+    }
+    updateAch();
+    window.fxAchRefresh = updateAch;
 </script>
 <script src="/blog/assets/fx.js"></script>
 </body>
