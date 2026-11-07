@@ -89,58 +89,25 @@
 
   /* ---------- 粒子连线背景：particles.js 2.0.0 现成模板 ---------- */
   function initParticles() {
-    if (document.getElementById('fx-particles')) return;
+    if (window.__fxNestLoaded) return;
+    window.__fxNestLoaded = true;
 
-    var box = document.createElement('div');
-    box.id = 'fx-particles';
-    box.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:-1;';
-    document.body.insertBefore(box, document.body.firstChild);
-
-    function launch() {
-      if (!window.particlesJS) return;
-      window.particlesJS('fx-particles', {
-        particles: {
-          number: { value: isMobile ? 40 : 90, density: { enable: true, value_area: 900 } },
-          color:  { value: '#00f0ff' },
-          shape:  { type: 'circle' },
-          opacity:{ value: 0.8, random: true },
-          size:   { value: 2.4, random: true },
-          line_linked: {
-            enable: true, distance: 165,
-            color: '#00f0ff', opacity: 0.22, width: 1
-          },
-          move: {
-            enable: true, speed: 4,
-            direction: 'none', random: true, out_mode: 'bounce', bounce: true
-          }
-        },
-        interactivity: {
-          detect_on: 'canvas',
-          events: {
-            onhover: { enable: true, mode: 'grab' },
-            onclick: { enable: true, mode: 'push' },
-            resize: true
-          },
-          modes: {
-            grab: { distance: 220, line_linked: { opacity: 0.5 } },
-            push: { particles_nb: 3 }
-          }
-        },
-        retina_detect: true
-      });
+    function make(url) {
+      var s = document.createElement('script');
+      s.setAttribute('color',   '200,200,200');
+      s.setAttribute('opacity', '0.5');
+      s.setAttribute('zIndex',  '-1');
+      s.setAttribute('count',   '99');
+      s.src = url;
+      // 必须 append 到 body 末尾：这个库靠「最后一个 script 标签」读属性
+      document.body.appendChild(s);
+      return s;
     }
 
-    var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js';
-    s.onload = launch;
-    s.onerror = function () {
-      // jsdelivr 抽风时回退 cdnjs
-      var b = document.createElement('script');
-      b.src = 'https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js';
-      b.onload = launch;
-      document.head.appendChild(b);
+    var main = make('https://cdn.jsdelivr.net/npm/canvas-nest.js@1.0.1/dist/canvas-nest.min.js');
+    main.onerror = function () {
+      make('https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/1.0.1/canvas-nest.min.js');
     };
-    document.head.appendChild(s);
   }
   if (!NO_PARTICLES) initParticles();
 
