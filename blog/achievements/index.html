@@ -68,39 +68,58 @@ body{
   <p class="tip">成就记录保存在你自己的浏览器本地（localStorage），换设备或清缓存会重置。<br>每个成就只会在第一次达成时弹出提示，不会重复触发。</p>
 </div>
 
+<script src="/blog/assets/fx.js"></script>
 <script>
 (function () {
-  var ACH = (window.fxAchList) || {};
+  // 兜底清单：即使 fx.js 没加载成功，也不会显示 0/0
+  var FALLBACK = {
+    first_visit: { name: '初次见面', desc: '第一次来到这里' },
+    night_owl:   { name: '夜猫子',   desc: '凌晨 0–5 点访问' },
+    konami:      { name: '上上下下', desc: '触发 Konami 秘籍' },
+    wanderer:    { name: '漫游者',   desc: '访问过 5 个不同页面' },
+    clicker:     { name: '手速惊人', desc: '单页点击 50 次' },
+    daily:       { name: '今日份',   desc: '查看过每日一词' },
+    gamer:       { name: '爱玩的人', desc: '进过一次游戏大厅' }
+  };
+  var ACH = (window.fxAchList && Object.keys(window.fxAchList).length)
+            ? window.fxAchList : FALLBACK;
+
   var ICON = {
     first_visit: '👋', night_owl: '🦉', konami: '🎮', wanderer: '🧭',
     clicker: '⚡', daily: '📖', gamer: '🕹️'
   };
-  var got = {};
-  try { got = JSON.parse(localStorage.getItem('fx_ach_v1') || '{}'); } catch (e) {}
 
-  var ids = Object.keys(ACH);
-  var grid = document.getElementById('grid');
-  var done = 0;
+  function render() {
+    var got = {};
+    try { got = JSON.parse(localStorage.getItem('fx_ach_v1') || '{}'); } catch (e) {}
+    var ids = Object.keys(ACH);
+    var grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    var done = 0;
 
-  ids.forEach(function (id) {
-    var t = got[id];
-    if (t) done++;
-    var d = t ? new Date(t) : null;
-    var dateStr = d ? (d.getFullYear() + '.' + (d.getMonth() + 1) + '.' + d.getDate()) : '';
-    var el = document.createElement('div');
-    el.className = 'item' + (t ? ' on' : '');
-    el.innerHTML =
-      '<div class="icon">' + (ICON[id] || '★') + '</div>' +
-      '<div><div class="nm">' + ACH[id].name + '</div>' +
-      '<div class="ds">' + ACH[id].desc + '</div>' +
-      (dateStr ? '<div class="dt">' + dateStr + ' 达成</div>' : '') +
-      '</div>';
-    grid.appendChild(el);
-  });
+    ids.forEach(function (id) {
+      var t = got[id];
+      if (t) done++;
+      var d = t ? new Date(t) : null;
+      var dateStr = d ? (d.getFullYear() + '.' + (d.getMonth() + 1) + '.' + d.getDate()) : '';
+      var el = document.createElement('div');
+      el.className = 'item' + (t ? ' on' : '');
+      el.innerHTML =
+        '<div class="icon">' + (ICON[id] || '★') + '</div>' +
+        '<div><div class="nm">' + ACH[id].name + '</div>' +
+        '<div class="ds">' + ACH[id].desc + '</div>' +
+        (dateStr ? '<div class="dt">' + dateStr + ' 达成</div>' : '') +
+        '</div>';
+      grid.appendChild(el);
+    });
 
-  var total = ids.length;
-  document.getElementById('num').innerHTML = done + ' <span>/ ' + total + '</span>';
-  document.getElementById('fill').style.width = (total ? (done / total * 100) : 0) + '%';
+    document.getElementById('num').innerHTML = done + ' <span>/ ' + ids.length + '</span>';
+    document.getElementById('fill').style.width =
+      (ids.length ? (done / ids.length * 100) : 0) + '%';
+  }
+
+  render();
+  window.fxAchRefresh = render;   // 在成就墙里解锁时立刻亮起来
 })();
 </script>
 <script src="/blog/assets/fx.js"></script>
