@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>排行榜 · 游戏大厅</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+:root{
+  --bg:#05060d; --txt:#eaf6ff; --dim:#7d9bb8; --muted:#9db4cd;
+  --line:rgba(120,190,255,.18); --cyan:#57e8ff; --gold:#ffd25a;
+}
+body{
+  background:
+    radial-gradient(1000px 560px at 18% -12%, rgba(29,111,242,.20) 0%, transparent 60%),
+    radial-gradient(900px 500px at 88% 6%, rgba(163,123,255,.16) 0%, transparent 62%),
+    var(--bg);
+  color:var(--txt); min-height:100vh; display:flex; justify-content:center;
+  font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  padding:44px 18px 70px; -webkit-font-smoothing:antialiased; isolation:isolate;
+}
+.wrap{max-width:1080px;width:100%;}
+header{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:8px;}
+h1{font-size:38px;font-weight:900;letter-spacing:8px;line-height:1;
+  background:linear-gradient(100deg,#fff 10%,var(--cyan) 45%,var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 26px rgba(87,232,255,.3));}
+.brand .en{color:var(--dim);font-size:11px;letter-spacing:9px;margin-top:8px;}
+nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
+nav a{color:var(--dim);text-decoration:none;font-size:12.5px;border:1px solid var(--line);
+  padding:8px 15px;border-radius:10px;background:rgba(255,255,255,.03);transition:.18s;}
+nav a:hover{color:#fff;border-color:var(--cyan);background:rgba(87,232,255,.08);}
+.lead{color:var(--muted);font-size:13px;letter-spacing:.5px;margin:18px 0 18px;line-height:1.8;}
+
+.filters{margin-bottom:18px;}
+.frow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px;}
+.frow .lb{font-size:10px;letter-spacing:2px;color:var(--dim);width:38px;flex:0 0 auto;}
+.tab{cursor:pointer;font-family:inherit;font-size:12.5px;padding:7px 14px;border-radius:9px;
+  border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--dim);transition:.18s;}
+.tab:hover{color:#fff;border-color:var(--cyan);}
+.tab.on{color:#04101c;background:var(--cyan);border-color:var(--cyan);font-weight:800;}
+.frow.mode .tab.on{background:#a37bff;border-color:#a37bff;color:#fff;}
+.frow.track .tab.on{background:var(--gold);border-color:var(--gold);}
+.frow.rule .tab.on{background:#ff8a00;border-color:#ff8a00;color:#04101c;}
+.pending{margin-top:22px;background:rgba(12,16,32,.55);border:1px dashed rgba(120,190,255,.24);
+  border-radius:16px;padding:16px 18px;}
+.pending h3{font-size:11.5px;letter-spacing:2px;color:var(--dim);margin-bottom:11px;font-weight:600;}
+.pending .pgrid{display:flex;gap:7px;flex-wrap:wrap;}
+.pending .pchip{cursor:pointer;font-family:inherit;font-size:11.5px;padding:6px 11px;border-radius:8px;
+  border:1px solid rgba(120,190,255,.2);background:rgba(255,255,255,.03);color:#9db4cd;transition:.18s;}
+.pending .pchip:hover{color:#04101c;background:var(--cyan);border-color:var(--cyan);}
+.pending .pchip b{color:var(--gold);font-weight:700;}
+.pending .pchip:hover b{color:#04101c;}
+
+.bar{display:flex;align-items:center;gap:12px;margin:4px 0 18px;flex-wrap:wrap;}
+.bar .st{font-size:11.5px;color:var(--dim);letter-spacing:1px;}
+.bar button{cursor:pointer;font-family:inherit;font-size:12px;padding:7px 14px;border-radius:9px;
+  border:1px solid var(--cyan);background:rgba(87,232,255,.08);color:var(--cyan);}
+.bar button:hover{background:var(--cyan);color:#04101c;}
+
+#list{display:grid;grid-template-columns:repeat(auto-fill,minmax(430px,1fr));gap:16px;}
+@media(max-width:560px){#list{grid-template-columns:1fr;} h1{font-size:28px;letter-spacing:5px;}
+  .frow .lb{width:100%;}}
+.board{background:rgba(12,16,32,.72);border:1px solid var(--line);border-radius:18px;
+  padding:18px 18px 14px;backdrop-filter:blur(8px);}
+.board h2{font-size:17px;font-weight:800;letter-spacing:1px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.board h2 .crumb{font-size:10px;letter-spacing:1px;color:var(--dim);font-weight:400;}
+.board h2 small{font-size:10px;letter-spacing:1px;color:var(--dim);font-weight:400;margin-left:auto;}
+.board .hint{font-size:11px;color:var(--dim);margin:6px 0 12px;line-height:1.7;}
+.board .hint a{color:var(--cyan);text-decoration:none;}
+.grp{margin-top:10px;}
+.grp .gt{font-size:10px;letter-spacing:2px;color:var(--dim);margin-bottom:4px;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+th{text-align:left;color:var(--dim);font-weight:400;font-size:10.5px;letter-spacing:1px;
+  padding:6px 6px;border-bottom:1px solid var(--line);}
+td{padding:9px 6px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--muted);vertical-align:top;}
+tr:last-child td{border-bottom:0;}
+td.pos{font-weight:900;font-style:italic;color:var(--gold);width:34px;font-size:15px;}
+td.pos.r1{color:#fff;text-shadow:0 0 12px var(--gold);}
+tr.me td{background:rgba(87,232,255,.06);}
+td.who{color:#eaf6ff;font-weight:600;white-space:nowrap;}
+td.val{color:var(--cyan);font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums;}
+td.dt{font-size:11px;color:#5f7894;white-space:nowrap;}
+td.det{font-size:11px;color:#7d93ac;line-height:1.5;max-width:170px;}
+.empty{padding:30px 6px;text-align:center;color:#5f7894;font-size:12.5px;line-height:2;}
+.empty a{color:var(--cyan);text-decoration:none;}
+.foot{margin-top:30px;color:#5f7894;font-size:11.5px;letter-spacing:.5px;text-align:center;line-height:2;}
+.foot code{color:var(--cyan);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>排行榜</h1>
+      <div class="en">L E A D E R B O A R D</div>
+    </div>
+    <nav>
+      <a href="/blog/game/">🎮 游戏大厅</a>
+      <a href="/blog/achievements/">🏆 成就墙</a>
+      <a href="/">← 返回主页</a>
+    </nav>
+  </header>
+
+  <p class="lead">按 <b>游戏 → 比赛模式 → 赛道 → 道具规则</b> 分开排名。飞车 3D 共 32 张榜：普通道具赛与 5 个特殊道具赛各占一张，互不混排。每条成绩是仓库里一个公开 Issue，页面直接读取、实时排序。</p>
+
+  <div class="filters">
+    <div class="frow" id="row-game"><span class="lb">游戏</span><div class="chips" id="chips-game"></div></div>
+    <div class="frow mode" id="row-mode"><span class="lb">模式</span><div class="chips" id="chips-mode"></div></div>
+    <div class="frow track" id="row-track"><span class="lb">赛道</span><div class="chips" id="chips-track"></div></div>
+    <div class="frow rule" id="row-rule"><span class="lb">规则</span><div class="chips" id="chips-rule"></div></div>
+  </div>
+
+  <div class="bar">
+    <span class="st" id="status">正在读取…</span>
+    <button id="refresh">↻ 刷新</button>
+  </div>
+
+  <div id="list"></div>
+  <div id="pending" class="pending" style="display:none"></div>
+
+  <p class="foot">
+    用时类成绩越短越靠前，分数类越高越靠前 · 每张榜单显示 Top 10<br>
+    数据来自 <code>api.github.com</code>，页面缓存 5 分钟 · 彩蛋盲盒按实际抽中的特殊规则归档
+  </p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var OWNER = 'cxf54188', REPO = 'cxf54188.github.io';
+  var BASE = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/issues';
+  var CACHE_KEY = 'lb_cache_v3', CACHE_MS = 5 * 60 * 1000;
+  var GAME_URL = '/blog/game/';
+
+  var NAMES = {
+    'qq-speed':'飞车 3D', 'chainburst':'链爆', 'loopburst':'圈爆',
+    'gravitypen':'引力笔', 'bubblesweep':'气泡收网', 'ghostwave':'幽灵波',
+    'mirror':'反手', 'echostorm':'回声风暴', 'cascade':'链爆·级联', 'graze':'掠影'
+  };
+  var UNITS = { 'qq-speed':'ms' };
+
+  /* ============================================================
+     预置榜单：只为了让「还没人打过的榜」也有位置显示。
+     boards 显式列出合法组合，避免生成「竞速模式 × 一路狂飙」这种
+     根本不存在的幽灵榜。填漏了也没关系：有成绩提交后会自动发现新榜。
+     其他 9 个游戏不在这里 —— 它们一提交成绩就会自动出现。
+     ============================================================ */
+  var KNOWN_BOARDS = {
+    'qq-speed': {
+      boards: (function () {
+        var TRACKS = ['11城', '情迷爱琴海', '法老金字塔', '雪地大冒险'];
+        // 普通道具赛 + 5 个特殊道具赛（名字来自 qq-speed.html 的 If 数组）
+        var RULES = ['经典随机', '一路狂飙', '狂轰乱炸', '步步惊心', '如影随形', '雷霆万钧'];
+        var out = [];
+        ['竞速模式', '单圈冲刺'].forEach(function (m) {
+          TRACKS.forEach(function (t) { out.push({ mode:m, track:t, rule:'-' }); });
+        });
+        TRACKS.forEach(function (t) {
+          RULES.forEach(function (r) { out.push({ mode:'道具模式', track:t, rule:r }); });
+        });
+        return out;   // 4 + 4 + 24 = 32 张
+      })()
+    }
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+  function fmt(v, unit) {
+    if (unit === 'ms') {
+      var t = Number(v) / 1000;
+      if (!isFinite(t)) return '--:--.--';
+      var m = Math.floor(t / 60), s = Math.floor(t % 60), c = Math.floor((t % 1) * 100);
+      return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') + '.' + String(c).padStart(2, '0');
+    }
+    var n = Number(v);
+    return isFinite(n) ? n.toLocaleString('zh-CN') : String(v);
+  }
+  function parseBody(body) {
+    var o = {};
+    String(body || '').split('\n').forEach(function (line) {
+      var i = line.indexOf(':');
+      if (i > 0) o[line.slice(0, i).trim()] = line.slice(i + 1).trim();
+    });
+    return o;
+  }
+  function parseIssue(it) {
+    if (!it || !it.title || it.title.indexOf('Leaderboard:') !== 0) return null;
+    var b = parseBody(it.body);
+    if (!b.Game || b.Score == null) return null;
+    var score = Number(b.Score);
+    if (!isFinite(score)) return null;
+    return {
+      game:   b.Game,
+      name:   b.Name || NAMES[b.Game] || b.Game,
+      mode:   b.Mode  || '默认',          // v1 老成绩兜底
+      track:  b.Track || '-',
+      rule:   b.Rule  || '-',            // v2 老成绩兜底（无道具规则）
+      player: b.Player || '匿名',
+      score:  score,
+      show:   b.Show || '',
+      unit:   b.Unit || UNITS[b.Game] || '',
+      better: b.Better === 'low' ? 'low' : 'high',
+      detail: b.Detail || '',
+      at:     b['Submitted at'] || it.created_at,
+      url:    it.html_url
+    };
+  }
+  function day(s) {
+    var d = new Date(s);
+    if (isNaN(d)) return '';
+    return (d.getMonth() + 1) + '/' + d.getDate();
+  }
+  function uniq(a) {
+    var r = [];
+    a.forEach(function (x) { if (r.indexOf(x) < 0) r.push(x); });
+    return r;
+  }
+  function boardName(b) {
+    return b.mode + ' · ' + b.track + (b.rule && b.rule !== '-' ? ' · ' + b.rule : '');
+  }
+  function same(a, b) {
+    return a.mode === b.mode && a.track === b.track && a.rule === b.rule;
+  }
+
+  /* URL 上带 ?game=&mode=&track=&rule= 时直接定位到某张榜 */
+  var qs = new URLSearchParams(location.search);
+  var S = {
+    game:  qs.get('game')  || 'all',
+    mode:  qs.get('mode')  || 'all',
+    track: qs.get('track') || 'all',
+    rule:  qs.get('rule')  || 'all'
+  };
+  var ALL = [];
+
+  function boardsOf(game) {
+    var out = [], kb = KNOWN_BOARDS[game];
+    if (kb) {
+      var src = kb.boards || [];
+      if (!src.length && kb.modes) {          // 兼容 v2 格式
+        if (kb.combos) {
+          src = kb.combos.map(function (c) { return { mode:c[0], track:c[1], rule:'-' }; });
+        } else {
+          (kb.modes || []).forEach(function (m) {
+            (kb.tracks || []).forEach(function (t) {
+              src.push({ mode:m, track:t, rule:'-' });
+            });
+          });
+        }
+      }
+      src.forEach(function (b) {
+        out.push({ mode:b.mode, track:b.track, rule:b.rule || '-' });
+      });
+    }
+    ALL.forEach(function (r) {
+      if (r.game !== game) return;
+      var b = { mode:r.mode, track:r.track, rule:r.rule };
+      if (!out.some(function (x) { return same(x, b); })) out.push(b);
+    });
+    return out;
+  }
+  function gamesList() {
+    var g = Object.keys(KNOWN_BOARDS);
+    ALL.forEach(function (r) { g.push(r.game); });
+    return uniq(g);
+  }
+  function modesList(game) {
+    return game === 'all' ? [] : uniq(boardsOf(game).map(function (b) { return b.mode; }));
+  }
+  function tracksList(game, mode) {
+    if (game === 'all') return [];
+    return uniq(boardsOf(game).filter(function (b) {
+      return mode === 'all' || b.mode === mode;
+    }).map(function (b) { return b.track; }));
+  }
+  function rulesList(game, mode, track) {
+    if (game === 'all') return [];
+    return uniq(boardsOf(game).filter(function (b) {
+      return (mode  === 'all' || b.mode  === mode) &&
+             (track === 'all' || b.track === track);
+    }).map(function (b) { return b.rule; }));
+  }
+
+  function chips(box, items, cur, onPick, labelFn) {
+    var html = '<button class="tab' + (cur === 'all' ? ' on' : '') + '" data-v="all">全部</button>';
+    items.forEach(function (v) {
+      html += '<button class="tab' + (cur === v ? ' on' : '') + '" data-v="' + esc(v) + '">'
+           + esc(labelFn ? labelFn(v) : v) + '</button>';
+    });
+    box.innerHTML = html;
+    Array.prototype.forEach.call(box.querySelectorAll('.tab'), function (b) {
+      b.onclick = function () { onPick(b.getAttribute('data-v')); };
+    });
+  }
+
+  function renderFilters() {
+    var games = gamesList();
+    chips(document.getElementById('chips-game'), games, S.game, function (v) {
+      S.game = v; S.mode = 'all'; S.track = 'all'; S.rule = 'all';
+      syncUrl(); renderAll();
+    }, function (g) { return NAMES[g] || g; });
+
+    var modes = modesList(S.game);
+    document.getElementById('row-mode').style.display = modes.length > 1 ? '' : 'none';
+    if (modes.length > 1) {
+      chips(document.getElementById('chips-mode'), modes, S.mode, function (v) {
+        S.mode = v; S.track = 'all'; S.rule = 'all'; syncUrl(); renderAll();
+      });
+    }
+    var tracks = tracksList(S.game, S.mode);
+    document.getElementById('row-track').style.display = tracks.length > 1 ? '' : 'none';
+    if (tracks.length > 1) {
+      chips(document.getElementById('chips-track'), tracks, S.track, function (v) {
+        S.track = v; S.rule = 'all'; syncUrl(); renderAll();
+      });
+    }
+    var rules = rulesList(S.game, S.mode, S.track);
+    document.getElementById('row-rule').style.display = rules.length > 1 ? '' : 'none';
+    if (rules.length > 1) {
+      chips(document.getElementById('chips-rule'), rules, S.rule, function (v) {
+        S.rule = v; syncUrl(); renderAll();
+      }, function (r) { return r === '-' ? '无道具' : r; });
+    }
+  }
+
+  function syncUrl() {
+    var q = [];
+    if (S.game  !== 'all') q.push('game='  + encodeURIComponent(S.game));
+    if (S.mode  !== 'all') q.push('mode='  + encodeURIComponent(S.mode));
+    if (S.track !== 'all') q.push('track=' + encodeURIComponent(S.track));
+    if (S.rule  !== 'all') q.push('rule='  + encodeURIComponent(S.rule));
+    history.replaceState(null, '', location.pathname + (q.length ? '?' + q.join('&') : ''));
+  }
+
+  /* 一张榜单卡片：同一榜单里若混了不同计分口径，分小组各排各的 */
+  function boardCard(game, mode, track, rule) {
+    var rows = ALL.filter(function (r) {
+      return r.game === game
+          && (mode  === 'all' || r.mode  === mode)
+          && (track === 'all' || r.track === track)
+          && (rule  === 'all' || r.rule  === rule);
+    });
+    var groups = {};
+    rows.forEach(function (r) {
+      var k = (r.unit || 'pt') + '|' + r.better;
+      (groups[k] = groups[k] || []).push(r);
+    });
+    var gkeys = Object.keys(groups);
+    var better = rows.length ? rows[0].better : 'high';
+    var me = window.ScoreBridge ? window.ScoreBridge.getPlayer() : '';
+
+    var crumb = '<span class="crumb">' + esc(NAMES[game] || game) + '</span>';
+    var title = (mode  === 'all' ? '全部模式' : esc(mode))  + ' · '
+              + (track === 'all' ? '全部赛道' : esc(track))
+              + (rule !== 'all' && rule !== '-' ? ' · ' + esc(rule) : '');
+    var hint = 'TOP 10 · 共 ' + rows.length + ' 条成绩 · '
+             + '<a href="' + esc(GAME_URL) + '">去打一局 →</a>';
+
+    var body = '';
+    if (!rows.length) {
+      body = '<div class="empty">这张榜还没有人提交成绩 🏁<br>'
+           + '<a href="' + esc(GAME_URL) + '">去游戏里跑一局 →</a></div>';
+    } else {
+      body = gkeys.map(function (k) {
+        var arr = groups[k].slice();
+        var low = k.endsWith('|low');
+        arr.sort(function (a, b) { return low ? a.score - b.score : b.score - a.score; });
+        arr = arr.slice(0, 10);
+        var u = k.split('|')[0];
+        var gt = gkeys.length > 1
+          ? '<div class="gt">' + (u === 'ms' ? '用时' : u === 'place' ? '名次' : '分数')
+            + ' · ' + (low ? '越小越好' : '越大越好') + '</div>' : '';
+        var trs = arr.map(function (r, i) {
+          return '<tr class="' + (me && r.player === me ? 'me' : '') + '">'
+            + '<td class="pos' + (i === 0 ? ' r1' : '') + '">' + (i + 1) + '</td>'
+            + '<td class="who">' + esc(r.player) + '</td>'
+            + '<td class="val">' + esc(r.show || fmt(r.score, u)) + '</td>'
+            + '<td class="det">' + esc(r.detail) + '</td>'
+            + '<td class="dt">' + esc(day(r.at)) + '</td>'
+            + '</tr>';
+        }).join('');
+        return '<div class="grp">' + gt
+          + '<table><thead><tr><th>#</th><th>玩家</th><th>成绩</th><th>详情</th><th>日期</th></tr></thead>'
+          + '<tbody>' + trs + '</tbody></table></div>';
+      }).join('');
+    }
+
+    return '<section class="board">'
+      + '<h2>' + crumb + esc(title)
+      + '<small>' + (better === 'low' ? '越短越好' : '越高越好') + '</small></h2>'
+      + '<div class="hint">' + hint + '</div>'
+      + body + '</section>';
+  }
+
+  function hasScore(game, mode, track, rule) {
+    return ALL.some(function (r) {
+      return r.game === game && r.mode === mode && r.track === track && r.rule === rule;
+    });
+  }
+
+  function renderList() {
+    var list = document.getElementById('list');
+    var games = S.game === 'all' ? gamesList() : [S.game];
+    var cards = [], pending = [];
+    /* 四个维度都选定后，即使没成绩也把那张空榜显示出来 */
+    var explicit = S.game !== 'all' && S.mode !== 'all'
+                && S.track !== 'all' && S.rule !== 'all';
+
+    games.forEach(function (g) {
+      var bs = boardsOf(g);
+      if (!bs.length) {
+        if (S.game === 'all') cards.push(boardCard(g, 'all', 'all', 'all'));
+        return;
+      }
+      var modes  = S.mode  === 'all' ? uniq(bs.map(function (b) { return b.mode;  })) : [S.mode];
+      var tracks = S.track === 'all' ? uniq(bs.map(function (b) { return b.track; })) : [S.track];
+      var rules  = S.rule  === 'all' ? uniq(bs.map(function (b) { return b.rule;  })) : [S.rule];
+      modes.forEach(function (m) {
+        tracks.forEach(function (t) {
+          rules.forEach(function (r) {
+            var exists = bs.some(function (b) { return same(b, { mode:m, track:t, rule:r }); });
+            if (!exists && !hasScore(g, m, t, r)) return;   // 过滤幽灵组合
+            if (hasScore(g, m, t, r) || explicit) {
+              cards.push(boardCard(g, m, t, r));
+            } else {
+              pending.push({ game:g, mode:m, track:t, rule:r });
+            }
+          });
+        });
+      });
+    });
+
+    if (!cards.length && !pending.length) {
+      list.innerHTML = '<div class="board"><div class="empty">还没有任何成绩 🏁<br>'
+        + '<a href="' + esc(GAME_URL) + '">去游戏里跑一局 →</a></div></div>';
+    } else {
+      list.innerHTML = cards.join('');
+    }
+
+    var box = document.getElementById('pending');
+    if (!pending.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
+    box.style.display = '';
+    box.innerHTML = '<h3>待开榜 · ' + pending.length + ' 张（点一下直接查看）</h3><div class="pgrid">'
+      + pending.map(function (b, i) {
+          return '<button class="pchip" data-i="' + i + '">'
+               + '<b>' + esc(NAMES[b.game] || b.game) + '</b> ' + esc(boardName(b)) + '</button>';
+        }).join('')
+      + '</div>';
+    Array.prototype.forEach.call(box.querySelectorAll('.pchip'), function (el) {
+      el.onclick = function () {
+        var b = pending[Number(el.getAttribute('data-i'))];
+        S.game = b.game; S.mode = b.mode; S.track = b.track; S.rule = b.rule;
+        syncUrl(); renderAll();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+    });
+  }
+
+  function renderAll() { renderFilters(); renderList(); }
+  function setStatus(t) { document.getElementById('status').textContent = t; }
+
+  function load(force) {
+    var cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null'); } catch (e) {}
+    if (!force && cached && Date.now() - cached.t < CACHE_MS) {
+      ALL = cached.d; finish(); return;
+    }
+    setStatus('正在读取 GitHub Issues…');
+    var q = '?state=open&per_page=100&sort=created&direction=desc';
+    fetch(BASE + q + '&labels=leaderboard')
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (arr) {
+        if (arr.length) return arr;
+        return fetch(BASE + q).then(function (r) { return r.json(); })
+          .then(function (a) {
+            return a.filter(function (it) { return it.title && it.title.indexOf('Leaderboard:') === 0; });
+          });
+      })
+      .then(function (arr) {
+        ALL = (arr || []).map(parseIssue).filter(Boolean);
+        try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), d: ALL })); } catch (e) {}
+        finish();
+      })
+      .catch(function (e) {
+        setStatus('读取失败：' + e.message + '（可稍后点刷新重试）');
+        if (cached) { ALL = cached.d; finish(); }
+      });
+  }
+  function finish() {
+    setStatus('共 ' + ALL.length + ' 条成绩 · 更新于 ' + new Date().toLocaleTimeString('zh-CN'));
+    renderAll();
+  }
+
+  document.getElementById('refresh').onclick = function () { load(true); };
+  load(false);
+})();
+</script>
+<script src="/blog/assets/score.js"></script>
+<script src="/blog/assets/fx.js"></script>
+</body>
+</html>
