@@ -28,7 +28,7 @@
 
   var OWNER = 'cxf54188';
   var REPO  = 'cxf54188.github.io';
-  var LB_URL = '/blog/leaderboard/';
+  var LB_URL = '/blog/games/leaderboard/';
 
   /* Deno Deploy 跑通后填这里，例如 https://xxx.deno.dev/submit */
   var SCORE_API = '';
