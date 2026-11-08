@@ -1,188 +1,305 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>游戏大厅</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog · cxf54188</title>
+<meta name="description" content="cxf54188 的博客 · 文章、游戏与排行榜">
+<link rel="icon" type="image/svg+xml" href="/img/yb_avatar.svg">
 <style>
-* { box-sizing:border-box; margin:0; padding:0; }
+* { margin:0; padding:0; box-sizing:border-box; }
+
 :root{
-  --bg:#05060d; --txt:#eaf6ff; --dim:#7d9bb8; --line:rgba(120,190,255,.18);
-  --cyan:#57e8ff; --pink:#ff5fa8; --gold:#ffd25a; --violet:#a37bff;
+  --cyan:#00f0ff; --cyan-dim:rgba(0,240,255,.6);
+  --magenta:#ff006e; --purple:#7b2ff7;
+  --gold:#ffd25a; --darker:#050510;
+  --text:#e0e0ff; --dim:rgba(200,200,255,.6);
+  --line:rgba(0,240,255,.18);
 }
+
+/* 关键：底色放 html，body 透明，fx.js 的粒子 canvas(z-index:-1) 才看得见 */
+html { background:var(--darker); }
 body{
-  background:
-    radial-gradient(1000px 560px at 18% -12%, rgba(29,111,242,.20) 0%, transparent 60%),
-    radial-gradient(900px 500px at 88% 6%, rgba(163,123,255,.16) 0%, transparent 62%),
-    var(--bg);
-  color:var(--txt);
-  font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
-  min-height:100vh; display:flex; justify-content:center;
-  padding:44px 18px 70px;
+  min-height:100vh; position:relative;
+  background:transparent; isolation:isolate;
+  color:var(--text); overflow-x:hidden;
+  font-family:"JetBrains Mono","Fira Code","Consolas",
+              "PingFang SC","Microsoft YaHei",monospace;
   -webkit-font-smoothing:antialiased;
-  isolation:isolate;
 }
-.wrap{max-width:1120px;width:100%;}
 
-header{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:10px;}
-h1{font-size:40px;font-weight:900;letter-spacing:8px;line-height:1;
-  background:linear-gradient(100deg,#fff 10%,var(--cyan) 42%,var(--pink) 75%,var(--gold));
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 0 26px rgba(87,232,255,.3));}
-.brand .en{color:var(--dim);font-size:11px;letter-spacing:9px;margin-top:8px;}
+/* 氛围光晕：半透明，不挡粒子 */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(1000px 560px at 16% -12%, rgba(0,240,255,.14), transparent 60%),
+    radial-gradient(900px 520px at 88% 6%, rgba(123,47,247,.14), transparent 62%),
+    radial-gradient(700px 500px at 50% 110%, rgba(255,0,110,.07), transparent 65%);}
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background:
+    linear-gradient(rgba(0,240,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,240,255,.025) 1px,transparent 1px);
+  background-size:60px 60px; animation:gridMove 24s linear infinite;}
+@keyframes gridMove{0%{background-position:0 0,0 0}100%{background-position:60px 60px,60px 60px}}
+.scanline{position:fixed;inset:0;z-index:9999;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);}
+
+.wrap{position:relative;z-index:10;max-width:1120px;margin:0 auto;padding:36px 20px 70px;}
+
+/* ===== 顶栏 ===== */
+header{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;
+  padding-bottom:18px;border-bottom:1px solid var(--line);}
+.brand h1{font-size:30px;font-weight:800;letter-spacing:7px;line-height:1;
+  background:linear-gradient(100deg,#fff 12%,var(--cyan) 55%,var(--purple));
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.brand .en{color:var(--dim);font-size:10px;letter-spacing:8px;margin-top:8px;}
 nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
-nav a{color:var(--dim);text-decoration:none;font-size:12.5px;
-  border:1px solid var(--line);padding:8px 15px;border-radius:10px;
-  background:rgba(255,255,255,.03);transition:.18s;}
-nav a:hover{color:#fff;border-color:var(--cyan);background:rgba(87,232,255,.08);}
+nav a{color:var(--dim);text-decoration:none;font-size:12px;letter-spacing:.5px;
+  border:1px solid var(--line);padding:8px 14px;border-radius:6px;
+  background:rgba(0,240,255,.03);transition:.2s;}
+nav a:hover{color:var(--cyan);border-color:var(--cyan);
+  box-shadow:0 0 14px rgba(0,240,255,.18);transform:translateY(-2px);}
 
-.lead{color:#9db4cd;font-size:13px;letter-spacing:1px;margin:18px 0 6px;}
-.count{font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:24px;}
+/* ===== Hero ===== */
+.hero{padding:44px 0 30px;}
+.terminal{display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.2);
+  border-radius:6px;padding:6px 14px;margin-bottom:20px;}
+.terminal .dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 6px var(--cyan);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.terminal span{font-size:.8rem;color:var(--cyan-dim);letter-spacing:2px;}
+.hero h2{font-size:clamp(22px,3.4vw,36px);font-weight:700;letter-spacing:2px;
+  line-height:1.5;color:#fff;margin-bottom:12px;}
+.hero h2 .cursor{display:inline-block;width:3px;height:1em;background:var(--cyan);
+  vertical-align:middle;margin-left:5px;animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0}}
+.type{font-size:.95rem;color:var(--dim);letter-spacing:1px;min-height:1.7em;}
+.type .caret{display:inline-block;width:2px;height:1.1em;background:var(--cyan);
+  vertical-align:middle;margin-left:3px;animation:blink 1s step-end infinite;}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:16px;}
-.card{
+/* ===== 区块通用 ===== */
+.sec{margin-top:46px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+.sec-head h3{font-size:19px;letter-spacing:4px;font-weight:700;color:#fff;}
+.sec-head .sub{font-size:10.5px;letter-spacing:3px;color:var(--dim);}
+.sec-head .more{margin-left:auto;font-size:11.5px;color:var(--cyan-dim);
+  text-decoration:none;border:1px solid var(--line);padding:6px 13px;border-radius:6px;transition:.2s;}
+.sec-head .more:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,240,255,.18);}
+
+/* ===== 游戏速览 ===== */
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;}
+.gcard{
   --c:var(--cyan);
-  position:relative;overflow:hidden;
-  background:rgba(12,16,32,.72);border:1px solid var(--line);
-  border-radius:20px;padding:20px 20px 18px;
-  display:flex;flex-direction:column;min-height:262px;
-  text-decoration:none;color:var(--txt);transition:.2s;
-  backdrop-filter:blur(8px);
+  position:relative;overflow:hidden;text-decoration:none;color:var(--text);
+  border:1px solid var(--line);border-radius:12px;padding:15px 16px 14px;
+  background:rgba(8,12,26,.66);backdrop-filter:blur(6px);
+  display:flex;flex-direction:column;min-height:112px;transition:.2s;
 }
-.card .glow{position:absolute;right:-46px;top:-46px;width:160px;height:160px;
-  border-radius:50%;background:var(--c);filter:blur(55px);opacity:.16;transition:.3s;pointer-events:none;}
-.card:hover{transform:translateY(-4px);border-color:var(--c);
-  background:rgba(255,255,255,.055);box-shadow:0 18px 46px rgba(0,0,0,.55);}
-.card:hover .glow{opacity:.42;}
+.gcard .blur{position:absolute;right:-34px;top:-34px;width:110px;height:110px;
+  border-radius:50%;background:var(--c);filter:blur(42px);opacity:.14;pointer-events:none;}
+.gcard:hover{transform:translateY(-3px);border-color:var(--c);
+  background:rgba(0,240,255,.05);box-shadow:0 14px 34px rgba(0,0,0,.5);}
+.gcard:hover .blur{opacity:.36;}
+.gcard .no{font-size:10px;letter-spacing:2px;color:var(--c);font-weight:800;}
+.gcard .cn{font-size:18px;font-weight:800;letter-spacing:2px;margin-top:7px;}
+.gcard .en{font-size:9.5px;letter-spacing:3px;color:var(--dim);margin-top:3px;}
+.gcard .tag{margin-top:auto;align-self:flex-start;font-size:10px;color:var(--dim);
+  border:1px solid var(--line);border-radius:5px;padding:2px 8px;}
+.gcard .go{position:absolute;right:14px;bottom:14px;font-size:14px;color:var(--c);opacity:.5;transition:.2s;}
+.gcard:hover .go{opacity:1;transform:translateX(3px);}
 
-.row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;}
-.idx{font-size:10.5px;letter-spacing:3px;color:var(--c);font-weight:800;}
-.tag{font-size:10px;letter-spacing:1px;color:var(--dim);
-  border:1px solid var(--line);border-radius:6px;padding:2px 8px;}
+/* ===== 四大入口 ===== */
+.entries{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;}
+.entry{
+  position:relative;overflow:hidden;text-decoration:none;color:var(--text);
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  background:rgba(10,14,30,.68);backdrop-filter:blur(8px);
+  transition:.22s;min-height:150px;display:flex;flex-direction:column;
+}
+.entry::before{content:'';position:absolute;inset:0;opacity:.1;pointer-events:none;
+  background:radial-gradient(300px 160px at 100% 0,var(--c),transparent 70%);}
+.entry:hover{transform:translateY(-4px);border-color:var(--c);
+  box-shadow:0 18px 44px rgba(0,0,0,.55);}
+.entry .ico{font-size:26px;margin-bottom:12px;}
+.entry .t{font-size:17px;font-weight:800;letter-spacing:3px;}
+.entry .d{font-size:11.5px;line-height:1.8;color:var(--dim);margin-top:8px;}
+.entry .arrow{margin-top:auto;align-self:flex-end;font-size:15px;color:var(--c);}
 
-.card .cn{font-size:26px;font-weight:900;letter-spacing:3px;line-height:1.25;}
-.card .en{font-size:10.5px;color:var(--dim);letter-spacing:4px;margin:6px 0 14px;}
-.card .desc{font-size:12.5px;line-height:1.8;color:#a9c0d8;margin-top:auto;}
-.card .keys{margin-top:14px;display:flex;gap:5px;flex-wrap:wrap;}
-.card .keys span{font-size:10px;color:var(--dim);border:1px solid var(--line);
-  border-radius:6px;padding:3px 7px;}
-.card .play{margin-top:16px;align-self:flex-start;font-size:12.5px;letter-spacing:2px;
-  font-weight:700;color:var(--c);border:1px solid var(--c);
-  background:rgba(255,255,255,.03);padding:7px 16px;border-radius:10px;transition:.2s;}
-.card:hover .play{background:var(--c);color:#04101c;}
+/* ===== 状态栏 ===== */
+.status{margin-top:52px;padding-top:18px;border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;
+  font-size:.76rem;color:var(--dim);letter-spacing:1px;}
+.status .s{display:flex;align-items:center;gap:6px;}
+.status .live{width:6px;height:6px;border-radius:50%;background:#00ff88;
+  box-shadow:0 0 6px #00ff88;animation:pulse 2s ease-in-out infinite;}
+.status .div{width:1px;height:13px;background:rgba(255,255,255,.1);}
 
-.foot{margin-top:34px;color:#5f7894;font-size:11.5px;letter-spacing:1px;text-align:center;line-height:2;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.hero>*{opacity:0;animation:fadeUp .7s ease forwards;}
+.hero>*:nth-child(1){animation-delay:.1s} .hero>*:nth-child(2){animation-delay:.25s}
+.hero>*:nth-child(3){animation-delay:.4s}
+.sec{opacity:0;animation:fadeUp .7s ease forwards;}
+.sec:nth-of-type(1){animation-delay:.5s} .sec:nth-of-type(2){animation-delay:.65s}
+
 @media(max-width:560px){
-  body{padding:28px 14px 50px;}
-  h1{font-size:30px;letter-spacing:5px;}
-  nav{margin-left:0;}
-  .card{min-height:auto;}
+  .wrap{padding:24px 14px 50px}
+  header{flex-direction:column;align-items:flex-start}
+  nav{margin-left:0}
+  .brand h1{font-size:24px;letter-spacing:4px}
+  .games{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
 }
 </style>
 </head>
 <body>
+
+<div class="ambient"></div>
+<div class="grid-bg"></div>
+<div class="scanline"></div>
+
 <div class="wrap">
 
   <header>
     <div class="brand">
-      <h1>游戏大厅</h1>
-      <div class="en">G A M E &nbsp; L O U N G E</div>
+      <h1>BLOG</h1>
+      <div class="en">C X F 5 4 1 8 8 &nbsp;/&nbsp; P E R S O N A L &nbsp; S P A C E</div>
     </div>
     <nav>
-      <a href="/">← 返回主页</a>
+      <a href="/">← 主页</a>
+      <a href="/blog/games/">🎮 游戏大厅</a>
       <a href="/blog/games/leaderboard/">📊 排行榜</a>
       <a href="/blog/achievements/">🏆 成就墙</a>
+      <a href="/blog/news/">📰 快报</a>
+      <a href="/links/">🔗 友链</a>
     </nav>
   </header>
 
-  <p class="lead">单人游玩，点开即玩，无需下载。成绩保存在各自游戏内的本机浏览器。</p>
-  <div class="count" id="count"></div>
+  <section class="hero">
+    <div class="terminal"><span class="dot"></span><span>系统就绪 · 全部板块在线</span></div>
+    <h2>写代码，做游戏，顺便记录点什么<span class="cursor"></span></h2>
+    <p class="type" id="typewriter"></p>
+  </section>
 
-  <div class="grid" id="grid"></div>
+  <!-- 游戏速览 -->
+  <section class="sec">
+    <div class="sec-head">
+      <h3>游戏</h3><span class="sub">G A M E S</span>
+      <a class="more" href="/blog/games/">进入游戏大厅 →</a>
+    </div>
+    <div class="games" id="games"></div>
+  </section>
 
-  <p class="foot">以后加游戏，只改下面 GAMES 数组里的一行即可 · 卡片编号自动重排<br>方向键 / 鼠标 / 空格为主要操作，具体看每张卡片下方标签</p>
+  <!-- 其他板块 -->
+  <section class="sec">
+    <div class="sec-head">
+      <h3>更多</h3><span class="sub">E X P L O R E</span>
+    </div>
+    <div class="entries">
+      <a class="entry" style="--c:#00f0ff" href="/blog/games/">
+        <div class="ico">🎮</div>
+        <div class="t">游戏大厅</div>
+        <div class="d">10 款原创小游戏，点开即玩，无需下载。进度存在各自浏览器里。</div>
+        <div class="arrow">→</div>
+      </a>
+      <a class="entry" style="--c:#ffd25a" href="/blog/games/leaderboard/">
+        <div class="ico">📊</div>
+        <div class="t">排行榜</div>
+        <div class="d">飞车 3D 按模式 / 赛道 / 道具规则分成 32 张榜，成绩实时排序。</div>
+        <div class="arrow">→</div>
+      </a>
+      <a class="entry" style="--c:#a37bff" href="/blog/achievements/">
+        <div class="ico">🏆</div>
+        <div class="t">成就墙</div>
+        <div class="d">逛得够久、点得够多、按出那串秘籍，就会亮起一枚。</div>
+        <div class="arrow">→</div>
+      </a>
+      <a class="entry" style="--c:#ff5fa8" href="/blog/news/">
+        <div class="ico">📰</div>
+        <div class="t">图文快报</div>
+        <div class="d">赛场瞬间与图集存档，配图与留言板都在这里。</div>
+        <div class="arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <div class="status">
+    <div class="s"><span class="live"></span><span id="clock"></span></div>
+    <div class="div"></div>
+    <div class="s"><span style="color:var(--cyan)">●</span> 在线</div>
+    <div class="div"></div>
+    <div class="s"><span style="color:var(--gold)">🏆</span> <span id="ach-count">成就 0/7</span></div>
+    <div class="div"></div>
+    <div class="s"><span style="color:var(--purple)">⚙</span> GITHUB PAGES</div>
+  </div>
+
 </div>
 
 <script>
-/* ============================================================
-   游戏清单：以后增删游戏只改这个数组
-   大厅位于 blog/games/index.html，游戏是同层目录 blog/games/<id>/index.html
-   链接写成目录形式，不带 .html
-   ============================================================ */
-
+/* ========== 游戏清单：以后加/删游戏只改这个数组 ==========
+   id 必须与 blog/games/<id>/index.html 的文件夹名一致          */
 const GAMES = [
-  {
-    id:'qq-speed', cn:'飞车 3D', en:'QQ SPEED', type:'竞速', color:'#ff8a00',
-    desc:'浏览器里的 3D 竞速，还原 11 城、情迷爱琴海、法老金字塔、雪地大冒险。漂移集气、小喷双喷、氮气与道具赛一并搬了进来。',
-    keys:['方向键','漂移','氮气','道具']
-  },
-  {
-    id:'chainburst', cn:'链爆', en:'CHAINBURST', type:'切割', color:'#57e8ff',
-    desc:'直接挥动鼠标划过光球即可点燃，同色的一串顺着电弧整条炸开。60 秒冲分，链越长倍率越离谱。',
-    keys:['鼠标划过','空格脉冲','避开暗球']
-  },
-  {
-    id:'loopburst', cn:'圈爆', en:'LOOPBURST', type:'圈选', color:'#ff5fa8',
-    desc:'按住拖出一个圈再松手，圈里数量最多的那种颜色整串连爆。圈越紧分越狠，画太大直接失效。',
-    keys:['拖动画圈','松手连爆','空格脉冲']
-  },
-  {
-    id:'gravitypen', cn:'引力笔', en:'GRAVITY PEN', type:'引力', color:'#a37bff',
-    desc:'光核引擎永远全开、无法刹车，你手里只有一个引力点——把轨道提前弯过去。能量一直在漏，停下来就是死。',
-    keys:['鼠标引力','左键急转','右键斥力','空格脉冲']
-  },
-  {
-    id:'bubblesweep', cn:'气泡收网', en:'BUBBLE SWEEP', type:'收网', color:'#6fe3ff',
-    desc:'在任意位置按住充气，气泡中央实时显示本网预计得分，见好就收。收满 12 网自动出成绩卡。',
-    keys:['按住充气','松手收网','空格中央']
-  },
-  {
-    id:'ghostwave', cn:'幽灵波', en:'GHOST WAVE', type:'描线', color:'#8fb8ff',
-    desc:'屏幕上只给你几个发光采样点，隐藏波形全程不出现——靠脑子把它补成一条线。8 段波形约 60 秒。',
-    keys:['从左到右画波','空格显影','仅 3 次']
-  },
-  {
-    id:'mirror', cn:'反手', en:'MIRROR // SHIFT', type:'镜像', color:'#c084fc',
-    desc:'鼠标不再直达屏幕。半透明十字是真身，发光圆环才是「你的手」，正位 / 左右反 / 上下反 / 全反转随机突变。',
-    keys:['鼠标镜像','左键聚焦','空格脉冲']
-  },
-  {
-    id:'echostorm', cn:'回声风暴', en:'ECHO STORM', type:'点击', color:'#ffd25a',
-    desc:'每次命中都会在原地埋下一枚回声，1.5 秒后炸开收走周围整片光点。往人堆里打，一发能换七八次命中。',
-    keys:['点击光点','空格狂热','重练这套']
-  },
-  {
-    id:'cascade', cn:'链爆·级联', en:'CASCADE', type:'连锁', color:'#ffb547',
-    desc:'点一颗能量核，光束顺着棋盘一层层炸开，最多 7 浪。点火瞬间卡准共振环，整条链再翻一截。',
-    keys:['悬停预览','点击点火','空格共振']
-  },
-  {
-    id:'graze', cn:'掠影', en:'GRAZE', type:'擦弹', color:'#6dffb0',
-    desc:'机身跟着鼠标飞，你没有武器。分数不来自打爆什么，而来自离弹丸多近——擦身而过就算 GRAZE，越险分越狠。',
-    keys:['鼠标贴弹','空格脉冲','避开暗球']
-  }
+  { id:'qq-speed',    cn:'飞车 3D',   en:'QQ SPEED',        type:'竞速', color:'#ff8a00' },
+  { id:'chainburst',  cn:'链爆',      en:'CHAINBURST',      type:'切割', color:'#57e8ff' },
+  { id:'loopburst',   cn:'圈爆',      en:'LOOPBURST',       type:'圈选', color:'#ff5fa8' },
+  { id:'gravitypen',  cn:'引力笔',    en:'GRAVITY PEN',     type:'引力', color:'#a37bff' },
+  { id:'bubblesweep', cn:'气泡收网',  en:'BUBBLE SWEEP',    type:'收网', color:'#6fe3ff' },
+  { id:'ghostwave',   cn:'幽灵波',    en:'GHOST WAVE',      type:'描线', color:'#8fb8ff' },
+  { id:'mirror',      cn:'反手',      en:'MIRROR // SHIFT', type:'镜像', color:'#c084fc' },
+  { id:'echostorm',   cn:'回声风暴',  en:'ECHO STORM',      type:'点击', color:'#ffd25a' },
+  { id:'cascade',     cn:'链爆·级联', en:'CASCADE',         type:'连锁', color:'#ffb547' },
+  { id:'graze',       cn:'掠影',      en:'GRAZE',           type:'擦弹', color:'#6dffb0' }
 ];
 
-/* 关键这一行：大厅与游戏同层，直接写 id + 斜杠 */
-const urlOf = g => g.id + '/';
-
-document.getElementById('count').textContent =
-  '共 ' + GAMES.length + ' 款 · 全部可直接在浏览器里玩';
-
-document.getElementById('grid').innerHTML = GAMES.map(function (g, i) {
-  const no = 'NO.' + String(i + 1).padStart(2, '0');
-  const keys = g.keys.map(function (k) { return '<span>' + k + '</span>'; }).join('');
-  return ''
-    + '<a class="card" href="' + urlOf(g) + '" style="--c:' + g.color + '">'
-    +   '<div class="glow"></div>'
-    +   '<div class="row"><span class="idx">' + no + '</span><span class="tag">' + g.type + '</span></div>'
-    +   '<div class="cn">' + g.cn + '</div>'
-    +   '<div class="en">' + g.en + '</div>'
-    +   '<div class="desc">' + g.desc + '</div>'
-    +   '<div class="keys">' + keys + '</div>'
-    +   '<div class="play">开始游玩 →</div>'
+document.getElementById('games').innerHTML = GAMES.map(function (g, i) {
+  return '<a class="gcard" href="/blog/games/' + g.id + '/" style="--c:' + g.color + '">'
+    + '<div class="blur"></div>'
+    + '<div class="no">NO.' + String(i + 1).padStart(2, '0') + '</div>'
+    + '<div class="cn">' + g.cn + '</div>'
+    + '<div class="en">' + g.en + '</div>'
+    + '<div class="tag">' + g.type + '</div>'
+    + '<div class="go">→</div>'
     + '</a>';
 }).join('');
+
+/* ========== 打字机 ========== */
+const lines = [
+  '正在挂载游戏模块... 10 款 ✅',
+  '排行榜服务... 32 张分榜在线 📊',
+  '↑↑↓↓←→←→BA 也许会触发点什么 🎮',
+  'while(alive){ build(); }'
+];
+let li = 0, ci = 0;
+const tw = document.getElementById('typewriter');
+function type() {
+  if (li >= lines.length) { setTimeout(() => { li = 0; ci = 0; type(); }, 3200); return; }
+  const cur = lines[li];
+  tw.innerHTML = cur.slice(0, ci + 1) + '<span class="caret"></span>';
+  ci++;
+  if (ci < cur.length) setTimeout(type, 38);
+  else setTimeout(() => { li++; ci = 0; type(); }, 1700);
+}
+setTimeout(type, 800);
+
+/* ========== 时钟 ========== */
+const clock = document.getElementById('clock');
+function tick() {
+  clock.textContent = '⏰ ' + new Date().toLocaleString('zh-CN', {
+    year:'numeric', month:'2-digit', day:'2-digit',
+    hour:'2-digit', minute:'2-digit', second:'2-digit'
+  });
+}
+tick(); setInterval(tick, 1000);
+
+/* ========== 成就进度（与全站 fx.js 同步） ========== */
+function updateAch() {
+  var got = {};
+  try { got = JSON.parse(localStorage.getItem('fx_ach_v1') || '{}'); } catch (e) {}
+  var n = Object.keys(got).length;
+  var total = window.fxAchList ? Object.keys(window.fxAchList).length : 7;
+  var el = document.getElementById('ach-count');
+  if (el) el.textContent = '成就 ' + n + '/' + total;
+}
+updateAch();
+window.fxAchRefresh = updateAch;
 </script>
 <script src="/blog/assets/fx.js"></script>
 </body>
