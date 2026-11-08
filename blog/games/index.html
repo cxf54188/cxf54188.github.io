@@ -105,10 +105,9 @@ nav a:hover{color:#fff;border-color:var(--cyan);background:rgba(87,232,255,.08);
 <script>
 /* ============================================================
    游戏清单：以后增删游戏只改这个数组
-   FLAT = true  → blog/games/<id>.html        （平铺，推荐）
-   FLAT = false → blog/games/<id>/index.html  （每个游戏一个文件夹）
+   文件结构固定为：blog/games/<id>/index.html
+   链接写成目录形式，不带 .html —— 服务器自动找 index.html
    ============================================================ */
-const FLAT = true;
 
 const GAMES = [
   {
@@ -163,9 +162,8 @@ const GAMES = [
   }
 ];
 
-const urlOf = g => FLAT
-  ? '../games/' + g.id + '.html'
-  : '../games/' + g.id + '/index.html';
+/* 关键这一行：目录形式，无 .html */
+const urlOf = g => '../games/' + g.id + '/';
 
 document.getElementById('count').textContent =
   '共 ' + GAMES.length + ' 款 · 全部可直接在浏览器里玩';
