@@ -1203,7 +1203,7 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
 
       <div class="hz-hero">
         <div class="hz-kicker">CLASS-BOARD / DATA CONSOLE</div>
-        <h2 class="hz-title">一个班、<em id="hzTitleNum">十周 · 175 次记录</em></h2>
+        <h2 class="hz-title">一个班、<em id="hzTitleNum">十周 · 184 次记录</em></h2>
         <p class="hz-sub">数据来自班级逐日违纪流水，按周次、学科、星期几、小组、个人等维度整理成可交互的看板。姓名以 AES-256 加密，答对随机抽出的 3 道班级题后才会显示；从下面挑一个方向进去看。</p>
         <div class="hz-boot">
           <span>$ load events.log → <b>OK</b></span>
@@ -1304,13 +1304,13 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
       <div class="grid2b">
         <div class="card">
           <h3>前半程 vs 后半程</h3>
-          <div class="desc">前五周（W1–W5）与后五周（W6–W10）对比，看班级整体是在收敛还是扩散。</div>
+          <div class="desc" id="halfDesc">前半程与后半程对比，看班级整体是在收敛还是扩散。</div>
           <div class="statgrid" id="cmpStat"></div>
           <div id="cmpBars"></div>
         </div>
         <div class="card">
           <h3>本期重点关注</h3>
-          <div class="desc">累计次数最高的同学，以及第九–十周仍在违纪的同学。</div>
+          <div class="desc">累计次数最高的同学，以及最近两周仍在违纪的同学。</div>
           <div id="focus"></div>
         </div>
       </div>
@@ -1322,7 +1322,7 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
         </div>
         <div class="card">
           <h3>本周班级气象台</h3>
-          <div class="desc">按最近一周（第十周）的违纪强度换算成天气，方便直观感受班级纪律状况。</div>
+          <div class="desc">按最新一周的违纪强度换算成天气，方便直观感受班级纪律状况。</div>
           <div id="wxBox"></div>
         </div>
       </div>
@@ -1639,7 +1639,7 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
         <div class="desc">拖到任意一周，看看「截至那一周」的榜单长什么样 —— 谁早早领先，谁后半程才冒头。</div>
         <div class="ctrl">
           <input type="range" id="tmRange" min="1" max="10" value="10" style="width:min(420px,90%)">
-          <span id="tmLabel" style="font-size:13px;font-weight:700">截至第十周</span>
+          <span id="tmLabel" style="font-size:13px;font-weight:700">截至—</span>
           <button class="btn ghost" id="tmPlay">▶ 自动播放</button>
         </div>
         <div id="tmOut"></div>
@@ -1907,18 +1907,18 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
  * 课堂违纪互动看板 · 数据层
  * 需要更新数据时，只改这个文件：
  *   EVENTS —— 逐日违纪流水（周次、星期、日期、学科、姓名）
- *   RAW    —— 由 EVENTS 生成的 52 人周次(10) / 学科(13) / 星期(7) 矩阵
+ *   RAW    —— 由 EVENTS 生成的 52 人周次(11) / 学科(13) / 星期(7) 矩阵
  *   GROUPS —— 8 个小组名单
  *   QUIZ / QBANK —— 答题解锁的题目与姓名密文（不含答案）
  * 注意：本文件必须在 app.js 之前加载。
  * ================================================================ */
 /* ============ 基础数据 ============ */
-const WEEKS = ['第一周','第二周','第三周','第四周','第五周','第六周','第七周','第八周','第九周','第十周'];
-const SHORT = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10'];
+const WEEKS = ['第一周','第二周','第三周','第四周','第五周','第六周','第七周','第八周','第九周','第十周','第十一周'];
+const SHORT = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11'];
 const SUBS  = ['语文','数学','英语','物理','政治','历史','生物','地理','信息','音乐','美术','体育','不详'];
-const NW = 10, NS = 13;
-const L = 9, L2 = 8, L3 = 7;   /* 最后一周 / 倒数第二 / 倒数第三 */
-const HALF = 5;                 /* 前半程 W1–W5，后半程 W6–W10 */
+const NW = 11, NS = 13;
+const L = 10, L2 = 9, L3 = 8;  /* 最后一周 / 倒数第二 / 倒数第三 */
+const HALF = 5;                 /* 前半程 W1–W5，后半程 W6–W11（11 周按 floor 切分） */
 
 /* 大九班分组（全班 52 人，8 个小组） */
 const DOWCN = ['周一','周二','周三','周四','周五','周六','周日'];
@@ -2009,164 +2009,167 @@ const EVENTS = [
   [10,2,'11.4',5,['陈BS']],
   [10,4,'11.6',2,['张YH']],
   [10,4,'11.6',0,['敖JS','王ZY','李PL']],
-  [10,4,'11.6',7,['陈BS']]
+  [10,4,'11.6',7,['陈BS']],
+  [11,2,'11.11',1,['江KY','敖JS','赵RR','何YM','陈YM']],
+  [11,3,'11.12',0,['敖JS']],
+  [11,4,'11.13',7,['陈BS','艾XY','敖JS']]
 ];
 
 const RAW = [
-  ["",[1,2,2,4,0,1,2,3,0,1],
-   [1,2,0,3,3,1,0,1,0,3,1,0,1],
-   [5,3,2,3,1,0,2]],
-  ["",[0,0,0,2,0,0,0,0,1,1],
-   [1,0,0,0,1,0,1,1,0,0,0,0,0],
-   [1,1,0,0,1,0,1]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[1,2,2,4,0,1,2,3,0,1,1],
+   [1,2,0,3,3,1,0,2,0,3,1,0,1],
+   [5,3,2,3,2,0,2]],
+  ["",[0,0,0,2,0,0,0,0,1,1,3],
+   [2,1,0,0,1,0,1,2,0,0,0,0,0],
+   [1,1,1,1,2,0,1]],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,2,0,0,0,1,0,1,2],
-   [0,0,0,0,0,2,0,1,0,1,2,0,0],
-   [3,0,1,1,1,0,0]],
-  ["",[0,0,0,0,1,0,0,0,0,0],
+  ["",[0,0,2,0,0,0,1,0,1,2,1],
+   [0,0,0,0,0,2,0,2,0,1,2,0,0],
+   [3,0,1,1,2,0,0]],
+  ["",[0,0,0,0,1,0,0,0,0,0,0],
    [0,0,0,0,1,0,0,0,0,0,0,0,0],
    [0,1,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,0,1,0,0,0,1,0,1],
-   [0,1,0,0,0,0,0,1,0,0,1,0,0],
-   [2,1,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,1,0,0,0,1,0,1,1],
+   [0,2,0,0,0,0,0,1,0,0,1,0,0],
+   [2,1,1,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[1,0,0,0,1,0,0,0,0,1],
+  ["",[1,0,0,0,1,0,0,0,0,1,0],
    [1,1,0,0,0,0,0,1,0,0,0,0,0],
    [1,1,0,1,0,0,0]],
-  ["",[0,0,0,2,2,1,1,0,0,0],
+  ["",[0,0,0,2,2,1,1,0,0,0,0],
    [0,1,0,3,0,0,1,1,0,0,0,0,0],
    [3,1,0,0,0,1,1]],
-  ["",[2,2,1,4,1,1,0,0,0,0],
+  ["",[2,2,1,4,1,1,0,0,0,0,0],
    [1,2,0,1,4,0,0,1,1,0,1,0,0],
    [2,3,0,2,2,1,1]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,1,0,0,0,0,0,0,0,0],
+  ["",[0,1,0,0,0,0,0,0,0,0,0],
    [0,0,0,1,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,1,0,0]],
-  ["",[1,2,2,5,1,1,2,0,0,1],
-   [0,3,0,1,4,0,1,3,0,2,1,0,0],
-   [2,6,0,2,3,0,2]],
-  ["",[0,0,3,2,1,0,2,4,0,0],
+  ["",[1,2,2,5,1,1,2,0,0,1,1],
+   [0,4,0,1,4,0,1,3,0,2,1,0,0],
+   [2,6,1,2,3,0,2]],
+  ["",[0,0,3,2,1,0,2,4,0,0,0],
    [2,1,0,2,2,1,0,2,0,1,1,0,0],
    [2,5,2,1,0,0,2]],
-  ["",[0,0,0,0,0,0,0,0,1,0],
+  ["",[0,0,0,0,0,0,0,0,1,0,0],
    [0,1,0,0,0,0,0,0,0,0,0,0,0],
    [0,1,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,0,1,0,0,0,0,0,0],
+  ["",[0,0,0,1,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,1,0,0,0,0,0,0],
    [1,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,1,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,1],
+   [0,1,0,0,0,0,0,0,0,0,0,0,0],
+   [0,0,1,0,0,0,0]],
+  ["",[0,0,0,0,0,0,0,1,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,1,0,0],
    [1,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,1,0,0,1,0,0,0,1],
+  ["",[0,0,1,0,0,1,0,0,0,1,0],
    [1,0,0,0,0,0,0,0,1,1,0,0,0],
    [0,0,0,2,1,0,0]],
-  ["",[1,1,1,2,0,0,2,1,0,0],
+  ["",[1,1,1,2,0,0,2,1,0,0,0],
    [1,3,0,0,0,0,0,0,0,2,1,0,1],
    [1,2,1,3,0,0,1]],
-  ["",[0,0,0,0,0,0,1,0,0,0],
+  ["",[0,0,0,0,0,0,1,0,0,0,0],
    [0,0,0,1,0,0,0,0,0,0,0,0,0],
    [1,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[1,0,0,1,0,1,1,0,1,0],
+  ["",[1,0,0,1,0,1,1,0,1,0,0],
    [0,2,0,0,1,0,1,1,0,0,0,0,0],
    [1,2,0,0,2,0,0]],
-  ["",[0,1,1,2,0,0,0,1,0,0],
+  ["",[0,1,1,2,0,0,0,1,0,0,0],
    [0,1,0,0,0,0,0,1,0,2,0,0,1],
    [0,0,1,3,0,0,1]],
-  ["",[0,0,1,1,0,0,0,1,0,0],
+  ["",[0,0,1,1,0,0,0,1,0,0,0],
    [0,1,0,1,0,0,0,1,0,0,0,0,0],
    [0,2,0,0,0,0,1]],
-  ["",[0,0,3,5,1,0,0,2,2,0],
+  ["",[0,0,3,5,1,0,0,2,2,0,0],
    [0,2,0,1,4,0,0,1,0,2,3,0,0],
    [3,4,0,3,2,0,1]],
-  ["",[0,0,1,3,0,0,0,2,4,0],
+  ["",[0,0,1,3,0,0,0,2,4,0,0],
    [1,3,1,0,1,0,1,1,0,2,0,0,0],
    [3,2,1,2,1,0,1]],
-  ["",[0,0,0,0,0,0,0,0,2,0],
+  ["",[0,0,0,0,0,0,0,0,2,0,0],
    [0,0,0,0,0,1,0,1,0,0,0,0,0],
    [1,0,0,0,1,0,0]],
-  ["",[1,0,0,0,1,0,0,0,0,0],
+  ["",[1,0,0,0,1,0,0,0,0,0,0],
    [0,0,0,0,2,0,0,0,0,0,0,0,0],
    [0,1,0,0,1,0,0]],
-  ["",[0,0,0,0,0,0,0,0,1,0],
+  ["",[0,0,0,0,0,0,0,0,1,0,0],
    [0,0,0,0,0,0,0,0,0,0,1,0,0],
    [1,0,0,0,0,0,0]],
-  ["",[0,0,0,2,0,0,1,2,0,0],
+  ["",[0,0,0,2,0,0,1,2,0,0,0],
    [1,1,0,0,1,0,0,1,0,1,0,0,0],
    [2,1,0,1,0,0,1]],
-  ["",[0,0,0,0,0,2,0,0,0,0],
+  ["",[0,0,0,0,0,2,0,0,0,0,0],
    [0,1,0,0,0,0,0,0,0,1,0,0,0],
    [0,0,0,2,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,1],
+  ["",[0,0,0,0,0,0,0,0,0,1,0],
    [1,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,1,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,0,1,1,0,0,1,1,0],
+  ["",[0,0,0,1,1,0,0,1,1,0,0],
    [0,0,0,0,2,0,0,1,0,0,1,0,0],
    [1,1,0,0,2,0,0]],
-  ["",[0,0,0,1,0,0,0,0,0,0],
+  ["",[0,0,0,1,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,1,0,0,0,0,0,0],
    [1,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0],
+  ["",[0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0]],
-  ["",[0,0,0,1,0,0,0,0,0,1],
+  ["",[0,0,0,1,0,0,0,0,0,1,0],
    [0,1,1,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,1,0,1]],
-  ["",[1,0,0,0,0,0,0,0,0,0],
+  ["",[1,0,0,0,0,0,0,0,0,0,0],
    [0,0,0,0,0,0,0,0,1,0,0,0,0],
    [0,0,0,1,0,0,0]],
-  ["",[0,1,2,0,0,2,1,2,3,0],
+  ["",[0,1,2,0,0,2,1,2,3,0,0],
    [0,0,1,1,2,1,1,1,1,3,0,0,0],
    [2,2,1,4,2,0,0]],
-  ["",[0,0,2,0,1,0,1,1,1,0],
-   [0,0,0,0,3,0,0,1,0,2,0,0,0],
-   [0,3,0,2,1,0,0]],
-  ["",[0,1,1,1,0,0,0,3,0,0],
+  ["",[0,0,2,0,1,0,1,1,1,0,1],
+   [0,1,0,0,3,0,0,1,0,2,0,0,0],
+   [0,3,1,2,1,0,0]],
+  ["",[0,1,1,1,0,0,0,3,0,0,0],
    [1,0,0,1,0,0,0,1,0,2,0,0,1],
    [2,0,1,2,0,0,1]],
-  ["",[0,1,0,0,0,0,1,0,0,0],
+  ["",[0,1,0,0,0,0,1,0,0,0,0],
    [0,0,0,0,1,0,0,0,0,0,0,0,1],
    [0,1,1,0,0,0,0]]
 ];
@@ -2733,16 +2736,16 @@ function renderKpis(){
   var items = [
     ['累计违纪次数', TOTAL+' 次', RANK.length+' 名同学合计，'+WEEKS[PEAK]+'最高', 'var(--brand)'],
     ['违纪人数占比', RANK.length+' / '+state.classSize, '覆盖率 '+Math.round(RANK.length/state.classSize*100)+'%', 'var(--red)'],
-    ['零违纪人数', zeroCount()+' 人', '十周内无违纪记录', 'var(--green)'],
+    ['零违纪人数', zeroCount()+' 人', ''+WKT+'内无违纪记录', 'var(--green)'],
     ['全班人均', perClass+' 次', '违纪同学人均 '+perBad+' 次', 'var(--orange)'],
-    ['后半程变化', (d>0?'+':'')+d+' 次', '较前五周（W1–W'+HALF+'）'+(d>0?'上升':'下降')+' '+pct+'%', d>0?'var(--red)':'var(--green)'],
+    ['后半程变化', (d>0?'+':'')+d+' 次', '较前半程（W1–W'+HALF+'）'+(d>0?'上升':'下降')+' '+pct+'%', d>0?'var(--red)':'var(--green)'],
     ['最危险学科', SUBS[topSubIdx], subTotals[topSubIdx]+' 次 / '+subPeople[topSubIdx]+' 人', 'var(--brand2)']
   ];
   $('kpis').innerHTML = items.map(function(it){
     return '<div class="kpi"><div class="bar" style="background:'+it[3]+'"></div>'+
       '<div class="k-label">'+it[0]+'</div><div class="k-val">'+it[1]+'</div><div class="k-sub">'+it[2]+'</div></div>';
   }).join('');
-  $('b1').textContent = '统计周期：十周（W1–W'+NW+'）';
+  $('b1').textContent = '统计周期：'+WKT+'（W1–W'+NW+'）';
   $('b2').textContent = '违纪 '+RANK.length+' 人 / 班级 '+state.classSize+' 人';
   $('b3').textContent = '累计 '+TOTAL+' 次';
   $('b4').textContent = '维度：周次 × 学科';
@@ -2765,6 +2768,12 @@ function renderKpis(){
   hzSet('hzGroups', GROUPS.length);
   hzSet('hzPeak', WEEKS[PEAK]);
   hzSet('hzTopSub', SUBS[topSubIdx]);
+  var hd = $('halfDesc');
+  if(hd !== FAKE){
+    var cn = ['零','一','二','三','四','五','六','七','八','九','十','十一','十二'];
+    var c = function(x){ return cn[x] || String(x); };
+    hd.textContent = '前'+c(HALF)+'周（W1–W'+HALF+'）与后'+c(NW-HALF)+'周（W'+(HALF+1)+'–W'+NW+'）对比，看班级整体是在收敛还是扩散。';
+  }
 }
 
 /* ============ 每周柱状 + 折线 ============ */
@@ -2877,7 +2886,7 @@ function renderFocus(){
                 .sort(function(a,b){return (b.w[L]*2+b.w[L2])-(a.w[L]*2+a.w[L2]);});
   var html = '<div style="font-size:12.5px;color:var(--muted);margin-bottom:8px">累计 Top 5</div><div class="chips">';
   top.forEach(function(s){ html += '<span class="pill red" data-n="'+esc(s.name)+'">'+esc(s.name)+' · '+s.total+' 次</span>'; });
-  html += '</div><div style="font-size:12.5px;color:var(--muted);margin:16px 0 8px">第九–十周仍在违纪（'+active.length+' 人）</div><div class="chips">';
+  html += '</div><div style="font-size:12.5px;color:var(--muted);margin:16px 0 8px">'+SHORT[L2]+'–'+SHORT[L]+'仍在违纪（'+active.length+' 人）</div><div class="chips">';
   active.forEach(function(s){ html += '<span class="pill" data-n="'+esc(s.name)+'">'+esc(s.name)+' · '+SHORT[L2]+' '+s.w[L2]+' / '+SHORT[L]+' '+s.w[L]+'</span>'; });
   html += '</div>';
   var el = $('focus');
@@ -2900,7 +2909,7 @@ function renderWeather(){
   var w = map.filter(function(m){return v<=m.max;})[0];
   var cmp = v - weekTotals[L2];
   var html = '<div class="wx"><div class="em">'+w.em+'</div><div class="tx"><b>本周天气：'+w.t+'（'+v+' 次 / '+p+' 人）</b>'+
-    '<div>'+w.d+'<br>较上周 '+(cmp>0?'增加 '+cmp+' 次':(cmp<0?'减少 '+(-cmp)+' 次':'持平'))+' · 十周均值 '+(TOTAL/NW).toFixed(1)+' 次</div></div></div>';
+    '<div>'+w.d+'<br>较上周 '+(cmp>0?'增加 '+cmp+' 次':(cmp<0?'减少 '+(-cmp)+' 次':'持平'))+' · '+WKT+'均值 '+(TOTAL/NW).toFixed(1)+' 次</div></div></div>';
   $('wxBox').innerHTML = html;
 }
 
@@ -2964,7 +2973,7 @@ function renderWeek(){
   if(!rows.length){ html += '<div class="desc">该周无违纪记录。</div>'; }
   else{
     html += '<table><thead><tr><th style="width:52px">#</th><th>姓名</th><th style="width:80px" class="num">本周</th>'+
-            '<th style="width:80px" class="num">累计</th><th style="width:150px">十周分布</th></tr></thead><tbody>';
+            '<th style="width:80px" class="num">累计</th><th style="width:150px">'+WKT+'分布</th></tr></thead><tbody>';
     rows.forEach(function(s,idx){
       var mini = s.w.map(function(v,j){
         return '<i title="'+SHORT[j]+'" style="display:inline-block;width:13px;height:13px;margin-right:2px;border-radius:3px;background:'+
@@ -3073,7 +3082,7 @@ function patternHtml(){
     '已收敛型': BAD.filter(function(s){return s.first>0 && (sumW(s.w,HALF,HALF+2)===0);})
   };
   var tips = {
-    '持续型':'十周中有 4 周以上违纪，习惯性问题，需长期跟踪',
+    '持续型':''+WKT+'中有 4 周以上违纪，习惯性问题，需长期跟踪',
     '集中爆发型':'次数集中在 1–2 周内，多为偶发冲突或特定事件',
     '新增/复发型':'前期有过、近期又出现，需要及时提醒',
     '已收敛型':'第四周起已归零，干预见效或已自行改正'
@@ -3129,7 +3138,7 @@ function openSheet(name){
   $('sheet').innerHTML =
     '<button class="close" id="cls">✕</button>'+
     '<h2>'+esc(s.name)+'<span style="font-size:13px;color:var(--muted);font-weight:600;margin-left:10px">班级第 '+s.rank+' / '+RANK.length+' 位</span></h2>'+
-    '<div class="sub">十周累计 <b>'+s.total+'</b> 次 · 活跃 '+s.spread+' / '+NW+' 周 · 单周最高 '+s.maxw+' 次 · 涉及 '+s.subSpread+' 门学科</div>'+
+    '<div class="sub">'+WKT+'累计 <b>'+s.total+'</b> 次 · 活跃 '+s.spread+' / '+NW+' 周 · 单周最高 '+s.maxw+' 次 · 涉及 '+s.subSpread+' 门学科</div>'+
     '<div style="margin-top:10px">'+tags.map(function(t){return '<span class="tag" style="background:'+t[1]+';color:'+t[2]+'">'+t[0]+'</span>';}).join('')+'</div>'+
     '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;margin-top:12px">'+g+'</svg>'+
     '<div class="statgrid">'+
@@ -3150,15 +3159,15 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeShee
 /* ============ 徽章 ============ */
 function badgesOf(s){
   var b = [];
-  if(s.spread===NW) b.push({t:'十周全勤',d:'十周全部上榜，一次没落下'});
-  else if(s.spread>=5) b.push({t:'高频常客',d:'十周里 '+s.spread+' 周有记录'});
+  if(s.spread===NW) b.push({t:''+WKT+'全勤',d:''+WKT+'全部上榜，一次没落下'});
+  else if(s.spread>=5) b.push({t:'高频常客',d:''+WKT+'里 '+s.spread+' 周有记录'});
   if(s.maxw>=4) b.push({t:'单周四杀',d:'单周最高 '+s.maxw+' 次'});
   if(s.streak>=4) b.push({t:'连续 '+s.streak+' 连',d:'连续 '+s.streak+' 周违纪，习惯性强'});
   if(s.first>0 && s.last===0) b.push({t:'浪子回头',d:'后半程完全归零'});
   if(s.first===0 && s.last>0) b.push({t:'后半程新秀',d:'前半程干净，后半程开始出现'});
   if(s.delta<=-3) b.push({t:'急速刹车',d:'后半程减少 '+(-s.delta)+' 次'});
   if(s.delta>=3) b.push({t:'油门踩到底',d:'后半程增加 '+s.delta+' 次'});
-  if(s.total===1) b.push({t:'差一点就完美',d:'十周只出现过 1 次'});
+  if(s.total===1) b.push({t:'差一点就完美',d:''+WKT+'只出现过 1 次'});
   if(s.w[0]>0 && s.total===s.w[0] && s.total>0) b.push({t:'开局即巅峰',d:'所有违纪都发生在第一周'});
   if(s.w[L]>0 && s.w[L2]===0) b.push({t:'突然袭击',d:WEEKS[L2]+'安静，'+WEEKS[L]+'又出现'});
   if(s.total>=9) b.push({t:'榜单常青树',d:'累计 '+s.total+' 次，位居前列'});
@@ -3223,11 +3232,11 @@ function buildAwards(){
   }
   var a;
   a = top1(BAD, function(s){return s.total;});
-  if(a) A.push({ico:'👑', ttl:'终身成就奖', who:a.name, why:'十周累计 '+a.total+' 次，全班的「天花板」', rib:'累计最高', bg:'linear-gradient(135deg,#f43f5e,#f97316)'});
+  if(a) A.push({ico:'👑', ttl:'终身成就奖', who:a.name, why:''+WKT+'累计 '+a.total+' 次，全班的「天花板」', rib:'累计最高', bg:'linear-gradient(135deg,#f43f5e,#f97316)'});
   a = top1(BAD, function(s){return s.maxw;});
   if(a) A.push({ico:'💥', ttl:'单周爆发奖', who:a.name, why:'单周最高 '+a.maxw+' 次，'+WEEKS[a.w.indexOf(a.maxw)]+'火力全开', rib:'单周峰值', bg:'linear-gradient(135deg,#dc2626,#a855f7)'});
   a = top1(BAD, function(s){return s.spread;});
-  if(a) A.push({ico:'📆', ttl:'全勤上榜奖', who:a.name, why:'十周里 '+a.spread+' 周都有记录，稳定得让人心疼', rib:'活跃周数', bg:'linear-gradient(135deg,#7c3aed,#4f46e5)'});
+  if(a) A.push({ico:'📆', ttl:'全勤上榜奖', who:a.name, why:''+WKT+'里 '+a.spread+' 周都有记录，稳定得让人心疼', rib:'活跃周数', bg:'linear-gradient(135deg,#7c3aed,#4f46e5)'});
   a = top1(BAD, function(s){return s.subSpread;});
   if(a) A.push({ico:'🎨', ttl:'全面开花奖', who:a.name, why:'横跨 '+a.subSpread+' 门学科，主战场是'+a.topSub, rib:'学科广度', bg:'linear-gradient(135deg,#db2777,#f59e0b)'});
   a = top1(BAD.filter(function(s){return s.first>0 && s.last===0;}), function(s){return s.first;});
@@ -3239,7 +3248,7 @@ function buildAwards(){
   a = top1(BAD.filter(function(s){return s.w[L]>0;}), function(s){return s.w[L];});
   if(a) A.push({ico:'⚡', ttl:'闪电侠奖', who:a.name, why:WEEKS[L]+'就有 '+a.w[L]+' 次，收尾还在冲', rib:'最近一周', bg:'linear-gradient(135deg,#0ea5e9,#6366f1)'});
   var one = BAD.filter(function(s){return s.total===1;});
-  if(one.length) A.push({ico:'🎯', ttl:'差一点就完美奖', who:one[0].name+' 等 '+one.length+' 人', why:'十周只出现过 1 次，四舍五入就是没犯过', rib:'最轻微', bg:'linear-gradient(135deg,#64748b,#94a3b8)'});
+  if(one.length) A.push({ico:'🎯', ttl:'差一点就完美奖', who:one[0].name+' 等 '+one.length+' 人', why:''+WKT+'只出现过 1 次，四舍五入就是没犯过', rib:'最轻微', bg:'linear-gradient(135deg,#64748b,#94a3b8)'});
   a = top1(BAD.filter(function(s){return s.first===0 && s.last>0;}), function(s){return s.last;});
   if(a) A.push({ico:'🌱', ttl:'后半程新秀奖', who:a.name, why:'前半程零记录，后五周出现 '+a.last+' 次，需要及时提醒', rib:'新出现', bg:'linear-gradient(135deg,#db2777,#f59e0b)'});
   a = top1(BAD.filter(function(s){return s.streak>=3;}), function(s){return s.streak;});
@@ -3254,8 +3263,8 @@ function buildAwards(){
   a = top1(BAD.filter(function(s){return s.sub[12]>0;}), function(s){return s.sub[12];});
   if(a) A.push({ico:'❓', ttl:'神秘失踪奖', who:a.name, why:'有 '+a.sub[12]+' 次违纪连科目都没记清', rib:'不详', bg:'linear-gradient(135deg,#475569,#94a3b8)'});
   var zc = zeroCount();
-  A.push({ico:'🛡️', ttl:'集体免疫奖', who:zc+' 位零违纪同学', why:'十周一次没上榜，班级的稳定器', rib:'零违纪', bg:'linear-gradient(135deg,#059669,#0d9488)'});
-  A.push({ico:'🌋', ttl:'最疯狂一周', who:WEEKS[PEAK], why:'全班 '+weekTotals[PEAK]+' 次、涉及 '+weekPeople[PEAK]+' 人，占十周总量 '+Math.round(weekTotals[PEAK]/(TOTAL||1)*100)+'%', rib:'峰值周', bg:'linear-gradient(135deg,#7c2d12,#dc2626)'});
+  A.push({ico:'🛡️', ttl:'集体免疫奖', who:zc+' 位零违纪同学', why:''+WKT+'一次没上榜，班级的稳定器', rib:'零违纪', bg:'linear-gradient(135deg,#059669,#0d9488)'});
+  A.push({ico:'🌋', ttl:'最疯狂一周', who:WEEKS[PEAK], why:'全班 '+weekTotals[PEAK]+' 次、涉及 '+weekPeople[PEAK]+' 人，占'+WKT+'总量 '+Math.round(weekTotals[PEAK]/(TOTAL||1)*100)+'%', rib:'峰值周', bg:'linear-gradient(135deg,#7c2d12,#dc2626)'});
   var si = subTotals.indexOf(Math.max.apply(null,subTotals));
   A.push({ico:'📚', ttl:'最难hold住的课', who:SUBS[si], why:'全班 '+subTotals[si]+' 次、'+subPeople[si]+' 人在这一科翻过车', rib:'学科重灾区', bg:'linear-gradient(135deg,#4338ca,#7c3aed)'});
   return A;
@@ -3386,7 +3395,7 @@ function spin(){
       focus:'本周重点关注对象',
       lucky:'今日幸运儿，奖励一次提问机会'
     }[state.wheelMode];
-    var extraTxt = s ? '<br><span style="font-size:12.5px;color:var(--muted)">十周累计 '+s.total+' 次 · 最近一周 '+s.w[L]+' 次 · 主战场 '+s.topSub+'</span>' : '';
+    var extraTxt = s ? '<br><span style="font-size:12.5px;color:var(--muted)">'+WKT+'累计 '+s.total+' 次 · 最近一周 '+s.w[L]+' 次 · 主战场 '+s.topSub+'</span>' : '';
     var el = $('wheelResult');
     el.innerHTML = modeTxt+'<b>🎉 '+esc(winner)+'</b><span>'+(new Date()).toLocaleString('zh-CN')+'</span>'+extraTxt;
     el.classList.add('on');
@@ -3593,7 +3602,7 @@ function renderGrp(){
       return '<div class="grpitem" data-nm="'+esc(s.name)+'">'+
         '<b>'+esc(s.name)+'</b>'+
         '<span>'+(s.total>0 ? s.total+' 次 · '+s.topSub : '零违纪 ✓')+'</span>'+
-        '<span class="mini">'+s.w.map(function(v,i){ return v? ('W'+(i+1)+':'+v) : ''; }).filter(Boolean).join(' ') + (s.total? '' : '十周全勤')+'</span>'+
+        '<span class="mini">'+s.w.map(function(v,i){ return v? ('W'+(i+1)+':'+v) : ''; }).filter(Boolean).join(' ') + (s.total? '' : ''+WKT+'全勤')+'</span>'+
       '</div>';
     }).join('') + '</div>';
 }
@@ -3859,9 +3868,12 @@ var XPID   = {dow:'xDow', week:'xWeek', sub:'xSub', grp:'xGrp', person:'xPerson'
 var XSTATE = {};
 
 function xWeeksTxt(){
-  var cn = ['零','一','二','三','四','五','六','七','八','九','十'];
-  return (WEEKS.length <= 10 ? cn[WEEKS.length] : WEEKS.length) + '周';
+  var cn = ['零','一','二','三','四','五','六','七','八','九','十',
+            '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十'];
+  return (WEEKS.length <= 20 ? cn[WEEKS.length] : WEEKS.length) + '周';
 }
+/* 全局周数文案：所有「周数」字样的中文文案统一从这里取，加周时只改 data.js 即可 */
+var WKT = xWeeksTxt();
 /* 每条「人次」记录的五个维度坐标（EVENTS 里的姓名始终是脱敏明文） */
 function xRecords(){
   var out = [];
@@ -4012,7 +4024,7 @@ function renderXPerson(){ renderCross('person'); }
 /* ================================================================
  * 通用深度剖析引擎
  * 五个维度（星期几 / 周次 / 学科 / 小组 / 个人）各自选一个具体值，
- * 输出统一结构：概览 → 与其余 4 个维度的热力交叉表 → 十周走势 →
+ * 输出统一结构：概览 → 与其余 4 个维度的热力交叉表 → 周数走势 →
  *              逐日流水 → 涉及同学。
  * 「个人」额外并入：本人首次/末次与连续记录、全班首次末次表、
  *              连续上榜追踪、形态分类（原 3 个独立视角的内容）。
@@ -4177,11 +4189,11 @@ function deepHtml(key, idx){
   others.forEach(function(k){ h += deepCross(key, idx, k); });
   h += '</div>';
 
-  /* 十周走势（与全班对比） */
+  /* 周数走势（与全班对比） */
   var bw = [], i;
   for(i=0;i<NW;i++) bw.push(0);
   recs.forEach(function(r){ if(r.wk>=0 && r.wk<NW) bw[r.wk]++; });
-  h += '<div class="dsec">📈 十周走势（紫＝'+esc(label)+'，灰＝全班）</div>' +
+  h += '<div class="dsec">📈 '+WKT+'走势（紫＝'+esc(label)+'，灰＝全班）</div>' +
     anLines([
       {name:esc(label), color:'#6366f1', data:bw},
       {name:'全班', color:'#b8bfd0', data:weekTotals.slice()}
@@ -4201,7 +4213,7 @@ function deepHtml(key, idx){
     dm[e.date].subs[SUBS[e.sub]] = (dm[e.date].subs[SUBS[e.sub]]||0) + hit.length;
   });
   h += '<div class="dsec">📆 逐日流水（共 '+order.length+' 个违纪日）</div>';
-  if(!order.length) h += '<div class="desc">这一项十周内没有任何记录 🎉</div>';
+  if(!order.length) h += '<div class="desc">这一项'+WKT+'内没有任何记录 🎉</div>';
   else{
     h += '<div class="dlist">';
     order.slice(-14).forEach(function(d){
@@ -4753,7 +4765,7 @@ function pvBuild(dim){
     var halfA=weekTotals.slice(0,HALF).reduce(function(a,b){return a+b;},0);
     var halfB=weekTotals.slice(HALF).reduce(function(a,b){return a+b;},0);
     notes=[
-      '<b>'+WEEKS[pk2]+'</b> 是峰值周（'+weekTotals[pk2]+' 次），占十周总量的 '+Math.round(weekTotals[pk2]/TOTAL*100)+'%。',
+      '<b>'+WEEKS[pk2]+'</b> 是峰值周（'+weekTotals[pk2]+' 次），占'+WKT+'总量的 '+Math.round(weekTotals[pk2]/TOTAL*100)+'%。',
       '前五周 '+halfA+' 次、后五周 '+halfB+' 次，'+(halfB<halfA?'整体收敛了 '+(halfA-halfB)+' 次':'反而回升了 '+(halfB-halfA)+' 次')+'。',
       '最近一周（'+WEEKS[NW-1]+'）'+weekTotals[NW-1]+' 次，涉及 '+weekPeople[NW-1]+' 人。'
     ];
@@ -4801,7 +4813,7 @@ function pvBuild(dim){
     var zero=SUBS.filter(function(s,j){return subTotals[j]===0;});
     notes=[
       '重灾区前三：<b>'+top3.map(function(x){return x.s+' '+x.v+' 次';}).join('、')+'</b>，合计占 '+Math.round(top3.reduce(function(a,x){return a+x.v;},0)/TOTAL*100)+'%。',
-      zero.length? ('<b>'+zero.join('、')+'</b> 十周零违纪。') : '十三门课均有记录。',
+      zero.length? ('<b>'+zero.join('、')+'</b> '+WKT+'零违纪。') : '十三门课均有记录。',
       '零记录学科：'+(zero.length? '<b>'+zero.join('、')+'</b>' : '无')+'；其余 '+(NS-zero.length)+' 门课合计 '+TOTAL+' 次，其中出现人数最多的是 <b>'+
         (function(){ var x=SUBS.map(function(s,j){return {s:s,v:subPeople[j]};}).sort(function(a,b){return b.v-a.v;})[0]; return x.s+'（'+x.v+' 人）'; })()+'。'
     ];
@@ -4852,7 +4864,7 @@ function pvBuild(dim){
     var srt=rows.slice().sort(function(a,b){return b.avg-a.avg;});
     notes=[
       '按人均看，<b>'+pvLink('grp',srt[0].label.replace(/第|组/g,''),srt[0].label)+'</b> 最高（'+srt[0].avg+' 次/人），<b>'+srt[srt.length-1].label+'</b> 最低（'+srt[srt.length-1].avg+' 次/人）。',
-      '零违纪人数最多的是 <b>'+rows.slice().sort(function(a,b){return b.zero-a.zero;})[0].label+'</b>，该组有 '+rows.slice().sort(function(a,b){return b.zero-a.zero;})[0].zero+' 人十周全勤。',
+      '零违纪人数最多的是 <b>'+rows.slice().sort(function(a,b){return b.zero-a.zero;})[0].label+'</b>，该组有 '+rows.slice().sort(function(a,b){return b.zero-a.zero;})[0].zero+' 人'+WKT+'全勤。',
       '8 组合计 '+TOTAL+' 次，与全班合计完全吻合；全班 52 人均已编入小组。'
     ];
   }
@@ -4888,12 +4900,12 @@ function pvBuild(dim){
     });
     var zero=S.length-BAD.length;
     totals={label:'合计（'+BAD.length+' 人）',grp:'—',n:TOTAL,rank:'—',weeks:NW,topDow:'—',
-      first:'2026.9.3',last:'2026.11.6',topSub:'—',subSpan:subTotals.filter(function(v){return v>0;}).length,
+      first:'2026.'+EV[0].date,last:'2026.'+EV[EV.length-1].date,topSub:'—',subSpan:subTotals.filter(function(v){return v>0;}).length,
       streak:'—',delta:weekTotals.slice(HALF).reduce(function(a,b){return a+b;},0)-weekTotals.slice(0,HALF).reduce(function(a,b){return a+b;},0)};
     var late=BAD.filter(function(s){return s.first===0&&s.last>0;}).length;
     var quiet=BAD.filter(function(s){return s.last===0&&s.first>0;}).length;
     notes=[
-      '全班 52 人中 <b>'+BAD.length+'</b> 人有记录、<b>'+zero+'</b> 人十周零违纪（占 '+Math.round(zero/S.length*100)+'%）。',
+      '全班 '+S.length+' 人中 <b>'+BAD.length+'</b> 人有记录、<b>'+zero+'</b> 人'+WKT+'零违纪（占 '+Math.round(zero/S.length*100)+'%）。',
       '榜首 <b>'+pvLink('person',RANK[0].name,RANK[0].name)+'</b> '+RANK[0].total+' 次，涉及 '+RANK[0].subSpread+' 门学科、活跃 '+RANK[0].spread+' 周。',
       '后半程新出现 '+late+' 人、后半程完全归零 '+quiet+' 人。'
     ];
@@ -5221,7 +5233,7 @@ function renderADow(){
   var h = '<div class="statgrid">'+
     '<div class="stat"><b style="color:var(--red)">'+DOWCN[worst]+'</b><span>最危险的一天 · '+mx+' 次</span></div>'+
     '<div class="stat"><b style="color:var(--green)">'+DOWCN[bestI]+'</b><span>最安静的一天 · '+best+' 次</span></div>'+
-    '<div class="stat"><b>'+tot+'</b><span>十周总次数</span></div>'+
+    '<div class="stat"><b>'+tot+'</b><span>'+WKT+'总次数</span></div>'+
     '</div>';
   h += '<div style="margin-top:10px">';
   for(var i=0;i<7;i++){
@@ -5637,7 +5649,7 @@ function renderTimeMachine(){
     for(var i=0;i<upto;i++) t += s.w[i];
     return {name:s.name, t:t, cur:s.w[upto-1]};
   }).filter(function(x){return x.t>0;}).sort(function(a,b){return b.t-a.t;});
-  /* 固定基准 = 全班十周累计最高次数，拖到早期时柱子自然变短 */
+  /* 固定基准 = 全班'+WKT+'累计最高次数，拖到早期时柱子自然变短 */
   var mx = Math.max.apply(null, S.map(function(s){return s.total;}).concat([1]));
   var html = '<div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">截至 W' + upto + '：' + arr.length + ' 人有违纪记录，累计 ' +
     arr.reduce(function(a,b){return a+b.t;},0) + ' 次</div>';
@@ -5672,12 +5684,12 @@ $('tmPlay').addEventListener('click', function(){
 
 /* ===== 趣味实验室：段位赛 ===== */
 var DW = [
-  {t:'纪律王者',  min:0,  max:0,      c:'#f59e0b', e:'👑', d:'十周零违纪，全班最强'},
+  {t:'纪律王者',  min:0,  max:0,      c:'#f59e0b', e:'👑', d:''+WKT+'零违纪，全班最强'},
   {t:'秩序钻石',  min:1,  max:2,      c:'#0ea5e9', e:'💎', d:'偶有闪失，整体很稳'},
   {t:'规矩铂金',  min:3,  max:5,      c:'#10b981', e:'🛡️', d:'需要偶尔提醒一下'},
   {t:'活跃黄金',  min:6,  max:8,      c:'#eab308', e:'🥇', d:'已经进入观察名单'},
   {t:'重点白银',  min:9,  max:12,     c:'#94a3b8', e:'🥈', d:'频次偏高，得盯一盯'},
-  {t:'传说青铜',  min:13, max:9999,   c:'#b45309', e:'🏺', d:'十周累计上两位数，传说级'}
+  {t:'传说青铜',  min:13, max:9999,   c:'#b45309', e:'🏺', d:''+WKT+'累计上两位数，传说级'}
 ];
 function dwOf(n){
   var t = (typeof n === 'number') ? n : 0;
@@ -5699,7 +5711,7 @@ function renderDuanwei(){
   var list = '<div class="dwlist">' + S.slice().sort(function(a,b){return a.total-b.total;}).map(function(s){
     var d = dwOf(s.total);
     return '<div class="dwcard" data-n="' + esc(s.name) + '"><b>' + esc(s.name) + '</b>' +
-      '<span>' + s.total + ' 次 · ' + (s.total ? '主战场 ' + s.topSub : '十周全勤零违纪') + '</span>' +
+      '<span>' + s.total + ' 次 · ' + (s.total ? '主战场 ' + s.topSub : ''+WKT+'全勤零违纪') + '</span>' +
       '<span class="dwbadge" style="background:' + d.c + '">' + d.e + ' ' + d.t + '</span></div>';
   }).join('') + '</div>';
   var el = $('dwOut');
@@ -5727,8 +5739,8 @@ $('guessBtn').addEventListener('click', function(){
   $('guessOut').innerHTML =
     '<div class="statgrid"><div class="stat"><b>'+ref+'</b><span>系统参考值</span></div>'+
     '<div class="stat"><b>'+lo+'–'+hi+'</b><span>合理区间</span></div>'+
-    '<div class="stat"><b>'+Math.round(avg*10)/10+'</b><span>十周均值</span></div></div>'+
-    '<div class="ok">'+comment+'<br><span style="font-size:11.5px">参考值＝近四周均值×50% ＋ 近两周均值×30% ＋ 十周均值×20%</span></div>';
+    '<div class="stat"><b>'+Math.round(avg*10)/10+'</b><span>'+WKT+'均值</span></div></div>'+
+    '<div class="ok">'+comment+'<br><span style="font-size:11.5px">参考值＝近四周均值×50% ＋ 近两周均值×30% ＋ '+WKT+'均值×20%</span></div>';
 });
 
 /* ============ 换算器 ============ */
@@ -5790,7 +5802,7 @@ function forecastRisk(){
     var why=[];
     if(s.w[L]>0) why.push(WEEKS[L]+'仍在榜（'+s.w[L]+' 次）');
     if(s.w[L2]>0) why.push(WEEKS[L2]+'有过记录');
-    if(s.spread>=4) why.push('十周里活跃 '+s.spread+' 周，习惯性强');
+    if(s.spread>=4) why.push(''+WKT+'里活跃 '+s.spread+' 周，习惯性强');
     if(s.delta>0) why.push('后半程呈上升（+'+s.delta+'）');
     if(s.subSpread>=4) why.push('横跨 '+s.subSpread+' 门学科，覆盖面广');
     if(!why.length) why.push('近期安静，属低风险观察对象');
@@ -5812,7 +5824,7 @@ function renderForecast(){
       '<div style="font-size:12px;color:var(--ink2)">'+x.why.join(' · ')+'</div></div>';
   });
   var safe=S.filter(function(s){return s.total===0;}).length;
-  html+='<div class="ok" style="margin-top:8px">班级里还有 <b>'+safe+'</b> 位同学十周零违纪，'+
+  html+='<div class="ok" style="margin-top:8px">班级里还有 <b>'+safe+'</b> 位同学'+WKT+'零违纪，'+
     '他们才是「下周一定不上榜」的稳选。</div>';
   $('fcOut').innerHTML=html;
 }
@@ -5879,14 +5891,14 @@ function renderTicket(whoId, outId){
     '<div class="tn">编号 '+tkNo(s.name)+' 　班级记录专用</div>'+
     '<div class="ln"><span>当事人</span><b>'+esc(s.name)+'</b></div>'+
     '<div class="ln"><span>所属班级</span>本班（全员 '+S.length+' 人）</div>'+
-    '<div class="ln"><span>统计周期</span>十周（W1–W'+NW+'）</div>'+
+    '<div class="ln"><span>统计周期</span>'+WKT+'（W1–W'+NW+'）</div>'+
     '<div class="ln"><span>累计次数</span><b>'+s.total+' 次</b>　危险等级：'+level+'</div>'+
     '<div class="ln"><span>主要阵地</span>'+s.topSub+'课（'+s.maxSub+' 次）</div>'+
     '<div class="ln"><span>活跃周数</span>'+s.spread+' / '+NW+' 周</div>'+
     '<div class="ln"><span>涉及学科</span>'+s.subSpread+' 门</div>'+
-    '<div class="ln" style="border:0"><span>违法事实</span>'+(facts.length? facts.join('；') : '十周内无违纪记录')+'</div>'+
+    '<div class="ln" style="border:0"><span>违法事实</span>'+(facts.length? facts.join('；') : ''+WKT+'内无违纪记录')+'</div>'+
     '<div class="rule"><b>处罚决定：</b>'+(s.total===0
-      ? '经核查，该同学十周内无任何违纪记录，不予处罚，特此表扬 🎉'
+      ? '经核查，该同学'+WKT+'内无任何违纪记录，不予处罚，特此表扬 🎉'
       : pun+'。<br>另处「纪律分」扣减 '+s.total+' 分，折合虚拟罚金 '+fine+' 元。')+'</div>'+
     '<div class="sign">班级纪律委员会　签发日期：'+new Date().toLocaleDateString('zh-CN')+'</div>'+
     '</div>'+
@@ -5936,10 +5948,10 @@ function slotResult(r){
     : (hitS ? '🎯 <b>命中学科！</b>'+esc(who.name)+'在'+r[1]+'课有 '+who.sub[si]+' 次记录，但'+r[0]+'那周很安分。'
     : '😌 <b>虚惊一场。</b>'+esc(who.name)+'在'+r[0]+'和'+r[1]+'课都没有违纪记录。'));
   out.innerHTML='<div class="'+cls+'">'+txt+'<br><span style="font-size:11.5px">组合：'+esc(r[0])+' × '+esc(r[1])+' × '+esc(who.name)+
-    ' · 该同学十周累计 '+who.total+' 次</span></div>';
+    ' · 该同学'+WKT+'累计 '+who.total+' 次</span></div>';
 }
 
-/* ===== 趣味实验室：十周年度回忆 ===== */
+/* ===== 趣味实验室：'+WKT+'年度回忆 ===== */
 function yearWord(s){
   if(s.total===0) return ['零帧起手','#10b981'];
   if(s.spread>=5) return ['常驻嘉宾','#e11d48'];
@@ -5961,7 +5973,7 @@ function renderYear(whoId, outId){
   if(firstIdx<0){ for(var q=0;q<NW;q++){ if(s.w[q]>0){ firstIdx=q; break; } } }
   box.innerHTML=
     '<div style="text-align:center;padding:12px;border-radius:12px;background:var(--soft3);margin-bottom:10px">'+
-      '<div style="font-size:12px;color:var(--muted)">'+esc(s.name)+' 的十周违纪年度报告</div>'+
+      '<div style="font-size:12px;color:var(--muted)">'+esc(s.name)+' 的'+WKT+'违纪年度报告</div>'+
       '<div style="font-size:26px;font-weight:800;color:'+w[1]+';margin:4px 0">'+w[0]+'</div>'+
       '<div style="font-size:12px;color:var(--ink2)">年度累计 '+s.total+' 次 · 班级第 '+(s.rank||'-')+' 位</div>'+
     '</div>'+
@@ -5972,18 +5984,18 @@ function renderYear(whoId, outId){
       '<div class="stat"><b>'+s.subSpread+'</b><span>涉及学科</span></div>'+
     '</div>'+
     (s.total===0
-      ? '<div class="ok">🎉 <b>全年无违纪。</b>十周共 '+S.length+' × '+NW+' 个格子里，你的名字一次都没出现过。这是全班 '+zeroCount()+' 位「零帧起手」同学之一。</div>'
+      ? '<div class="ok">🎉 <b>全年无违纪。</b>'+WKT+'共 '+S.length+' × '+NW+' 个格子里，你的名字一次都没出现过。这是全班 '+zeroCount()+' 位「零帧起手」同学之一。</div>'
       : '<div class="grp" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:7px;background:var(--soft2)">'+
         '<b>📌 高光时刻</b><br>'+WEEKS[peakIdx]+'，单周 '+s.maxw+' 次，占个人全年 '+Math.round(s.maxw/s.total*100)+'%。<br>'+
         '<span style="color:var(--muted)">首次上榜于'+WEEKS[firstIdx<0?0:firstIdx]+'，主战场是'+s.topSub+'课（'+s.maxSub+' 次）。</span></div>'+
         '<div class="grp" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:7px;background:var(--soft2)">'+
         '<b>📊 vs 班级</b><br>你占全班违纪总量的 '+(TOTAL? Math.round(s.total/TOTAL*100):0)+'%，'+
         '高于全班 '+(S.length-Math.round(s.total/(TOTAL||1)*S.length))+' 位同学。<br>'+
-        '<span style="color:var(--muted)">'+(quiet.length? ('你在'+quiet.map(function(i){return WEEKS[i];}).join('、')+'完全消失过。') : '十周里没有一周是完全干净的。')+'</span></div>'+
+        '<span style="color:var(--muted)">'+(quiet.length? ('你在'+quiet.map(function(i){return WEEKS[i];}).join('、')+'完全消失过。') : ''+WKT+'里没有一周是完全干净的。')+'</span></div>'+
         '<div class="ok"><b>年度评语：</b>'+yearComment(s)+'</div>');
 }
 function yearComment(s){
-  if(s.spread>=5) return '十周里有 '+s.spread+' 周都能看到你，稳定得像课程设置的一部分。';
+  if(s.spread>=5) return ''+WKT+'里有 '+s.spread+' 周都能看到你，稳定得像课程设置的一部分。';
   if(s.maxw>=4) return '你的违纪不分散，一出手就是'+WEEKS[s.w.indexOf(s.maxw)]+'那种集中爆发。';
   if(s.subSpread>=4) return '横跨 '+s.subSpread+' 门学科，这份「雨露均沾」也是种本事。';
   if(s.delta>0) return '后半程比前半程多了 '+s.delta+' 次，趋势是向上的 —— 这里指的是次数。';
@@ -6002,16 +6014,16 @@ function rdScript(){
   return [
     ['开场','各位同学中午好，这里是「班级纪律之声」，我是自动播报员。今天是'+WEEKS[L]+'播报日，我们先来看本周要闻。'],
     ['本周要闻','本周全班违纪 <b>'+weekTotals[L]+' 次</b>，涉及 <b>'+weekPeople[L]+' 人</b>，较上周'+
-      (cmp>0?('增加 '+cmp+' 次'):(cmp<0?('减少 '+(-cmp)+' 次'):'持平'))+'。十周累计 <b>'+TOTAL+' 次</b>，人均 '+(TOTAL/state.classSize).toFixed(2)+' 次。'],
-    ['学科快讯','本周最热闹的板块依然是<b>'+SUBS[si]+'课</b>，十周累计 '+subTotals[si]+' 次、'+subPeople[si]+' 人涉案。'+
+      (cmp>0?('增加 '+cmp+' 次'):(cmp<0?('减少 '+(-cmp)+' 次'):'持平'))+'。'+WKT+'累计 <b>'+TOTAL+' 次</b>，人均 '+(TOTAL/state.classSize).toFixed(2)+' 次。'],
+    ['学科快讯','本周最热闹的板块依然是<b>'+SUBS[si]+'课</b>，'+WKT+'累计 '+subTotals[si]+' 次、'+subPeople[si]+' 人涉案。'+
       (subTotals[2]===0? '值得一提的是，英语课至今零违纪，请保持。' : '')+
       (subTotals[11]===0? '体育课同样零记录，值得表扬。' : '')],
-    ['人物专访','本期专访对象：<b>'+esc(guest.name)+'</b>。十周累计 '+guest.total+' 次，主战场'+guest.topSub+''+
+    ['人物专访','本期专访对象：<b>'+esc(guest.name)+'</b>。'+WKT+'累计 '+guest.total+' 次，主战场'+guest.topSub+''+
       (guest.maxSub>0? '课（'+guest.maxSub+' 次）' : '')+'，活跃 '+guest.spread+' 周。'+
-      (guest.total===0? '这位同学十周零违纪，是本次专访的正能量代表。' : '')],
+      (guest.total===0? '这位同学'+WKT+'零违纪，是本次专访的正能量代表。' : '')],
     ['气象预报','纪律气象台发布：本周班级天气为<b>'+wxWord(weekTotals[L])+'</b>。'+
       '请同学们注意，峰值为'+WEEKS[PEAK]+'的 '+weekTotals[PEAK]+' 次，是全周期最高，那周的天气是暴雨。'],
-    ['红榜时间','截至目前，全班有 <b>'+zeroN+'</b> 位同学十周零违纪，占班级 '+Math.round(zeroN/state.classSize*100)+'%。'+
+    ['红榜时间','截至目前，全班有 <b>'+zeroN+'</b> 位同学'+WKT+'零违纪，占班级 '+Math.round(zeroN/state.classSize*100)+'%。'+
       '他们是班级的稳定器，掌声送给他们。'],
     ['结束语','以上就是本周播报的全部内容。数据来自班级真实登记，播报词由程序自动生成。我们下周同一时间再见。']
   ];
@@ -6053,7 +6065,7 @@ var BINGO_POOL=[
   {t:'有人横跨 ≥ 6 门学科',      f:function(){ return BAD.filter(function(s){return s.subSpread>=6;}).length>0; }},
   {t:'有人横跨 ≥ 10 门学科',     f:function(){ return BAD.filter(function(s){return s.subSpread>=10;}).length>0; }},
   {t:'有人连续 ≥ 5 周违纪',      f:function(){ return BAD.filter(function(s){return s.streak>=5;}).length>0; }},
-  {t:'有人十周周周上榜',         f:function(){ return BAD.filter(function(s){return s.spread===NW;}).length>0; }},
+  {t:'有人'+WKT+'里每周都上榜',         f:function(){ return BAD.filter(function(s){return s.spread===NW;}).length>0; }},
   {t:'存在「不详」学科记录',     f:function(){ return subTotals[12]>0; }},
   {t:'有人后半程完全归零',       f:function(){ return BAD.filter(function(s){return s.first>0&&s.last===0;}).length>0; }},
   {t:'有人后半程增加 ≥ 3 次',    f:function(){ return BAD.filter(function(s){return s.delta>=3;}).length>0; }},
@@ -6267,7 +6279,7 @@ function toast(msg){
 var dtCase = null, dtScore = {win:0, lose:0, streak:0, best:0};
 function dtCluePool(s){
   var pool = [
-    {ico:'📅', t:'活跃周数', d:'这位同学十周里有 '+s.spread+' 周上过榜。'},
+    {ico:'📅', t:'活跃周数', d:'这位同学'+WKT+'里有 '+s.spread+' 周上过榜。'},
     {ico:'🎨', t:'学科广度', d:'违纪记录一共涉及 '+s.subSpread+' 门学科。'},
     {ico:'📚', t:'主战场', d:'最常出状况的是「'+s.topSub+'」课，共 '+s.maxSub+' 次。'},
     {ico:'💥', t:'峰值周', d:'火力最猛的是'+WEEKS[s.w.indexOf(s.maxw)]+'，单周 '+s.maxw+' 次。'},
@@ -6321,7 +6333,7 @@ function dtReveal(win){
     el.innerHTML = '<div class="'+(win?'ok':'warn')+'" style="margin-top:12px">'+
       '<b style="font-size:15px">'+(win?'🎉 答对了！就是 '+esc(s.name):'🫣 答案是 '+esc(s.name))+'</b><br>'+
       '用了 '+used+' 条线索'+(win?(' · 本局得分 <b>'+gain+'</b> 分'+(dtScore.streak>1?(' · 连胜 '+dtScore.streak+' 局 🔥'):'')):' · 本局 0 分')+
-      '<br><span style="font-size:11.5px">十周累计 '+s.total+' 次 · 主战场 '+s.topSub+' · 峰值 '+WEEKS[s.w.indexOf(s.maxw)]+'</span>'+
+      '<br><span style="font-size:11.5px">'+WKT+'累计 '+s.total+' 次 · 主战场 '+s.topSub+' · 峰值 '+WEEKS[s.w.indexOf(s.maxw)]+'</span>'+
       '<div style="margin-top:8px"><button class="btn ghost" id="dtNext">再来一局</button></div></div>';
     var nx = $('dtNext');
     if(nx) nx.addEventListener('click', dtNewCase);
@@ -6347,7 +6359,7 @@ function dtFillGuess(){
 
 /* --- 2. 违纪诊断书 --- */
 var EVO = [
-  {max:0,  e:'🥚', t:'纪律之卵', r:'0 次',  d:'十周零违纪，纯净状态'},
+  {max:0,  e:'🥚', t:'纪律之卵', r:'0 次',  d:''+WKT+'零违纪，纯净状态'},
   {max:1,  e:'🌱', t:'初犯萌芽', r:'1 次',  d:'只出现过一次，几乎可以忽略'},
   {max:3,  e:'🍃', t:'轻度走神', r:'2–3 次', d:'偶发范围，属于正常波动'},
   {max:6,  e:'🔥', t:'活跃分子', r:'4–6 次', d:'已进入老师的常规视线'},
@@ -6378,8 +6390,8 @@ function renderDiag(whoId, outId){
       : (s.delta>0
         ? '【处方一】排查近期座位与同伴变动 【处方二】主战场「'+s.topSub+'」课提前预习 10 分钟 【处方三】设定「连续两周为 0」小目标'
         : '【处方一】一般性口头提醒即可，不必单独施压 【处方二】纳入常规观察名单 【处方三】见效后及时正向反馈'));
-  var verdict = '查 '+esc(s.name)+'，十周之内违纪 '+s.total+' 次，尤以「'+dept+'」课为甚。'+
-    (s.total===0 ? '念其十周守纪、始终如一，着即通报表扬，免除一切"用药"。'
+  var verdict = '查 '+esc(s.name)+'，'+WKT+'之内违纪 '+s.total+' 次，尤以「'+dept+'」课为甚。'+
+    (s.total===0 ? '念其'+WKT+'守纪、始终如一，着即通报表扬，免除一切"用药"。'
       : (s.delta<0 ? '念其后期收敛、确有悔改之意，着以观后效，暂不追加处置。'
         : (s.delta>0 ? '然其后半程反有加重之势，着令重点关注，限期整改。'
           : '念其前后如一、未见恶化，着以常规提醒，记录在案。')));
@@ -6388,7 +6400,7 @@ function renderDiag(whoId, outId){
       '<b>就诊人</b><span>'+esc(s.name)+'</span>'+
       '<b>科室</b><span>'+dept+'科</span>'+
       '<b>当前形态</b><span>'+ev.e.e+' '+ev.e.t+'（'+ev.e.r+'）</span>'+
-      '<b>主诉</b><span>'+(s.total===0?'十周内无任何违纪主诉':'近十周于「'+dept+'」等课出现注意力脱离共 '+s.total+' 次')+'</span>'+
+      '<b>主诉</b><span>'+(s.total===0?''+WKT+'内无任何违纪主诉':'近'+WKT+'于「'+dept+'」等课出现注意力脱离共 '+s.total+' 次')+'</span>'+
       '<b>既往史</b><span>'+SHORT.map(function(w,i){return w+' '+s.w[i];}).join(' / ')+'</span>'+
       '<b>症状</b><span>'+sym.join('；')+'</span>'+
       '<b>诊断</b><span>'+ev.e.t+(s.subSpread>=4?' · 伴跨科扩散':(s.subSpread===1&&s.total>0?' · 单科局限型':''))+'</span>'+
@@ -6412,12 +6424,12 @@ var MOMENT_TPL = {
     '这 {n} 次里至少有两次是被冤枉的（大概）。'
   ],
   low:[
-    '七年……啊不，十周就 {n} 次，四舍五入等于没有吧。',
+    '七年……啊不，'+WKT+'就 {n} 次，四舍五入等于没有吧。',
     '被记了 {n} 次，老师可能只是想记住我的名字。',
     '我的违纪记录少得可怜，但我还是想发个朋友圈纪念一下。'
   ],
   zero:[
-    '十周零违纪，低调，勿cue。',
+    ''+WKT+'零违纪，低调，勿cue。',
     '名单上没有我，这很合理。',
     '老师说要表扬零违纪的同学，我先提前高兴一下。'
   ]
@@ -6434,7 +6446,7 @@ function renderMoment(whoId, outId){
   var cmts = picks.map(function(o){
     var t;
     /* 零违纪同学发朋友圈时，评论统一用正向回应 */
-    if(s.total===0) t = ['稳如泰山 🏔️','向你学习','这波属于凡尔赛了','十周零记录，太强了','低调，别炫耀'][rnd(5)];
+    if(s.total===0) t = ['稳如泰山 🏔️','向你学习','这波属于凡尔赛了',''+WKT+'零记录，太强了','低调，别炫耀'][rnd(5)];
     /* 座位经常调整，评论里不再出现「坐旁边 / 换座位 / 同桌」相关说法 */
     else if(o.total===0) t = ['下次带上我（不是）','低调点啊','？我一直以为你是好学生','保重'][rnd(4)];
     else if(o.total>=9) t = ['兄弟，同道中人','你这数据还是比我差点','一起罚站啊','懂的都懂 🤝'][rnd(4)];
@@ -6445,7 +6457,7 @@ function renderMoment(whoId, outId){
   var likes = s.total===0 ? (10 + rnd(30)) : Math.max(2, Math.min(state.classSize, state.classSize - s.rank + rnd(8)));
   $(__out).innerHTML =
     '<div class="moment"><div class="hd"><div class="av">'+esc(s.name.charAt(0))+'</div>'+
-    '<div class="who"><b>'+esc(s.name)+'</b><span>十周累计 '+s.total+' 次 · '+evoOf(s).e.t+'</span></div></div>'+
+    '<div class="who"><b>'+esc(s.name)+'</b><span>'+WKT+'累计 '+s.total+' 次 · '+evoOf(s).e.t+'</span></div></div>'+
     '<div class="body">'+esc(text)+'</div>'+
     '<div class="like">❤️ '+likes+' 人点赞</div>'+cmts+'</div>';
 }
@@ -6520,7 +6532,7 @@ function renderCo(){
 var ACHS = [
   {e:'👑', t:'违纪之王', d:'累计次数全班第一', f:function(s){return s.rank===1;}},
   {e:'💥', t:'单周四杀', d:'某一周违纪 4 次及以上', f:function(s){return s.maxw>=4;}},
-  {e:'📆', t:'十周全勤', d:'十周每周都有上榜记录', f:function(s){return s.spread===NW;}},
+  {e:'📆', t:''+WKT+'全勤', d:''+WKT+'每周都有上榜记录', f:function(s){return s.spread===NW;}},
   {e:'🎨', t:'五科开花', d:'违纪涉及 5 门及以上学科', f:function(s){return s.subSpread>=5;}},
   {e:'🎯', t:'一科专精', d:'违纪全部集中在 1 门学科', f:function(s){return s.subSpread===1 && s.total>0;}},
   {e:'🔥', t:'连续剧主角', d:'最长连续 3 周及以上违纪', f:function(s){return s.streak>=3;}},
@@ -7000,7 +7012,7 @@ function init(){
   $('dataNote').innerHTML =
     '· 数据来自班级<b>逐日违纪记录流水</b>（含日期、星期、学科、姓名），共 '+EV.length+' 条记录、'+TOTAL+' 人次，全班 '+S.length+' 人已全部录入。<br>'+
     '· 页面中的周次、学科、星期几、小组等所有维度，均由这一份流水实时统计生成，周次口径合计 '+wsumv+' 次、学科口径 '+ssumv+' 次，两者完全对齐。<br>'+
-    '· 统计区间：2026.9.3 – 2026.11.6，共十周；全班分为 8 个小组。<br>'+
+    '· 统计区间：2026.'+EV[0].date+' – 2026.'+EV[EV.length-1].date+'，共'+WKT+'；全班分为 '+GROUPS.length+' 个小组。<br>'+
     '· 「不详」指原记录中未注明学科的违纪。<br>'+
     '· 姓名为脱敏形式（姓氏 + 首字母），导出与打印时保持原样。';
   /* 默认落在主页：整页换成终端风；时钟每秒走一格 */
@@ -7010,6 +7022,17 @@ function init(){
     homeMode(document.querySelector('.tab.on') && document.querySelector('.tab.on').getAttribute('data-t') === 'home');
   }
   try{ setInterval(hzTick, 1000); }catch(e){}
+  /* 静态 HTML 文案里的周数也统一跟随数据（JS 动态内容已由 WKT 处理） */
+  try{
+    var tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    var tnodes = [], tn;
+    while((tn = tw.nextNode())){ if(tn.nodeValue && tn.nodeValue.indexOf('十周') >= 0) tnodes.push(tn); }
+    tnodes.forEach(function(x){ x.nodeValue = x.nodeValue.replace(/(?<!第)十周/g, WKT); });
+    Array.prototype.slice.call(document.querySelectorAll('[title]')).forEach(function(e){
+      var t = e.getAttribute('title');
+      if(t && t.indexOf('十周') >= 0) e.setAttribute('title', t.replace(/(?<!第)十周/g, WKT));
+    });
+  }catch(e){}
 }
 init();
 
