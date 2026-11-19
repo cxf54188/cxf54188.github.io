@@ -1250,6 +1250,29 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
 [data-theme="dark"] .gsopt.right{background:#0f3a2a}
 [data-theme="dark"] .gsopt.wrong{background:#4a1d24}
 
+/* ============ 🕰️ 时间视图控件（顶栏 + 主页终端框内各一处） ============ */
+.cutbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:9px 0 2px;
+  padding:8px 11px;border:1px solid var(--line);border-radius:10px;
+  background:var(--soft2);font-size:12.5px;color:var(--ink2)}
+.cut-ico{font-size:14px}
+.cut-lab{font-weight:800;color:var(--ink);letter-spacing:.5px;white-space:nowrap}
+.cutsel{font-family:inherit;font-size:12.5px;font-weight:700;color:var(--ink);
+  background:var(--input-bg);border:1px solid var(--input-line);border-radius:8px;
+  padding:5px 9px;outline:none;cursor:pointer;max-width:230px}
+.cutsel:focus{border-color:var(--brand)}
+.cutsel option{background:var(--card);color:var(--ink)}
+.cut-hint{font-size:11.5px;color:var(--muted);line-height:1.5;flex:1;min-width:180px}
+/* 主页终端框内：等宽字 + 荧光青，跟窗口条 / 读数条同一套语言 */
+.cutwrap{margin:0 0 14px}
+.cutwrap .cutbar{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
+  background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.14);
+  border-radius:8px;padding:9px 12px;margin:0}
+.cutwrap .cut-lab{color:#a7f3d0;letter-spacing:1.5px;text-transform:uppercase;font-size:11.5px}
+.cutwrap .cutsel{background:#11161f;border:1px solid #3a465c;color:#d8e2f2;
+  font-family:inherit;font-size:12px;border-radius:6px}
+.cutwrap .cut-hint{color:#8b93a7;font-size:11.5px}
+[data-theme="dark"] .cutbar{background:var(--soft2)}
+
 </style>
 </head>
 <body>
@@ -2048,50 +2071,31 @@ table td.hnum.lv4{background:#dc2626 !important;color:#fff !important}
 /* ================================================================
  * 课堂违纪互动看板 · 数据层
  * 需要更新数据时，只改这个文件：
- *   EVENTS —— 逐日违纪流水（周次、星期、日期、学科、姓名）
- *   RAW    —— 由 EVENTS 生成的 52 人周次(11) / 学科(13) / 星期(7) 矩阵
- *   GROUPS —— 8 个小组名单
+ *   EVENTS_ALL —— 逐日违纪流水（周次、星期、日期、学科、姓名），唯一数据源
+ *   NAME_ORDER —— 52 人固定顺序（与姓名解密数组的顺序一致）
+ *   GROUPS     —— 8 个小组名单
  *   QUIZ / QBANK —— 答题解锁的题目与姓名密文（不含答案）
+ * RAW / EV 等矩阵与派生量一律由 EVENTS 实时生成，不再手工维护第二份表。
  * 注意：本文件必须在 app.js 之前加载。
  * ================================================================ */
-/* ============ 基础数据 ============ */
-const WEEKS = ['第一周','第二周','第三周','第四周','第五周','第六周','第七周','第八周','第九周','第十周','第十一周'];
-const SHORT = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11'];
+/* ============ 基础数据（完整周期） ============ */
+const WEEKS_ALL = ['第一周','第二周','第三周','第四周','第五周','第六周','第七周','第八周','第九周','第十周','第十一周','第十二周'];
+const SHORT_ALL = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'];
 const SUBS  = ['语文','数学','英语','物理','政治','历史','生物','地理','信息','音乐','美术','体育','不详'];
-const NW = 11, NS = 13;
-const L = 10, L2 = 9, L3 = 8;  /* 最后一周 / 倒数第二 / 倒数第三 */
-const HALF = 5;                 /* 前半程 W1–W5，后半程 W6–W11（11 周按 floor 切分） */
-
-/* 大九班分组（全班 52 人，8 个小组） */
+const NS = 13;
+const NW_ALL = WEEKS_ALL.length;
 const DOWCN = ['周一','周二','周三','周四','周五','周六','周日'];
 const DOWSH = ['一','二','三','四','五','六','日'];
-/* 事件级：{w(1based), dow(0=周一), date, subIdx, names[]} —— 在 buildDow() 里从 EVENTS 构建 */
-var EV = [];
-/* 全局派生 */
-var DOWTOT = [0,0,0,0,0,0,0], DOWPEO = [0,0,0,0,0,0,0];
-var DOWSUB = [];   /* [dow][sub] */
-var WKDow  = [];   /* [week][dow] */
-var GRPDOW = [];   /* [groupIdx][dow] */
-var SUBWK  = [];   /* [sub][week] */
-var GRPSUB = [];   /* [groupIdx][sub] */
-var GRPWK  = [];   /* [groupIdx][week] */
-const GROUPS = [
-  {g:1, m:['艾XY','何YM','梁BL','王ZY','陈CX','刘XY','唐K']},
-  {g:2, m:['敖JS','何ZQ','罗YX','张JR','杜YT','刘YX','任YL']},
-  {g:3, m:['曾YC','黄KC','牟HR','张JC','段PY','舒T']},
-  {g:4, m:['陈BS','惠CY','穆XH','张YH','葛YT','田YC']},
-  {g:5, m:['陈XF','江KY','秦WM','张ZY','黄SQ','王W','陈ZY']},
-  {g:6, m:['陈YM','蒋HY','邱YL','赵RR','李H','王YH','杨YR']},
-  {g:7, m:['付JY','汤HY','周YT','李KX','韦ZX','张ZT','郭SR']},
-  {g:8, m:['韩CX','李PL','朱RZY','刘RX','张JY']}
-];
-/* ===== 密保题库 =====
-   页面里只有题目和密文，没有答案。答对的 3 个答案拼起来才是解密密钥。 */
-const QUIZ = [{"q": "我们亲爱的班主任姓啥？（一个汉字回答）"}, {"q": "我们每周几会跑步？（周一答 1；周一和周二答 12，从小到大）"}, {"q": "数学课代表有几个？（一个数字回答）"}, {"q": "我们是几班？（一个数字回答）"}, {"q": "新学期我们有几个新同学？（一个数字回答）"}, {"q": "我们的教室在哪里？（如：A402）"}];
-/* 每种 3 题组合各一份密文（C(6,3)=20）。密钥 = 该组合三题答案按题目顺序用 | 连接 */
-const QBANK = { iter: 100000, list: [{"q": [0, 1, 2], "salt": "0STBKQnG7TjIU2J4lVNihA==", "iv": "IdsJgB6VdOwNixuqcA+VMg==", "data": "9mIz5xMXNdvif/RUzKAgp8wedp66c/FDY3Gse4NpIkZZSDV3TkOluWlReLjLMn8izSgH/5Zw3H+eWYu2GY8UX1P7bGnIdDqPHEnbvDCcpla+BL7jpfwpZkWa0DjoT5xJjlzFLxNdvGFoGtXZMJebcYiTyYLfQ7hSw8u11FedAPJnPFZkr6rFxGYWO+oUaScu6qELeNHwATop8u4nbDfKmCeEFBecIIstu+e2UrF31IvsdYsUKJm08cWOWMl2F6Ie3EMiAXSz+1q0FR/+BPCeaVnbdMoMWL7B1z+mIMxFIUJ07pw5h+epTTcD3a96U+CVUPktFBO7Q2n8XCywOICI6Ql4l1ajyL6aSXNZavmWbnxJnpTqzbIdjqNU0LvgTL2xkFOFXozQZneCeZ+fQw5MvAPpbe0NDsI4ry+gFUNzUgzfaqz/2QF/yb5hPK6gsnXirgGnLegVCZNJmJ/ckWWIDNcCA70srfOhhtNkRWg8fdoac9/LjcJnOaL6d0jEEB594wPxF2qveDxdrkTpVH9AVHyqkUHLkIZuzl8Yd9pXlYE=", "iv2": "Nh49BYL7jfbkSGRctRdXRw==", "verify": "KA+npIGmS2EejD5FQqqwrA=="}, {"q": [0, 1, 3], "salt": "Trs0I2kc1vStOL3d0xUHrQ==", "iv": "oo/PBy7S97F2ZSPUACy2eg==", "data": "f9xaOC4FlDOx5Wtu+yYoJXy2YJ7pUxC8HIt5c9KNGMj4aJ71QfpCGrREE6198hNooXkRFduZQLM3jpCDLaZ+z6XUer97HVUOT8NbxiZzdqQ/0F5Q0cLy+eQNLl2YSfk06FJSXOMbcNXMBH44cf4yRBRlqTr1SaA5pfmoUdMYll5+DRUhrd9dwnFIts9vVFGQw1hHXZ8w/Wa/7fAMQTGz1MCz33YYSfzLDe22r262yyvqhmTepk6tx2nb1eFpYRLHxGp5JvM2FSrkt3xcgmkYFi+b1TtfvfIXDBhX1SHcPJm/tMPEm70vzIIr1X+2BTgYwGTIHsvJunJHP4VVnYJf03Cz0tbOsR4qKv8c3ufrn1++M0taguv4kv4tCTIZ/RrxC9/YX+kVJr+2wm98AB2zlF9ipR+ASX2Iuun5dEn8B/gEsG8tVfdKxZE/SwW8wSWGpMRLoQ49HMKKZPt2nv5yenAtAHOGA1cWz0FEoMI7PuhBXNqksEFZbrOY37wrDgXGKImgF5hB3n972SbWVohWfRYxJLJ/wYEj3U++v4gRKsw=", "iv2": "37hESk+TKM5a5CQqGMpySg==", "verify": "LSwsdnFacxI49PGPuQcflw=="}, {"q": [0, 1, 4], "salt": "MpAJGT6l9y530CmXVR6X8g==", "iv": "+RwcimTwKfSPI+WQw0df6w==", "data": "HqiB6dAnmiAgLP80L6DvoYJ8GnmbfVe7OZWCJCQ6I99rhfCDm42cH5MPm3M+JwgrIXap7kJmd5HV59UeXmlBvKeVysXrzkwxbWwGqAmbRDVQXa2o/kAHWwItysal0Y02LsmwCwhsKoop4T4Bp1fBtderxdVBhFSDem7BSz1d5by6kF+G/LclbeoUKD+h6oyx/r38KiNWFliXMZA5/cjcs4CKjkmXHcB+MvjDL+DsYYquDgUEBwvtfHa62c1dhDV66vIOrbvzO5SOshd2DfdNUOdBjuAC94REKLb/GKRy/KX9wEvjoRK5okNEl7VHuSlCEocCOVQdC3k69jGqBp4nLRMfOLNs/ozGYJmlevaYL5p2qwFaENaZbQr6dfH/3g4Ut+7cLKZcfbTijzScQTkARemtipHpDfpjfY5FYOPCncuINEpqxdmFucFL69v4bziXndHAPs8WIkzfYCdg9H8tYr8J1Zh24oSTyhybpjWjidiY6CP/xmocC9W7VQIzNUqcWlmh2jDD4lpyP/mnvP9TYFuibNxeup/Gj9LCmCRNolw=", "iv2": "VXQHHMaz4mCfMB0X/+pPTQ==", "verify": "88lfKUxwUNKCmwuxkoporQ=="}, {"q": [0, 1, 5], "salt": "EqO5Z8KdJ4KepC6XyWxFfw==", "iv": "0xKRdCbj8QIaKRas4eJs6w==", "data": "n9seZMDy2gZf3bLKSODy8U+FarpqmotOvWEbuxDa35DLiVIT7zDt03oK2dWdIlanulRFAZc4BiNyC8ClN9RMShqBZIVhGjlegp1j/mjnWGW8b2zf5kpm3EJvq/3Mj7gLyV+csWyb/N3cCIKjp9ZVtNOKl98B2LiyjDTaYYiA41w6fxsmkhm02nFNhApK5J33IdO4yp5G+cJY0y/gtyJmQdN6h8/WNVTX9RgecvFAH+PUTBEPHeN9HJUA1oP201PPyDZhoBZt0idb1LdiTC0cToeZgepLRR1E4NZVAR6Q3KLkI3FNXw13BMGMV9lAVbsXY1GZdTVbiOC62pdlOWRfR4EF37TkXkfiMOy5z23YozF/4DNOxf5JUKFEhZeEXvpDr/ObMFb8gelVxdx1XKlRsocIK6mVqAaTKGWQcYGXTAx1rmA89llwczZ4PB+9SpIrTL/M8bLlAsUFfeBlMY9L4RkJ3XXU8vMoFOshPQGqZBX5QEjNhDLT7QNhYle7oWxg0LyW4nj4SjPxPhDETHmKqgN+u0U/zKAqVhcWaXlCP/c=", "iv2": "Oelgan2+JOOEJ7Ogkb5eig==", "verify": "gvDFNZSHBMEGiY5qdcJZmg=="}, {"q": [0, 2, 3], "salt": "h57EM1mqrHE/N3DeGtSKmQ==", "iv": "LQGsVz+/I+mwC9WX0l4UOA==", "data": "Gt3+DFiZuQ3Yr14YQzQpzJO4vcPgPlFlIgqFYLTvyCKl5lGte8J9S0hNm7+LnnRnHmtdM2XNBLLTkGOgGyJLE1w+3fENqFvvfjt5cUobnqOQ4H6B1GTO7uchr9TehbxDJ3tUCY03VA4/LnWuT2ZDc2o2S32M4dthXXw0W4bISTlsCpKQoWdLyG+Uc1pTF4CQQg7WKGpKRiPla/L6P23QgusWg5CfU30/UUN6EKLXQtqlaahkrAWFfgx48Rn6pGYlFDNZgnUhISDZQXRbctRWulJSuthSelNth8qcBTB2EhqsKDq5iuATegk72FAbe0V2A5E0C2qyFm5H5rGBbkNIORGoq6WXWoUDrsPG15bM4oTZjt2Ku7vlWQsEkdirNHDSeXXBGwnx+sH7KsV+sn4lvk/RgYMB9xAECL8l/InrGDuvYrLSvFdQY6R13ZuPS6yq+W6/an0Pz2eBt3pIam4E2Qnw66+Gz7vLWfCPcK/nbMEVV89gnKdMeDNUbOpsufUQsqIZzSgQs//dXzQJWbB/X4j6vlLsyUkyUegbCB9v5Z0=", "iv2": "4m+yYjhS+9n8HhTJGnLRxA==", "verify": "jr39JP8Fs4k8Ub+rseocpA=="}, {"q": [0, 2, 4], "salt": "cCfSwsmo6rveaTx7YjYV0w==", "iv": "aFa+Vu/EKVZFK8ZJuF+S1A==", "data": "FzHz3mX2r55Br+N7gdoXOywicsJOvT0pVScE1HnOx88xtZoaKLoubQ01axEPW5FIaSwEKRJVGOU/w8VJy08xYdqgiRxI5jPL2U3hG4lTYW4+LAetSxCX51etROrwPjQSlH5s7ZvmYxyZyWeE5el8Z/b1bpLaNFsFOMLgcMx6UHJ6KJcHnpTXBmeZsaNi86DtfMRk+Zy7ez2Old4fw03sCB37W+JdgV2y0+O9ZdAIySPFqCkK9H08cL37qyj0DUHm0USND5UtVdmnaxJY/T9EOp5aYCdZC1M76YQiWaFRJntqYP2nAh9lYGWJzRqcK83q5SjF2sxY3PwLffKUYFprrvrj+dOSB4Qsa3njupvZDwAgpuHWYkxFz9zJuUnero6BwFBcMSQ7EF77gtstn/vz2Xr0Ib7Xm4ZGSNLDAQZ1EkJmPbaRq0BhC4yzdk1E0KNLnaAGLZZ9HyDHqQU2Qkvrl/PrFzK8CXPh4+HadpZTzfCVSiFvmteqCFH9uMW7VqY0mFCtQUs/V9ZgtVMDJAp5zRSKIkv1z2xuqgRtYKQlYOA=", "iv2": "PY+fqRJgoynA/GGRi6CjPA==", "verify": "hRt3D1yveuMcXMxuLuPZEg=="}, {"q": [0, 2, 5], "salt": "+UPBOXweTYd9x5nFpYKsiQ==", "iv": "4OeNA1zOYn9ZImpALf5Grw==", "data": "kgVESan50WGypH+iU/O1OW0P47MOJKfxdOHi7l6r2BrUKfAPK2POLO4QO7Cwh9kc+vJ+VRnV3A49vJDXpen5dIxC2Kc11W2tZorb+taf2bOywS1lPp+DJPWjtLOwqV5luEB3snNrClhxzlA2f4QafxpQpt8a0XidF+qPgMxcOU9B1c3/wOA2XoWmjH5I08ocjbkoSMnAZ/d479EiZpy6qSqQ6UQ03l+4w890PwK1cQ4XLU3ETbdZQb0kGdfeaVX/O7MY/337tS4iX7LRxm3DkolqmUKGeHKlkvqU5IP3ZZbwVEUj8ZcrD3kThE2ZOexw7yXYd+Dh8YasysMa9R22Ojb7cbtmGgNPmtcL6Dsa7IbKHUd9bjWN25fYnjBa6DHV/1ViCOg44/+Q1CSFZMJZul8P8/N+8njX2pGv6Gv0jhaXfzx99M1IcEs1J7YNdrasBBX3DPF1Y/smSHMK7bzU+RXzR9VE4it872ZQLW5x2DIOim5LeUqLhi59hom0P2gkr+4Uzv52t6GK6bTI2342bmvH6emmQBOJnYi/2dbH7S0=", "iv2": "Kvcpvc5UPu6uCM34Bgw3yA==", "verify": "AhZGfJ6wQ6zlrxOgDiPpTQ=="}, {"q": [0, 3, 4], "salt": "Kr8wB74dg56E3Sn8QbHd4Q==", "iv": "lF03dUa6hAuj+RKIK5skcw==", "data": "GCsh39i0cU+rXrPz0Eu1kmMm/AiMw3J7Cl9Vu214q4XaMp6B92AIWzZf5wv0duFUsNKo0h4Tpz1uQ8MjJyDI2UTkUCEHbWC6F0M1qUp5kwDnBL5CeDTeFe7LFrOPx93OH55qYDZtuBbdUuN7ZQc48gTPN/iF/auFLBPnThgEIMid21+ZYOiiCrsbV+jKixqj4ZK/fK+Zjy7ovXHcvRKH7T5IZSw+NdddStAQpJ3pBUHhGjFptwE8mgvWXkbdexNyAr0hjDufFc2+ij7afdJ6YL41fiMwcYnY4XoVadzRqIHDIii3IxamAhwu2ON42zRltKWiV3+0/3DgcCSIJqVD6ceit0sCQA/MaqbYHU+UbWIdvFuZQETFe/lG0JAUWCcY4YwF/nO1dz8391ZXE5ytaBG2TclJgtgQonYNoNF4LLANxaCighayKNw2c7OaGihoyGJ17VZCYfCtR+qOlNRRInom2OtFHfunUaqfQkEou5PUeFW9vSKa96K+n5zKbhAt+3r9vwrNWd5lUTV6z9X+KsGM9RLV8rwpjNtwa+nzxBI=", "iv2": "bFyRoJGPRCZLHz5AtkNk9A==", "verify": "CQWU0ITeuipTsnvAo5yqsw=="}, {"q": [0, 3, 5], "salt": "YGnVk9ga/af/M8kGL14sNA==", "iv": "b4ggg2vBdDr6oqRhzlRSTQ==", "data": "PHY9bsdvE6Gam6P5Wn7wnFQpHP5hJURZD+nXqxCErqCxqFAsJViIsrlG715FFjMvX7Rh5eFdXUx2gmXrGtVHVMOcc5H5TfgjyGqkvQVQbTLHXIsviGa3153mn7sPneDjv0+cvXSXZrryul20RlTQzt4UmGPDzfsAJ6jbXPk4KxNpEI9KO+3DyezI1VLSG+n3Whxl6BBnmQgu6IgdzFaRe9yeHx7FuK9Hc5A0p0Cc11t870jpaAsfUP+k0MDGvq9ezmUwhyRwtzXxfiBNMLx8HLp9F/FgdpZlE66FPiC7unnXOzQ6kEb0otwltTHwdmMu3Wp+JBmo6QERbp4kHHpv72G/k7FjxZ6N5nEe0gzIhLjaohz7yVr0gamGTQ8T9vJzKfMbN7I0Djp8J/4ovKxBfRXLUKaDkSt4LWAhMX8B0LKz0QwarenkW3Om8xvXAKvfCzX5BrAQHkinxZEJXIDrmc5nXtZhzhAtTu62DVfdolzsCJx4YDflywl6bCHVHXMRT/YboDIQ4U5mqZHve1hszbi8V7FGN8Cm9ccKdps5fbg=", "iv2": "Eq0H6Q82xUlhX9cMTfukww==", "verify": "Cd29lK+4s498Ew0mI7yoGQ=="}, {"q": [0, 4, 5], "salt": "vo77/sIyAJYjXf2Cbr9L4Q==", "iv": "tFl2VNja5mcPhgqi1j18mQ==", "data": "3JL37lsO2ORaQYgymXuaiV6VHmT2Wt6nZn1V9okewsBuwh6xrpNmDFBCCohm+EIjZOOPIe4/FFfW9h5embovb7+nTLbzv6+H5jJxCZB/QmpM5aWMRfWC2vnsD2oJuABRwITVG2BnI6TltJCO9fdvbiwB0Zehg0RNBzTiCbxLZ3ECx9UQNeXhKFEqYnT5Bgn5kVfMoL8F9Vu5hSJr1UuYvlpX4X9vKKJVcqGEcgIhq74g5QD+h19yRSVWkSRKo+ZA58vDtvYx1NVO/dUqbURM27Dxtx6+sEFwOdmacAzN7ynRP7AhspDT2FV7SdAYa4+UifjEpoSb8cHRC/4r29QEJHdTwIC8AUqtALl7uwLmdclLB2xg2ijjH+a3jwb5I4HZO0FW2ve6QgyxqpYmNnUPP1q9yoHoWTaA1n2Pz3xZ6aGiDSfseeaCXTGNI3nNeWoYjzuOvkYqPdh8owQAzDCKFCdqIjqFYaSDWThPgNnK09o2RCXpuz46Q/IqWtheMjQXln+zH1kXbsc6tb6cThaP8PRPdWJPUvmnQgd2XHpebc8=", "iv2": "y1uj7yWP8HosyLLeL27BBA==", "verify": "sqZu05uwlAWcJt26/kXdgg=="}, {"q": [1, 2, 3], "salt": "9/ePkRXSnmZ/GicdJusCzg==", "iv": "plxJkdsy+S2nfE7GhPRiTA==", "data": "O+CWzfy3jT95fFfxmflvqTxSthn2ZfMZk3QnDxQnxYN968cTvb2QzWF1G45UR4LXpYv6T0OsB3ZaPxMpD5xGCuMGwqb3qeLy5jhAvwfdy5JD+6A6wjsPztgi6H96xQivjqCI9XBk1Q4Fph/2YO+Qdof3IfUk93laCwsHdNaEUZh6prWuHqttPm1bVK+updU3oSXg/kiIxkjNj0Jl3AhCuTQ8En37J8EoE1Cy1eV2flqTAwqYN1iKYVuKBbWpSj6kJ3M8wtqCpV6hVUTZLoqNaL9XxzK2mhA22zKGAf9+CoUUQdAnVlxv7+CQywDfJkeDjiLK6kiBsZD2BEtD1kKswr5JUDsazocnjEMLVJR7vLXw3hRFLDfCJte0J+rbv0reOf+W0LiwU/39TOvhDOQ1Nlw9RuVJ0gDfCqb2B/Lth9Ct4qtuZTN303WsAqxbSnb2U0mWjlTqYuo4E/JYFWWwCPPDWsuf6sjzpNTDKS67TUKZvUgGBknip42IQs3mRhBPAMqig7bVgHkm2Gv38Hj8mJWdTRwU05sqoIrozeYrnDg=", "iv2": "POJtQS8w83oIf91TbELoJg==", "verify": "KC2uJHLhlez4IS9hFtDN3g=="}, {"q": [1, 2, 4], "salt": "zkmm9ltRfR/yvrGL790wDQ==", "iv": "fjiW7M1zhsHFzZ++QXU1oA==", "data": "RRFnxp94VM7CKTv92O/SjRqOkN0Mi5J3xOnkdbLFF6RFEb8t45NQSn6JIxNvu426aphL4e6Zh/rgYUzMyIm/lCMMVnnPaP0eKdA4C4xD7h1MIc2i8NgDUM5VPM1Yv/EpAS7xgZ1SnWUnECyR2cy4U8qRX4mxRPhqteiG3vkKnTbmjyaWQsilyYZaDDnQdgfw2pve44MwAcDyg1GWVknA8wxX3ubL8GeSLve0lc/NO0OejHDziZqgKSuH/XXszMvOEbX44rSoWyvqGbd4LrY3anW81AdVT8WLbVjhdTLT/IrNjl2K1mxM2CQ4m1Zri3GIZpaWmsKjPv9r+IMCAliGV0DzPjyjtMa0ZMCdrZUjIkYHYEPTj+PVXrrrovxRYkl+NqqypLLrxsuCu7UBU6afLLBTYNSYqJV42sVuaFoIuhDRaejgUGHSTIFlPy2kEFFx9GTlDb2+377F7CRMhD8AORhrZ7k1bjZxOp6UUwU+ikuWo8sNzbeKft6tLXFWs2X++LkQpDqgAn2PscouO+aJazGhuzioqnoIpk1SrdLk9Wo=", "iv2": "1QCx+9jEqR8TE0RBi1mWIw==", "verify": "yYa8av2AbWdijNm1yjqXgw=="}, {"q": [1, 2, 5], "salt": "r7D+7MpXgsxlqAbcaraeyA==", "iv": "R5HDFBUHnixJEdKHU75xOA==", "data": "ZSGPPZJPuAi9nW8c756+TVuJhcR7K3BpSwlXh0t6rx8hcad77NK4BMoGB8RHsqzYStT0diwckix7nFwFldkgL5/5b0Ro9C6FjNz8beciktH6TCiiOxwwaqU8x5jwDfF/OZxLwjLElaWJnufEBI6IUVb6L14dUET78pTzHOlCLTTsAy5bzQZ7lRjStI/SP4GbAy9QGqlRuDUT5t1k3AAe+xb7yrJhr7w9WiN4fpluxwaElDO80jHlxQU0Y366luS2vt/FY+c6JrS9cTlMNUS65NK8ySw/GaKlJGqsPFEjWQPnw0COsMwARpz7h29FMA4XxwAZni/DwzZeiALwhfs1Mvd07jKKObEucz2Obo4+E1nNZW1gJ/KfujcgDF+6sjNAz+ZR3fEbQOZJLO3yNWv9xD4rxdF0yI8dw3oQSY+NAOLsWWXeBEsQKTEgaXyVm+Esi1V14GswoanyvUfQnH9PNdxr7/xdROT1NGZNp0e91uj/1QfPKWjD33AD1uMcQPgZtzzbHtiuWGTVEY7oOnW0Fgs4WA1EHFFdy0+KPTGvxd0=", "iv2": "iVicMA78KNPzpnNr/CdzFQ==", "verify": "ziZKKewNmdZ9RToGv2MkDQ=="}, {"q": [1, 3, 4], "salt": "/EDD083oayJbgWarsiHMCQ==", "iv": "RLQHIvhBcUeuv+EeYlyRCA==", "data": "fMtwLyOktfS7XWB4V3CXd+0/z8xIgqEhANSLdoEPRcx4BLS8vPlsk9mDt/hJVnzn/3pl0ncelvnd1AkGi1+Up7+gHuacrrig7aTHWvo8DL1T9dS9yb5xyCOBpOLFQkeJGMITWKZDZAKP/0Hpp234GxR76bv27HVEJbTIJj8DOpVAq5S7ps0qk8sM2hdNmTOH+YfJMIhpQt9vATHQPDe02LioBVryjgrvRRov8Snqm9wSCAR1YXS3OglwXLtsAbcZhK1LZrJSHbPkKbdr4cukQxAIOUdAizKYKrJsUXTT0HieTbIAlgCY2njmv6d963knhkUml48dcEiHoy7jANVjAnJToOpKtUCDmMPwzc2Ww8Ka2EEH4FghwD8ZfoBq7C7FveH9SOvFaGa3rj38vnZ5Xl76BwokGSRrFhxDEXsErpPAHVjgifoeBH11+QyawpqjizvNUFUjLpYmSvbOwZTIH+iVIOGBIoGkcScXJ0zxFGv9j+H0QWFk601kPgAV0saySa56IY+kIWHWDilS6iHdZkYrRTGCewYopB5olnGBjzU=", "iv2": "lgSjx/LnAQdvuMzKB+pgkg==", "verify": "5SlwBbYQ61PIWR6RKjJmnA=="}, {"q": [1, 3, 5], "salt": "yklJW23OEHDfDqhuFEd8bw==", "iv": "atCkjsh4AOQRL7p43+aa6w==", "data": "/SBKWyTCcxy/e7cNueZ7/FBYNPVxybF+JobDW98XXVlMl/ViXJOQPVI6zsv2RMkJNoLVv5pUw2uG3W9UcS/cPl6Zrw0l8zEcYLzQC3xWEW74Q8l0EGFF9+0dVIXT9+HbP0GDCpqRnDZ/i+ETSK4gvGGC1RI5mbePIIRAR6R/Iii+BNxDJXGWpbcsjep3GxYFeSJKWtlvjJIlnUCJBLKwlZgSONoTD6KrZbymgHSshv+qVD2sKNZoLs96zJGguwvq3XM7S9lLJaSp+b2GZtwgFlRHbuASfzESmGCr5WeiB8hL8XaU5iLdmQUZhBTHFdyBhBMWSEIZKI8f+vxVr9dxoqU9PesIWcA3TAxPwyBQzh4KPisiYfQu+XceBikTcagc6VuAqW2r8ThZ2KlMsGZSZRSqtu6OtPR63K27G5shm1pedR7T2BVVTaKlgcocd3TAMU9cM9uOEE1SnDsgbgO35YSqTyz7ZXZaws1O7L/vQhBzIDVpVBdnBgxzWvqre1nLpYqhbFN8zJb1Brlyj1cHzk+Sb9+jckYw4skAx575p1Q=", "iv2": "PBCbe9A3UzbzB5VTyPkolQ==", "verify": "i3IKmbfu3rGIjm6bCl/yKA=="}, {"q": [1, 4, 5], "salt": "YYsSPUwQiRiTVMtdPIDqCw==", "iv": "s9V4UQuWZBewjFTZKbBqkw==", "data": "bnBJW6bWg/GbuHF74Ydx9NGkiW4U7kv9NZ/mtu0YvjN3f7eWGVIskiP5xqE5jjM0oqKQ50c9fDCAXZGAPLWmrgV3v5T+Bz9X/rL6FPLy0otFjM/6atpiU+xfDOetYRzWKy5Sb2w4AJuCQ2aioFjG+9XuUQEx9O4p2mUI+F1jHcUH3egCKRujif6VSND33077fjqIbC2XExy4RGnVRpdjANrKRnvnmQ2R+sFxKoqLrZfZaSD43ddNjJPSc01K7rV9Gxj+HKCvMXxnZb9EWo34dcLAtj1nrix+LG3jwJgvgSmZ3jB7iog23DlFTXQjZATmsRrC3IVwtvMcmZxMZ0ZvvSQ4p3Rjg+sSamR1lvXB9WE53ukonRRVGIIhHzkXPdjCcd5xuLoeXvYTQapuH5DbcdWPym8BjlGhCI9Hqmh3sIc4hl3o4mYk+a7mLFRNy29kAuuxjx6WHuo81t5d43kfXKfPOV+uOOK07oytryPht4j31gi3dWJ871JrrQsDI//eaAoeKtIoTKf79iD+rknwqkukOymhUWMuqPEeXtNS9jg=", "iv2": "BciMAgM11U7Qlu77MX38Ug==", "verify": "fmvh5aXpe1Mpv9nDSLKsXQ=="}, {"q": [2, 3, 4], "salt": "W3XYRxqPfmFUbCTauFQbaA==", "iv": "Gna8W+QB+rhmklhqPxIGRA==", "data": "GzfyjkfFG9uv8QCUdnz/dmqvT/jnWCyeoiW6OfwDQFCBvODbruhIin+/jbOgIkBQ1mq72aiMtzV91gPinUPArEClkcPEepNEyUXShlpUQKJ+N0AE++ZNraN+qU2RLofSrCHqVYgtUNOC4UJnJTMNswgeqhjAH6Jph/J0hRYHjixKlwbUawrmrsSMM/EGN6I/csmCcI6bpaTKgeImYBxa+CC/RSdqEgPv9ZZH5Gw53CFiE/o063LhtBqb9E2ZTjnFa/heXlxi0u3Wfqhq4OOTsxyNrOFgtUjg1yuilZgnrf4bSmC6bLPa9RRv4F98kOc8dIuUPrSnrsN/t+AKxNoubOkO56SEXNEb43zBWT1fx5qbnh/TiGzsOoSLnkkfcPBIW0z84Pvv7dDAssJFMgpQOEnOy+DusOOZ47IxZaQDM0oQB7VQ3wmp00GjY6aJ23DP8Y3dtV12hepxb30ApOf41WdujR7hXps/c1R4n3PCGkjWRQ/drrydARLg533cT6Vk8hQfhEZTUgjnW9lJ32BFLuy6ndy65q9GsEvKmwZmWBM=", "iv2": "3UPyl/XAZ6EB3tdJlvHCCg==", "verify": "HFOYLliicE5l7rD4E2cYFQ=="}, {"q": [2, 3, 5], "salt": "NDAnQ6QO37JT+DopAzHISw==", "iv": "vQ75ZWEWh4UkwqllwjET/Q==", "data": "k3k3hA+XDBGgny9DgHBxRui+M7NTTmgYofl4HuMS2MW8KlKpeT9193vRhSnpH9Nf9sA95UfZ7e46TZC+kvTctpT2ZIbxPsmsOb+NJZTIitOyWOqmhMXYy6v+A3Gzu31e92Q8GOIpiQ8vk7Ca1d8KANQjoab4m10VWqMLCLUzjv402khlAwG++hKTSyeTu63fYOZ4yeeUlPr5H7Iahozsb7HwSDURaQf9osJhMWQpradfJK1uR5blaZp2V9wXhN3hpkPoja+ottIIyT1UVDNKQMWBcWsuM7uk/S0oOY4tXRWWAUZ+BScQVGoy4JO8RQXwVnUtH7fN6YHBnaAHsGQI/D5hW2Iz2EYKEexwAztSLPYRivhId98n86Bxr3JWxx12D2aLzcZvYdNfSWxmr2Wx9+re34hgCnuY5NiqzpId3BEeyQVpWaeFcC9EoGz48rXJCJtt6wSCSg7LNDomjekue5xiO0Oxab6lTkwegxONfEpew4iK8CZd/q1CVYFwmhboe6V1sMYzlIJZ3T4ziHO5yq+QBRZDdpb+ciRD4AhokEQ=", "iv2": "xoSyg8k31dSXCDA2frxKHA==", "verify": "Km7Tsze/P2FC5q2hRhJm0A=="}, {"q": [2, 4, 5], "salt": "CyqRGPZIZ6s5NcsHkhLLpg==", "iv": "bQno0sIfWRwvYIGJzujEuw==", "data": "smn/6/RIrStD4fZgW0om7JhG0MHqP75rAEfgnP/fwhtsfKoYFXUtZ6tMjz5hvXLe2qjkK+AgXyTn5WWjNQLp21B839Sdch/0DcHVcy+6P9rYnhugBComzxdC8e3iv9Yt35fRkICa8PLg3ueL6/OL437ZF56OUvaPK9S+N+snW15KTry9wWsOLVAPFKHM9b1fKZXRZx1eFn7iF36X3e8k3wspVR/OwaVAx8vWjwv1BHGlzbkJBlYNmFg9ocoFR506ffPJjWSADutI0LaEwssMFnXTPo6MPgcNfk9wDwzu4VvkEsbQc2du+rZOYEIssmLHv4lWXkpDsC2GKB2bMHVURf0oKxonGS4R1UdEg+thRcagaV2Tux5SG6NGKmDi0+TspqYzz6Dc8+zISpja4NoUQ3NuuiVjNsc+9NekM0xr7d/qL1YJTfcN1rnTj8W+2WON0yDYykzttW1ACp5Z7TFy2HakqOKBo34+adYo0Ay22BSsJMslpnczCgL4txOv1HZYIJvggHrzSJMZOJHppjTkV9BzIufHqtk2tv4E3zWQbFY=", "iv2": "+iORi1SpA58SOoPlYACUwg==", "verify": "zn0BwqKXhDRazllj7Q9emw=="}, {"q": [3, 4, 5], "salt": "dTOMIXT4FW/nepdCum6qgQ==", "iv": "eW86kjMEqKfVHVGpldceog==", "data": "IZnBZV+EJesa30f6SntX99AFzzflK1v4Zo57o0ScjHTvK+FPrZPhl48O+5zbbIOJpqtkVMGGNHCj9Lzx6Qc+9YUrkIoXJ505hMy92/cHzCGNkRPTBQyBZrH4nunEzqLIlZSV2D/22pIx5yECE9llqs09ua0ENbSxjjvIzXG8mV+6CIkSOWUlTfLVXSLaIioHN5VpwBWMXojLmgMZ4oFBKIQT4v/ucTpS/aoj3qFHmNb/Gi9uzKBWoZBIYQv+eBbMudJDIAAW3ZxMuCh1LZWMGS/uvoohvZ0kKD+wNpRWvvmgsgzRS9vsHuqQ3/68UmUfmJlpQ6weaZaLvUiM2k7B/3oC9hI24ddqNAi4c1Q2chv7NgC3O6YDWprw+J/36uY1xVKzM1adZood/Vqjl7aw8GDYnOEkfLX43hBiFZ/lUzKWUG4Xk8ITFYF5Hu1fglNyghjAFxuqchkknH/yrRgyOoaA1lCU3n0Ncofe/Xi8N2EwhBsTl6aaNrZvY1YIBM5TwlBzrN3fuYiDfg2kh+3eLc/6TiuilNNapqW8fy9WeQg=", "iv2": "5z2ePSAjyENzZaGI+Rb62g==", "verify": "PkjSqUakjV/Pf4FL55hl0A=="}] };
 
-const EVENTS = [
+/* 52 人固定顺序：必须与 QBANK 解密出的姓名数组顺序一致，
+   这样 applyNames() 把 REAL_NAMES[i] 填进 RAW[i] 时才能对上号。 */
+const NAME_ORDER = ["艾XY", "敖JS", "曾YC", "陈BS", "陈CX", "陈XF", "陈YM", "陈ZY", "杜YT", "段PY", "付JY", "葛YT", "郭SR", "韩CX", "何YM", "何ZQ", "黄KC", "黄SQ", "惠CY", "江KY", "蒋HY", "李H", "李KX", "李PL", "梁BL", "刘RX", "刘XY", "刘YX", "罗YX", "牟HR", "穆XH", "秦WM", "邱YL", "任YL", "舒T", "汤HY", "唐K", "田YC", "王W", "王YH", "王ZY", "韦ZX", "杨YR", "张JC", "张JR", "张JY", "张YH", "张ZT", "张ZY", "赵RR", "周YT", "朱RZY"];
+const NAME_IDX = {};
+NAME_ORDER.forEach(function(n,i){ NAME_IDX[n] = i; });
+
+/* ===== 唯一数据源：逐日违纪流水 =====
+   [周次(1based), 星期(0=周一), 日期, 学科索引, 姓名数组] */
+const EVENTS_ALL = [
   [1,3,'9.3',0,['杜YT','梁BL']],
   [1,3,'9.3',8,['张ZT','付JY']],
   [1,4,'9.4',4,['付JY','艾XY','何YM','任YL','刘YX']],
@@ -2154,170 +2158,93 @@ const EVENTS = [
   [10,4,'11.6',7,['陈BS']],
   [11,2,'11.11',1,['江KY','敖JS','赵RR','何YM','陈YM']],
   [11,3,'11.12',0,['敖JS']],
-  [11,4,'11.13',7,['陈BS','艾XY','敖JS']]
+  [11,4,'11.13',7,['陈BS','艾XY','敖JS']],
+  [12,0,'11.16',0,['付JY']],
+  [12,0,'11.16',10,['唐K','穆XH','艾XY','段PY','张JC']],
+  [12,3,'11.19',6,['梁BL','陈BS','艾XY']],
+  [12,3,'11.19',8,['何YM','艾XY','付JY','陈YM','秦WM','梁BL','陈BS','周YT']]
 ];
 
-const RAW = [
-  ["",[1,2,2,4,0,1,2,3,0,1,1],
-   [1,2,0,3,3,1,0,2,0,3,1,0,1],
-   [5,3,2,3,2,0,2]],
-  ["",[0,0,0,2,0,0,0,0,1,1,3],
-   [2,1,0,0,1,0,1,2,0,0,0,0,0],
-   [1,1,1,1,2,0,1]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,2,0,0,0,1,0,1,2,1],
-   [0,0,0,0,0,2,0,2,0,1,2,0,0],
-   [3,0,1,1,2,0,0]],
-  ["",[0,0,0,0,1,0,0,0,0,0,0],
-   [0,0,0,0,1,0,0,0,0,0,0,0,0],
-   [0,1,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,0,1,0,0,0,1,0,1,1],
-   [0,2,0,0,0,0,0,1,0,0,1,0,0],
-   [2,1,1,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[1,0,0,0,1,0,0,0,0,1,0],
-   [1,1,0,0,0,0,0,1,0,0,0,0,0],
-   [1,1,0,1,0,0,0]],
-  ["",[0,0,0,2,2,1,1,0,0,0,0],
-   [0,1,0,3,0,0,1,1,0,0,0,0,0],
-   [3,1,0,0,0,1,1]],
-  ["",[2,2,1,4,1,1,0,0,0,0,0],
-   [1,2,0,1,4,0,0,1,1,0,1,0,0],
-   [2,3,0,2,2,1,1]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,1,0,0,0,0,0,0,0,0,0],
-   [0,0,0,1,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,1,0,0]],
-  ["",[1,2,2,5,1,1,2,0,0,1,1],
-   [0,4,0,1,4,0,1,3,0,2,1,0,0],
-   [2,6,1,2,3,0,2]],
-  ["",[0,0,3,2,1,0,2,4,0,0,0],
-   [2,1,0,2,2,1,0,2,0,1,1,0,0],
-   [2,5,2,1,0,0,2]],
-  ["",[0,0,0,0,0,0,0,0,1,0,0],
-   [0,1,0,0,0,0,0,0,0,0,0,0,0],
-   [0,1,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,0,1,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,1,0,0,0,0,0,0],
-   [1,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,1],
-   [0,1,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,1,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,1,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,1,0,0],
-   [1,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,1,0,0,1,0,0,0,1,0],
-   [1,0,0,0,0,0,0,0,1,1,0,0,0],
-   [0,0,0,2,1,0,0]],
-  ["",[1,1,1,2,0,0,2,1,0,0,0],
-   [1,3,0,0,0,0,0,0,0,2,1,0,1],
-   [1,2,1,3,0,0,1]],
-  ["",[0,0,0,0,0,0,1,0,0,0,0],
-   [0,0,0,1,0,0,0,0,0,0,0,0,0],
-   [1,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[1,0,0,1,0,1,1,0,1,0,0],
-   [0,2,0,0,1,0,1,1,0,0,0,0,0],
-   [1,2,0,0,2,0,0]],
-  ["",[0,1,1,2,0,0,0,1,0,0,0],
-   [0,1,0,0,0,0,0,1,0,2,0,0,1],
-   [0,0,1,3,0,0,1]],
-  ["",[0,0,1,1,0,0,0,1,0,0,0],
-   [0,1,0,1,0,0,0,1,0,0,0,0,0],
-   [0,2,0,0,0,0,1]],
-  ["",[0,0,3,5,1,0,0,2,2,0,0],
-   [0,2,0,1,4,0,0,1,0,2,3,0,0],
-   [3,4,0,3,2,0,1]],
-  ["",[0,0,1,3,0,0,0,2,4,0,0],
-   [1,3,1,0,1,0,1,1,0,2,0,0,0],
-   [3,2,1,2,1,0,1]],
-  ["",[0,0,0,0,0,0,0,0,2,0,0],
-   [0,0,0,0,0,1,0,1,0,0,0,0,0],
-   [1,0,0,0,1,0,0]],
-  ["",[1,0,0,0,1,0,0,0,0,0,0],
-   [0,0,0,0,2,0,0,0,0,0,0,0,0],
-   [0,1,0,0,1,0,0]],
-  ["",[0,0,0,0,0,0,0,0,1,0,0],
-   [0,0,0,0,0,0,0,0,0,0,1,0,0],
-   [1,0,0,0,0,0,0]],
-  ["",[0,0,0,2,0,0,1,2,0,0,0],
-   [1,1,0,0,1,0,0,1,0,1,0,0,0],
-   [2,1,0,1,0,0,1]],
-  ["",[0,0,0,0,0,2,0,0,0,0,0],
-   [0,1,0,0,0,0,0,0,0,1,0,0,0],
-   [0,0,0,2,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,1,0],
-   [1,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,1,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,0,1,1,0,0,1,1,0,0],
-   [0,0,0,0,2,0,0,1,0,0,1,0,0],
-   [1,1,0,0,2,0,0]],
-  ["",[0,0,0,1,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,1,0,0,0,0,0,0],
-   [1,0,0,0,0,0,0]],
-  ["",[0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0]],
-  ["",[0,0,0,1,0,0,0,0,0,1,0],
-   [0,1,1,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,1,0,1]],
-  ["",[1,0,0,0,0,0,0,0,0,0,0],
-   [0,0,0,0,0,0,0,0,1,0,0,0,0],
-   [0,0,0,1,0,0,0]],
-  ["",[0,1,2,0,0,2,1,2,3,0,0],
-   [0,0,1,1,2,1,1,1,1,3,0,0,0],
-   [2,2,1,4,2,0,0]],
-  ["",[0,0,2,0,1,0,1,1,1,0,1],
-   [0,1,0,0,3,0,0,1,0,2,0,0,0],
-   [0,3,1,2,1,0,0]],
-  ["",[0,1,1,1,0,0,0,3,0,0,0],
-   [1,0,0,1,0,0,0,1,0,2,0,0,1],
-   [2,0,1,2,0,0,1]],
-  ["",[0,1,0,0,0,0,1,0,0,0,0],
-   [0,0,0,0,1,0,0,0,0,0,0,0,1],
-   [0,1,1,0,0,0,0]]
+/* 由流水生成每人矩阵：行 = NAME_ORDER 的顺序，第一列留空由解密结果填充 */
+function makeRaw(events, nw){
+  var rows = NAME_ORDER.map(function(){ return ['', new Array(nw).fill(0), new Array(NS).fill(0), new Array(7).fill(0)]; });
+  events.forEach(function(e){
+    e[4].forEach(function(n){
+      var i = NAME_IDX[n];
+      if(i === undefined) return;
+      rows[i][1][e[0]-1] += 1;
+      rows[i][2][e[3]]   += 1;
+      rows[i][3][e[1]]   += 1;
+    });
+  });
+  return rows;
+}
+
+/* ============ 🕰️ 时间视图：整体回到某一周 ============
+   选「截至第 N 周」后，整站（总览 / 分析 / 游戏 / 主页读数）都只基于 W1..WN 重建，
+   就像当时只有 N 周数据一样。0 = 全部数据。切换由界面写入 localStorage 并刷新页面。 */
+const CUT_KEY = 'kb_cutoff_v1';
+let CUT = 0;
+try{ CUT = parseInt(localStorage.getItem(CUT_KEY) || '0', 10) || 0; }catch(e){ CUT = 0; }
+if(CUT < 0 || CUT >= NW_ALL) CUT = 0;
+
+let WEEKS, SHORT, EVENTS, NW, L, L2, L3, HALF;
+if(CUT > 0){
+  WEEKS  = WEEKS_ALL.slice(0, CUT);
+  SHORT  = SHORT_ALL.slice(0, CUT);
+  EVENTS = EVENTS_ALL.filter(function(e){ return e[0] <= CUT; });
+  NW   = CUT;
+  L    = NW - 1;
+  L2   = Math.max(0, NW - 2);
+  L3   = Math.max(0, NW - 3);
+  HALF = Math.max(1, Math.floor(NW / 2));
+}else{
+  WEEKS  = WEEKS_ALL.slice();
+  SHORT  = SHORT_ALL.slice();
+  EVENTS = EVENTS_ALL.slice();
+  NW   = NW_ALL;
+  L    = NW - 1;
+  L2   = NW - 2;
+  L3   = NW - 3;
+  HALF = Math.max(1, Math.floor(NW / 2));
+}
+/* 单周视图：前后半程 / 进步 / 趋势类分析没有比较对象，统一由 SINGLE 降级说明，
+   H2EFF 供除法兜底，避免出现 W1–W0、除零 NaN 或误导性的「全员进步」。 */
+const SINGLE = (NW < 2);
+const H2EFF  = Math.max(1, NW - HALF);
+let RAW = makeRaw(EVENTS, NW);
+
+/* 大九班分组（全班 52 人，8 个小组） */
+/* 事件级：{w(1based), dow(0=周一), date, subIdx, names[]} —— 在 buildDow() 里从 EVENTS 构建 */
+var EV = [];
+/* 全局派生 */
+var DOWTOT = [0,0,0,0,0,0,0], DOWPEO = [0,0,0,0,0,0,0];
+var DOWSUB = [];
+var WKDow  = [];
+var GRPDOW = [];
+var SUBWK  = [];
+var GRPSUB = [];
+var GRPWK  = [];
+const GROUPS = [
+  {g:1, m:['艾XY','何YM','梁BL','王ZY','陈CX','刘XY','唐K']},
+  {g:2, m:['敖JS','何ZQ','罗YX','张JR','杜YT','刘YX','任YL']},
+  {g:3, m:['曾YC','黄KC','牟HR','张JC','段PY','舒T']},
+  {g:4, m:['陈BS','惠CY','穆XH','张YH','葛YT','田YC']},
+  {g:5, m:['陈XF','江KY','秦WM','张ZY','黄SQ','王W','陈ZY']},
+  {g:6, m:['陈YM','蒋HY','邱YL','赵RR','李H','王YH','杨YR']},
+  {g:7, m:['付JY','汤HY','周YT','李KX','韦ZX','张ZT','郭SR']},
+  {g:8, m:['韩CX','李PL','朱RZY','刘RX','张JY']}
 ];
-const STORE_KEY = 'classDiscipline_10w_v1';
+
+/* ===== 密保题库 =====
+   页面里只有题目和密文，没有答案。答对的 3 个答案拼起来才是解密密钥。 */
+const QUIZ = [{"q": "我们亲爱的班主任姓啥？（一个汉字回答）"}, {"q": "我们每周几会跑步？（周一答 1；周一和周二答 12，从小到大）"}, {"q": "数学课代表有几个？（一个数字回答）"}, {"q": "我们是几班？（一个数字回答）"}, {"q": "新学期我们有几个新同学？（一个数字回答）"}, {"q": "我们的教室在哪里？（如：A402）"}];
+/* 每种 3 题组合各一份密文（C(6,3)=20）。密钥 = 该组合三题答案按题目顺序用 | 连接 */
+const QBANK = { iter: 100000, list: [{"q": [0, 1, 2], "salt": "0STBKQnG7TjIU2J4lVNihA==", "iv": "IdsJgB6VdOwNixuqcA+VMg==", "data": "9mIz5xMXNdvif/RUzKAgp8wedp66c/FDY3Gse4NpIkZZSDV3TkOluWlReLjLMn8izSgH/5Zw3H+eWYu2GY8UX1P7bGnIdDqPHEnbvDCcpla+BL7jpfwpZkWa0DjoT5xJjlzFLxNdvGFoGtXZMJebcYiTyYLfQ7hSw8u11FedAPJnPFZkr6rFxGYWO+oUaScu6qELeNHwATop8u4nbDfKmCeEFBecIIstu+e2UrF31IvsdYsUKJm08cWOWMl2F6Ie3EMiAXSz+1q0FR/+BPCeaVnbdMoMWL7B1z+mIMxFIUJ07pw5h+epTTcD3a96U+CVUPktFBO7Q2n8XCywOICI6Ql4l1ajyL6aSXNZavmWbnxJnpTqzbIdjqNU0LvgTL2xkFOFXozQZneCeZ+fQw5MvAPpbe0NDsI4ry+gFUNzUgzfaqz/2QF/yb5hPK6gsnXirgGnLegVCZNJmJ/ckWWIDNcCA70srfOhhtNkRWg8fdoac9/LjcJnOaL6d0jEEB594wPxF2qveDxdrkTpVH9AVHyqkUHLkIZuzl8Yd9pXlYE=", "iv2": "Nh49BYL7jfbkSGRctRdXRw==", "verify": "KA+npIGmS2EejD5FQqqwrA=="}, {"q": [0, 1, 3], "salt": "Trs0I2kc1vStOL3d0xUHrQ==", "iv": "oo/PBy7S97F2ZSPUACy2eg==", "data": "f9xaOC4FlDOx5Wtu+yYoJXy2YJ7pUxC8HIt5c9KNGMj4aJ71QfpCGrREE6198hNooXkRFduZQLM3jpCDLaZ+z6XUer97HVUOT8NbxiZzdqQ/0F5Q0cLy+eQNLl2YSfk06FJSXOMbcNXMBH44cf4yRBRlqTr1SaA5pfmoUdMYll5+DRUhrd9dwnFIts9vVFGQw1hHXZ8w/Wa/7fAMQTGz1MCz33YYSfzLDe22r262yyvqhmTepk6tx2nb1eFpYRLHxGp5JvM2FSrkt3xcgmkYFi+b1TtfvfIXDBhX1SHcPJm/tMPEm70vzIIr1X+2BTgYwGTIHsvJunJHP4VVnYJf03Cz0tbOsR4qKv8c3ufrn1++M0taguv4kv4tCTIZ/RrxC9/YX+kVJr+2wm98AB2zlF9ipR+ASX2Iuun5dEn8B/gEsG8tVfdKxZE/SwW8wSWGpMRLoQ49HMKKZPt2nv5yenAtAHOGA1cWz0FEoMI7PuhBXNqksEFZbrOY37wrDgXGKImgF5hB3n972SbWVohWfRYxJLJ/wYEj3U++v4gRKsw=", "iv2": "37hESk+TKM5a5CQqGMpySg==", "verify": "LSwsdnFacxI49PGPuQcflw=="}, {"q": [0, 1, 4], "salt": "MpAJGT6l9y530CmXVR6X8g==", "iv": "+RwcimTwKfSPI+WQw0df6w==", "data": "HqiB6dAnmiAgLP80L6DvoYJ8GnmbfVe7OZWCJCQ6I99rhfCDm42cH5MPm3M+JwgrIXap7kJmd5HV59UeXmlBvKeVysXrzkwxbWwGqAmbRDVQXa2o/kAHWwItysal0Y02LsmwCwhsKoop4T4Bp1fBtderxdVBhFSDem7BSz1d5by6kF+G/LclbeoUKD+h6oyx/r38KiNWFliXMZA5/cjcs4CKjkmXHcB+MvjDL+DsYYquDgUEBwvtfHa62c1dhDV66vIOrbvzO5SOshd2DfdNUOdBjuAC94REKLb/GKRy/KX9wEvjoRK5okNEl7VHuSlCEocCOVQdC3k69jGqBp4nLRMfOLNs/ozGYJmlevaYL5p2qwFaENaZbQr6dfH/3g4Ut+7cLKZcfbTijzScQTkARemtipHpDfpjfY5FYOPCncuINEpqxdmFucFL69v4bziXndHAPs8WIkzfYCdg9H8tYr8J1Zh24oSTyhybpjWjidiY6CP/xmocC9W7VQIzNUqcWlmh2jDD4lpyP/mnvP9TYFuibNxeup/Gj9LCmCRNolw=", "iv2": "VXQHHMaz4mCfMB0X/+pPTQ==", "verify": "88lfKUxwUNKCmwuxkoporQ=="}, {"q": [0, 1, 5], "salt": "EqO5Z8KdJ4KepC6XyWxFfw==", "iv": "0xKRdCbj8QIaKRas4eJs6w==", "data": "n9seZMDy2gZf3bLKSODy8U+FarpqmotOvWEbuxDa35DLiVIT7zDt03oK2dWdIlanulRFAZc4BiNyC8ClN9RMShqBZIVhGjlegp1j/mjnWGW8b2zf5kpm3EJvq/3Mj7gLyV+csWyb/N3cCIKjp9ZVtNOKl98B2LiyjDTaYYiA41w6fxsmkhm02nFNhApK5J33IdO4yp5G+cJY0y/gtyJmQdN6h8/WNVTX9RgecvFAH+PUTBEPHeN9HJUA1oP201PPyDZhoBZt0idb1LdiTC0cToeZgepLRR1E4NZVAR6Q3KLkI3FNXw13BMGMV9lAVbsXY1GZdTVbiOC62pdlOWRfR4EF37TkXkfiMOy5z23YozF/4DNOxf5JUKFEhZeEXvpDr/ObMFb8gelVxdx1XKlRsocIK6mVqAaTKGWQcYGXTAx1rmA89llwczZ4PB+9SpIrTL/M8bLlAsUFfeBlMY9L4RkJ3XXU8vMoFOshPQGqZBX5QEjNhDLT7QNhYle7oWxg0LyW4nj4SjPxPhDETHmKqgN+u0U/zKAqVhcWaXlCP/c=", "iv2": "Oelgan2+JOOEJ7Ogkb5eig==", "verify": "gvDFNZSHBMEGiY5qdcJZmg=="}, {"q": [0, 2, 3], "salt": "h57EM1mqrHE/N3DeGtSKmQ==", "iv": "LQGsVz+/I+mwC9WX0l4UOA==", "data": "Gt3+DFiZuQ3Yr14YQzQpzJO4vcPgPlFlIgqFYLTvyCKl5lGte8J9S0hNm7+LnnRnHmtdM2XNBLLTkGOgGyJLE1w+3fENqFvvfjt5cUobnqOQ4H6B1GTO7uchr9TehbxDJ3tUCY03VA4/LnWuT2ZDc2o2S32M4dthXXw0W4bISTlsCpKQoWdLyG+Uc1pTF4CQQg7WKGpKRiPla/L6P23QgusWg5CfU30/UUN6EKLXQtqlaahkrAWFfgx48Rn6pGYlFDNZgnUhISDZQXRbctRWulJSuthSelNth8qcBTB2EhqsKDq5iuATegk72FAbe0V2A5E0C2qyFm5H5rGBbkNIORGoq6WXWoUDrsPG15bM4oTZjt2Ku7vlWQsEkdirNHDSeXXBGwnx+sH7KsV+sn4lvk/RgYMB9xAECL8l/InrGDuvYrLSvFdQY6R13ZuPS6yq+W6/an0Pz2eBt3pIam4E2Qnw66+Gz7vLWfCPcK/nbMEVV89gnKdMeDNUbOpsufUQsqIZzSgQs//dXzQJWbB/X4j6vlLsyUkyUegbCB9v5Z0=", "iv2": "4m+yYjhS+9n8HhTJGnLRxA==", "verify": "jr39JP8Fs4k8Ub+rseocpA=="}, {"q": [0, 2, 4], "salt": "cCfSwsmo6rveaTx7YjYV0w==", "iv": "aFa+Vu/EKVZFK8ZJuF+S1A==", "data": "FzHz3mX2r55Br+N7gdoXOywicsJOvT0pVScE1HnOx88xtZoaKLoubQ01axEPW5FIaSwEKRJVGOU/w8VJy08xYdqgiRxI5jPL2U3hG4lTYW4+LAetSxCX51etROrwPjQSlH5s7ZvmYxyZyWeE5el8Z/b1bpLaNFsFOMLgcMx6UHJ6KJcHnpTXBmeZsaNi86DtfMRk+Zy7ez2Old4fw03sCB37W+JdgV2y0+O9ZdAIySPFqCkK9H08cL37qyj0DUHm0USND5UtVdmnaxJY/T9EOp5aYCdZC1M76YQiWaFRJntqYP2nAh9lYGWJzRqcK83q5SjF2sxY3PwLffKUYFprrvrj+dOSB4Qsa3njupvZDwAgpuHWYkxFz9zJuUnero6BwFBcMSQ7EF77gtstn/vz2Xr0Ib7Xm4ZGSNLDAQZ1EkJmPbaRq0BhC4yzdk1E0KNLnaAGLZZ9HyDHqQU2Qkvrl/PrFzK8CXPh4+HadpZTzfCVSiFvmteqCFH9uMW7VqY0mFCtQUs/V9ZgtVMDJAp5zRSKIkv1z2xuqgRtYKQlYOA=", "iv2": "PY+fqRJgoynA/GGRi6CjPA==", "verify": "hRt3D1yveuMcXMxuLuPZEg=="}, {"q": [0, 2, 5], "salt": "+UPBOXweTYd9x5nFpYKsiQ==", "iv": "4OeNA1zOYn9ZImpALf5Grw==", "data": "kgVESan50WGypH+iU/O1OW0P47MOJKfxdOHi7l6r2BrUKfAPK2POLO4QO7Cwh9kc+vJ+VRnV3A49vJDXpen5dIxC2Kc11W2tZorb+taf2bOywS1lPp+DJPWjtLOwqV5luEB3snNrClhxzlA2f4QafxpQpt8a0XidF+qPgMxcOU9B1c3/wOA2XoWmjH5I08ocjbkoSMnAZ/d479EiZpy6qSqQ6UQ03l+4w890PwK1cQ4XLU3ETbdZQb0kGdfeaVX/O7MY/337tS4iX7LRxm3DkolqmUKGeHKlkvqU5IP3ZZbwVEUj8ZcrD3kThE2ZOexw7yXYd+Dh8YasysMa9R22Ojb7cbtmGgNPmtcL6Dsa7IbKHUd9bjWN25fYnjBa6DHV/1ViCOg44/+Q1CSFZMJZul8P8/N+8njX2pGv6Gv0jhaXfzx99M1IcEs1J7YNdrasBBX3DPF1Y/smSHMK7bzU+RXzR9VE4it872ZQLW5x2DIOim5LeUqLhi59hom0P2gkr+4Uzv52t6GK6bTI2342bmvH6emmQBOJnYi/2dbH7S0=", "iv2": "Kvcpvc5UPu6uCM34Bgw3yA==", "verify": "AhZGfJ6wQ6zlrxOgDiPpTQ=="}, {"q": [0, 3, 4], "salt": "Kr8wB74dg56E3Sn8QbHd4Q==", "iv": "lF03dUa6hAuj+RKIK5skcw==", "data": "GCsh39i0cU+rXrPz0Eu1kmMm/AiMw3J7Cl9Vu214q4XaMp6B92AIWzZf5wv0duFUsNKo0h4Tpz1uQ8MjJyDI2UTkUCEHbWC6F0M1qUp5kwDnBL5CeDTeFe7LFrOPx93OH55qYDZtuBbdUuN7ZQc48gTPN/iF/auFLBPnThgEIMid21+ZYOiiCrsbV+jKixqj4ZK/fK+Zjy7ovXHcvRKH7T5IZSw+NdddStAQpJ3pBUHhGjFptwE8mgvWXkbdexNyAr0hjDufFc2+ij7afdJ6YL41fiMwcYnY4XoVadzRqIHDIii3IxamAhwu2ON42zRltKWiV3+0/3DgcCSIJqVD6ceit0sCQA/MaqbYHU+UbWIdvFuZQETFe/lG0JAUWCcY4YwF/nO1dz8391ZXE5ytaBG2TclJgtgQonYNoNF4LLANxaCighayKNw2c7OaGihoyGJ17VZCYfCtR+qOlNRRInom2OtFHfunUaqfQkEou5PUeFW9vSKa96K+n5zKbhAt+3r9vwrNWd5lUTV6z9X+KsGM9RLV8rwpjNtwa+nzxBI=", "iv2": "bFyRoJGPRCZLHz5AtkNk9A==", "verify": "CQWU0ITeuipTsnvAo5yqsw=="}, {"q": [0, 3, 5], "salt": "YGnVk9ga/af/M8kGL14sNA==", "iv": "b4ggg2vBdDr6oqRhzlRSTQ==", "data": "PHY9bsdvE6Gam6P5Wn7wnFQpHP5hJURZD+nXqxCErqCxqFAsJViIsrlG715FFjMvX7Rh5eFdXUx2gmXrGtVHVMOcc5H5TfgjyGqkvQVQbTLHXIsviGa3153mn7sPneDjv0+cvXSXZrryul20RlTQzt4UmGPDzfsAJ6jbXPk4KxNpEI9KO+3DyezI1VLSG+n3Whxl6BBnmQgu6IgdzFaRe9yeHx7FuK9Hc5A0p0Cc11t870jpaAsfUP+k0MDGvq9ezmUwhyRwtzXxfiBNMLx8HLp9F/FgdpZlE66FPiC7unnXOzQ6kEb0otwltTHwdmMu3Wp+JBmo6QERbp4kHHpv72G/k7FjxZ6N5nEe0gzIhLjaohz7yVr0gamGTQ8T9vJzKfMbN7I0Djp8J/4ovKxBfRXLUKaDkSt4LWAhMX8B0LKz0QwarenkW3Om8xvXAKvfCzX5BrAQHkinxZEJXIDrmc5nXtZhzhAtTu62DVfdolzsCJx4YDflywl6bCHVHXMRT/YboDIQ4U5mqZHve1hszbi8V7FGN8Cm9ccKdps5fbg=", "iv2": "Eq0H6Q82xUlhX9cMTfukww==", "verify": "Cd29lK+4s498Ew0mI7yoGQ=="}, {"q": [0, 4, 5], "salt": "vo77/sIyAJYjXf2Cbr9L4Q==", "iv": "tFl2VNja5mcPhgqi1j18mQ==", "data": "3JL37lsO2ORaQYgymXuaiV6VHmT2Wt6nZn1V9okewsBuwh6xrpNmDFBCCohm+EIjZOOPIe4/FFfW9h5embovb7+nTLbzv6+H5jJxCZB/QmpM5aWMRfWC2vnsD2oJuABRwITVG2BnI6TltJCO9fdvbiwB0Zehg0RNBzTiCbxLZ3ECx9UQNeXhKFEqYnT5Bgn5kVfMoL8F9Vu5hSJr1UuYvlpX4X9vKKJVcqGEcgIhq74g5QD+h19yRSVWkSRKo+ZA58vDtvYx1NVO/dUqbURM27Dxtx6+sEFwOdmacAzN7ynRP7AhspDT2FV7SdAYa4+UifjEpoSb8cHRC/4r29QEJHdTwIC8AUqtALl7uwLmdclLB2xg2ijjH+a3jwb5I4HZO0FW2ve6QgyxqpYmNnUPP1q9yoHoWTaA1n2Pz3xZ6aGiDSfseeaCXTGNI3nNeWoYjzuOvkYqPdh8owQAzDCKFCdqIjqFYaSDWThPgNnK09o2RCXpuz46Q/IqWtheMjQXln+zH1kXbsc6tb6cThaP8PRPdWJPUvmnQgd2XHpebc8=", "iv2": "y1uj7yWP8HosyLLeL27BBA==", "verify": "sqZu05uwlAWcJt26/kXdgg=="}, {"q": [1, 2, 3], "salt": "9/ePkRXSnmZ/GicdJusCzg==", "iv": "plxJkdsy+S2nfE7GhPRiTA==", "data": "O+CWzfy3jT95fFfxmflvqTxSthn2ZfMZk3QnDxQnxYN968cTvb2QzWF1G45UR4LXpYv6T0OsB3ZaPxMpD5xGCuMGwqb3qeLy5jhAvwfdy5JD+6A6wjsPztgi6H96xQivjqCI9XBk1Q4Fph/2YO+Qdof3IfUk93laCwsHdNaEUZh6prWuHqttPm1bVK+updU3oSXg/kiIxkjNj0Jl3AhCuTQ8En37J8EoE1Cy1eV2flqTAwqYN1iKYVuKBbWpSj6kJ3M8wtqCpV6hVUTZLoqNaL9XxzK2mhA22zKGAf9+CoUUQdAnVlxv7+CQywDfJkeDjiLK6kiBsZD2BEtD1kKswr5JUDsazocnjEMLVJR7vLXw3hRFLDfCJte0J+rbv0reOf+W0LiwU/39TOvhDOQ1Nlw9RuVJ0gDfCqb2B/Lth9Ct4qtuZTN303WsAqxbSnb2U0mWjlTqYuo4E/JYFWWwCPPDWsuf6sjzpNTDKS67TUKZvUgGBknip42IQs3mRhBPAMqig7bVgHkm2Gv38Hj8mJWdTRwU05sqoIrozeYrnDg=", "iv2": "POJtQS8w83oIf91TbELoJg==", "verify": "KC2uJHLhlez4IS9hFtDN3g=="}, {"q": [1, 2, 4], "salt": "zkmm9ltRfR/yvrGL790wDQ==", "iv": "fjiW7M1zhsHFzZ++QXU1oA==", "data": "RRFnxp94VM7CKTv92O/SjRqOkN0Mi5J3xOnkdbLFF6RFEb8t45NQSn6JIxNvu426aphL4e6Zh/rgYUzMyIm/lCMMVnnPaP0eKdA4C4xD7h1MIc2i8NgDUM5VPM1Yv/EpAS7xgZ1SnWUnECyR2cy4U8qRX4mxRPhqteiG3vkKnTbmjyaWQsilyYZaDDnQdgfw2pve44MwAcDyg1GWVknA8wxX3ubL8GeSLve0lc/NO0OejHDziZqgKSuH/XXszMvOEbX44rSoWyvqGbd4LrY3anW81AdVT8WLbVjhdTLT/IrNjl2K1mxM2CQ4m1Zri3GIZpaWmsKjPv9r+IMCAliGV0DzPjyjtMa0ZMCdrZUjIkYHYEPTj+PVXrrrovxRYkl+NqqypLLrxsuCu7UBU6afLLBTYNSYqJV42sVuaFoIuhDRaejgUGHSTIFlPy2kEFFx9GTlDb2+377F7CRMhD8AORhrZ7k1bjZxOp6UUwU+ikuWo8sNzbeKft6tLXFWs2X++LkQpDqgAn2PscouO+aJazGhuzioqnoIpk1SrdLk9Wo=", "iv2": "1QCx+9jEqR8TE0RBi1mWIw==", "verify": "yYa8av2AbWdijNm1yjqXgw=="}, {"q": [1, 2, 5], "salt": "r7D+7MpXgsxlqAbcaraeyA==", "iv": "R5HDFBUHnixJEdKHU75xOA==", "data": "ZSGPPZJPuAi9nW8c756+TVuJhcR7K3BpSwlXh0t6rx8hcad77NK4BMoGB8RHsqzYStT0diwckix7nFwFldkgL5/5b0Ro9C6FjNz8beciktH6TCiiOxwwaqU8x5jwDfF/OZxLwjLElaWJnufEBI6IUVb6L14dUET78pTzHOlCLTTsAy5bzQZ7lRjStI/SP4GbAy9QGqlRuDUT5t1k3AAe+xb7yrJhr7w9WiN4fpluxwaElDO80jHlxQU0Y366luS2vt/FY+c6JrS9cTlMNUS65NK8ySw/GaKlJGqsPFEjWQPnw0COsMwARpz7h29FMA4XxwAZni/DwzZeiALwhfs1Mvd07jKKObEucz2Obo4+E1nNZW1gJ/KfujcgDF+6sjNAz+ZR3fEbQOZJLO3yNWv9xD4rxdF0yI8dw3oQSY+NAOLsWWXeBEsQKTEgaXyVm+Esi1V14GswoanyvUfQnH9PNdxr7/xdROT1NGZNp0e91uj/1QfPKWjD33AD1uMcQPgZtzzbHtiuWGTVEY7oOnW0Fgs4WA1EHFFdy0+KPTGvxd0=", "iv2": "iVicMA78KNPzpnNr/CdzFQ==", "verify": "ziZKKewNmdZ9RToGv2MkDQ=="}, {"q": [1, 3, 4], "salt": "/EDD083oayJbgWarsiHMCQ==", "iv": "RLQHIvhBcUeuv+EeYlyRCA==", "data": "fMtwLyOktfS7XWB4V3CXd+0/z8xIgqEhANSLdoEPRcx4BLS8vPlsk9mDt/hJVnzn/3pl0ncelvnd1AkGi1+Up7+gHuacrrig7aTHWvo8DL1T9dS9yb5xyCOBpOLFQkeJGMITWKZDZAKP/0Hpp234GxR76bv27HVEJbTIJj8DOpVAq5S7ps0qk8sM2hdNmTOH+YfJMIhpQt9vATHQPDe02LioBVryjgrvRRov8Snqm9wSCAR1YXS3OglwXLtsAbcZhK1LZrJSHbPkKbdr4cukQxAIOUdAizKYKrJsUXTT0HieTbIAlgCY2njmv6d963knhkUml48dcEiHoy7jANVjAnJToOpKtUCDmMPwzc2Ww8Ka2EEH4FghwD8ZfoBq7C7FveH9SOvFaGa3rj38vnZ5Xl76BwokGSRrFhxDEXsErpPAHVjgifoeBH11+QyawpqjizvNUFUjLpYmSvbOwZTIH+iVIOGBIoGkcScXJ0zxFGv9j+H0QWFk601kPgAV0saySa56IY+kIWHWDilS6iHdZkYrRTGCewYopB5olnGBjzU=", "iv2": "lgSjx/LnAQdvuMzKB+pgkg==", "verify": "5SlwBbYQ61PIWR6RKjJmnA=="}, {"q": [1, 3, 5], "salt": "yklJW23OEHDfDqhuFEd8bw==", "iv": "atCkjsh4AOQRL7p43+aa6w==", "data": "/SBKWyTCcxy/e7cNueZ7/FBYNPVxybF+JobDW98XXVlMl/ViXJOQPVI6zsv2RMkJNoLVv5pUw2uG3W9UcS/cPl6Zrw0l8zEcYLzQC3xWEW74Q8l0EGFF9+0dVIXT9+HbP0GDCpqRnDZ/i+ETSK4gvGGC1RI5mbePIIRAR6R/Iii+BNxDJXGWpbcsjep3GxYFeSJKWtlvjJIlnUCJBLKwlZgSONoTD6KrZbymgHSshv+qVD2sKNZoLs96zJGguwvq3XM7S9lLJaSp+b2GZtwgFlRHbuASfzESmGCr5WeiB8hL8XaU5iLdmQUZhBTHFdyBhBMWSEIZKI8f+vxVr9dxoqU9PesIWcA3TAxPwyBQzh4KPisiYfQu+XceBikTcagc6VuAqW2r8ThZ2KlMsGZSZRSqtu6OtPR63K27G5shm1pedR7T2BVVTaKlgcocd3TAMU9cM9uOEE1SnDsgbgO35YSqTyz7ZXZaws1O7L/vQhBzIDVpVBdnBgxzWvqre1nLpYqhbFN8zJb1Brlyj1cHzk+Sb9+jckYw4skAx575p1Q=", "iv2": "PBCbe9A3UzbzB5VTyPkolQ==", "verify": "i3IKmbfu3rGIjm6bCl/yKA=="}, {"q": [1, 4, 5], "salt": "YYsSPUwQiRiTVMtdPIDqCw==", "iv": "s9V4UQuWZBewjFTZKbBqkw==", "data": "bnBJW6bWg/GbuHF74Ydx9NGkiW4U7kv9NZ/mtu0YvjN3f7eWGVIskiP5xqE5jjM0oqKQ50c9fDCAXZGAPLWmrgV3v5T+Bz9X/rL6FPLy0otFjM/6atpiU+xfDOetYRzWKy5Sb2w4AJuCQ2aioFjG+9XuUQEx9O4p2mUI+F1jHcUH3egCKRujif6VSND33077fjqIbC2XExy4RGnVRpdjANrKRnvnmQ2R+sFxKoqLrZfZaSD43ddNjJPSc01K7rV9Gxj+HKCvMXxnZb9EWo34dcLAtj1nrix+LG3jwJgvgSmZ3jB7iog23DlFTXQjZATmsRrC3IVwtvMcmZxMZ0ZvvSQ4p3Rjg+sSamR1lvXB9WE53ukonRRVGIIhHzkXPdjCcd5xuLoeXvYTQapuH5DbcdWPym8BjlGhCI9Hqmh3sIc4hl3o4mYk+a7mLFRNy29kAuuxjx6WHuo81t5d43kfXKfPOV+uOOK07oytryPht4j31gi3dWJ871JrrQsDI//eaAoeKtIoTKf79iD+rknwqkukOymhUWMuqPEeXtNS9jg=", "iv2": "BciMAgM11U7Qlu77MX38Ug==", "verify": "fmvh5aXpe1Mpv9nDSLKsXQ=="}, {"q": [2, 3, 4], "salt": "W3XYRxqPfmFUbCTauFQbaA==", "iv": "Gna8W+QB+rhmklhqPxIGRA==", "data": "GzfyjkfFG9uv8QCUdnz/dmqvT/jnWCyeoiW6OfwDQFCBvODbruhIin+/jbOgIkBQ1mq72aiMtzV91gPinUPArEClkcPEepNEyUXShlpUQKJ+N0AE++ZNraN+qU2RLofSrCHqVYgtUNOC4UJnJTMNswgeqhjAH6Jph/J0hRYHjixKlwbUawrmrsSMM/EGN6I/csmCcI6bpaTKgeImYBxa+CC/RSdqEgPv9ZZH5Gw53CFiE/o063LhtBqb9E2ZTjnFa/heXlxi0u3Wfqhq4OOTsxyNrOFgtUjg1yuilZgnrf4bSmC6bLPa9RRv4F98kOc8dIuUPrSnrsN/t+AKxNoubOkO56SEXNEb43zBWT1fx5qbnh/TiGzsOoSLnkkfcPBIW0z84Pvv7dDAssJFMgpQOEnOy+DusOOZ47IxZaQDM0oQB7VQ3wmp00GjY6aJ23DP8Y3dtV12hepxb30ApOf41WdujR7hXps/c1R4n3PCGkjWRQ/drrydARLg533cT6Vk8hQfhEZTUgjnW9lJ32BFLuy6ndy65q9GsEvKmwZmWBM=", "iv2": "3UPyl/XAZ6EB3tdJlvHCCg==", "verify": "HFOYLliicE5l7rD4E2cYFQ=="}, {"q": [2, 3, 5], "salt": "NDAnQ6QO37JT+DopAzHISw==", "iv": "vQ75ZWEWh4UkwqllwjET/Q==", "data": "k3k3hA+XDBGgny9DgHBxRui+M7NTTmgYofl4HuMS2MW8KlKpeT9193vRhSnpH9Nf9sA95UfZ7e46TZC+kvTctpT2ZIbxPsmsOb+NJZTIitOyWOqmhMXYy6v+A3Gzu31e92Q8GOIpiQ8vk7Ca1d8KANQjoab4m10VWqMLCLUzjv402khlAwG++hKTSyeTu63fYOZ4yeeUlPr5H7Iahozsb7HwSDURaQf9osJhMWQpradfJK1uR5blaZp2V9wXhN3hpkPoja+ottIIyT1UVDNKQMWBcWsuM7uk/S0oOY4tXRWWAUZ+BScQVGoy4JO8RQXwVnUtH7fN6YHBnaAHsGQI/D5hW2Iz2EYKEexwAztSLPYRivhId98n86Bxr3JWxx12D2aLzcZvYdNfSWxmr2Wx9+re34hgCnuY5NiqzpId3BEeyQVpWaeFcC9EoGz48rXJCJtt6wSCSg7LNDomjekue5xiO0Oxab6lTkwegxONfEpew4iK8CZd/q1CVYFwmhboe6V1sMYzlIJZ3T4ziHO5yq+QBRZDdpb+ciRD4AhokEQ=", "iv2": "xoSyg8k31dSXCDA2frxKHA==", "verify": "Km7Tsze/P2FC5q2hRhJm0A=="}, {"q": [2, 4, 5], "salt": "CyqRGPZIZ6s5NcsHkhLLpg==", "iv": "bQno0sIfWRwvYIGJzujEuw==", "data": "smn/6/RIrStD4fZgW0om7JhG0MHqP75rAEfgnP/fwhtsfKoYFXUtZ6tMjz5hvXLe2qjkK+AgXyTn5WWjNQLp21B839Sdch/0DcHVcy+6P9rYnhugBComzxdC8e3iv9Yt35fRkICa8PLg3ueL6/OL437ZF56OUvaPK9S+N+snW15KTry9wWsOLVAPFKHM9b1fKZXRZx1eFn7iF36X3e8k3wspVR/OwaVAx8vWjwv1BHGlzbkJBlYNmFg9ocoFR506ffPJjWSADutI0LaEwssMFnXTPo6MPgcNfk9wDwzu4VvkEsbQc2du+rZOYEIssmLHv4lWXkpDsC2GKB2bMHVURf0oKxonGS4R1UdEg+thRcagaV2Tux5SG6NGKmDi0+TspqYzz6Dc8+zISpja4NoUQ3NuuiVjNsc+9NekM0xr7d/qL1YJTfcN1rnTj8W+2WON0yDYykzttW1ACp5Z7TFy2HakqOKBo34+adYo0Ay22BSsJMslpnczCgL4txOv1HZYIJvggHrzSJMZOJHppjTkV9BzIufHqtk2tv4E3zWQbFY=", "iv2": "+iORi1SpA58SOoPlYACUwg==", "verify": "zn0BwqKXhDRazllj7Q9emw=="}, {"q": [3, 4, 5], "salt": "dTOMIXT4FW/nepdCum6qgQ==", "iv": "eW86kjMEqKfVHVGpldceog==", "data": "IZnBZV+EJesa30f6SntX99AFzzflK1v4Zo57o0ScjHTvK+FPrZPhl48O+5zbbIOJpqtkVMGGNHCj9Lzx6Qc+9YUrkIoXJ505hMy92/cHzCGNkRPTBQyBZrH4nunEzqLIlZSV2D/22pIx5yECE9llqs09ua0ENbSxjjvIzXG8mV+6CIkSOWUlTfLVXSLaIioHN5VpwBWMXojLmgMZ4oFBKIQT4v/ucTpS/aoj3qFHmNb/Gi9uzKBWoZBIYQv+eBbMudJDIAAW3ZxMuCh1LZWMGS/uvoohvZ0kKD+wNpRWvvmgsgzRS9vsHuqQ3/68UmUfmJlpQ6weaZaLvUiM2k7B/3oC9hI24ddqNAi4c1Q2chv7NgC3O6YDWprw+J/36uY1xVKzM1adZood/Vqjl7aw8GDYnOEkfLX43hBiFZ/lUzKWUG4Xk8ITFYF5Hu1fglNyghjAFxuqchkknH/yrRgyOoaA1lCU3n0Ncofe/Xi8N2EwhBsTl6aaNrZvY1YIBM5TwlBzrN3fuYiDfg2kh+3eLc/6TiuilNNapqW8fy9WeQg=", "iv2": "5z2ePSAjyENzZaGI+Rb62g==", "verify": "PkjSqUakjV/Pf4FL55hl0A=="}] };
+
+const STORE_KEY = 'classDiscipline_12w_v1' + (CUT ? '_cut' + CUT : '');
 /* 旧版本残留的存档 key，启动后一次性清理 */
-const OLD_STORE_KEYS = ['classDiscipline_8w_v2','classDiscipline_7w_sub_v1','classDiscipline_7w_v1','classDiscipline_v1','kb_visit_v1'];
+const OLD_STORE_KEYS = ['classDiscipline_10w_v1','classDiscipline_8w_v2','classDiscipline_7w_sub_v1','classDiscipline_7w_v1','classDiscipline_v1','kb_visit_v1'];
 
 </script>
 <script>
@@ -2724,6 +2651,9 @@ function compute(){
     s.first  = sumW(s.w,0,HALF);
     s.last   = sumW(s.w,HALF,NW);
     s.delta  = s.last - s.first;
+    /* 单周没有「前 / 后」可比：归零后所有 delta>0、first>0&&last===0 之类的
+       条件自然不成立，奖项 / 徽章 / 判词不会凭空生成误导性结论。 */
+    if(SINGLE){ s.first = 0; s.last = 0; s.delta = 0; }
     s.recent = s.w[L];
     s.maxw   = Math.max.apply(null, s.w);
     s.maxSub = Math.max.apply(null, s.sub);
@@ -2755,7 +2685,7 @@ compute();
 
 /* ============ 状态 ============ */
 const state = {
-  sort:'total', filter:'all', q:'', week:7,
+  sort:'total', filter:'all', q:'', week:L,
   classSize:52, picked:[], wheelSrc:'all', wheelMode:'call', noRepeat:true, weighted:false, sim:0
 };
 function zeroNamesInData(){ return S.filter(function(s){return s.total===0;}).map(function(s){return s.name;}); }
@@ -2880,7 +2810,9 @@ function renderKpis(){
     ['违纪人数占比', RANK.length+' / '+state.classSize, '覆盖率 '+Math.round(RANK.length/state.classSize*100)+'%', 'var(--red)'],
     ['零违纪人数', zeroCount()+' 人', ''+WKT+'内无违纪记录', 'var(--green)'],
     ['全班人均', perClass+' 次', '违纪同学人均 '+perBad+' 次', 'var(--orange)'],
-    ['后半程变化', (d>0?'+':'')+d+' 次', '较前半程（W1–W'+HALF+'）'+(d>0?'上升':'下降')+' '+pct+'%', d>0?'var(--red)':'var(--green)'],
+    (SINGLE
+      ? ['前后半程', '—', '仅 1 周，暂无前后半程对比', 'var(--muted)']
+      : ['后半程变化', (d>0?'+':'')+d+' 次', '较前半程（W1–W'+HALF+'）'+(d>0?'上升':'下降')+' '+pct+'%', d>0?'var(--red)':'var(--green)']),
     ['最危险学科', SUBS[topSubIdx], subTotals[topSubIdx]+' 次 / '+subPeople[topSubIdx]+' 人', 'var(--brand2)']
   ];
   $('kpis').innerHTML = items.map(function(it){
@@ -2914,7 +2846,9 @@ function renderKpis(){
   if(hd !== FAKE){
     var cn = ['零','一','二','三','四','五','六','七','八','九','十','十一','十二'];
     var c = function(x){ return cn[x] || String(x); };
-    hd.textContent = '前'+c(HALF)+'周（W1–W'+HALF+'）与后'+c(NW-HALF)+'周（W'+(HALF+1)+'–W'+NW+'）对比，看班级整体是在收敛还是扩散。';
+    hd.textContent = SINGLE
+      ? '当前只统计第一周，前后半程对比需要至少 2 周数据。'
+      : '前'+c(HALF)+'周（W1–W'+HALF+'）与后'+c(NW-HALF)+'周（W'+(HALF+1)+'–W'+NW+'）对比，看班级整体是在收敛还是扩散。';
   }
 }
 
@@ -2997,9 +2931,17 @@ function renderCompare(){
   var fh = sumW(weekTotals,0,HALF);
   var sh = sumW(weekTotals,HALF,NW);
   var d = sh-fh;
+  if(SINGLE){
+    $('cmpStat').innerHTML = '<div class="stat"><b>'+TOTAL+'</b><span>第一周累计</span></div>'+
+      '<div class="stat"><b>'+weekPeople[0]+'</b><span>本周上榜人数</span></div>'+
+      '<div class="stat"><b>—</b><span>暂无前后半程对比</span></div>';
+    $('cmpBars').innerHTML = '<div class="desc" style="padding:10px 0">当前时间视图只有第一周，'+
+      '前后半程变化、收敛 / 扩散判断需要至少 2 周数据。把顶部「时间视图」切到 W2 或更后面即可看到。</div>';
+    return;
+  }
   $('cmpStat').innerHTML =
-    '<div class="stat"><b>'+fh+'</b><span>前五周（W1–W'+HALF+'）</span></div>'+
-    '<div class="stat"><b>'+sh+'</b><span>后五周（W'+(HALF+1)+'–W'+NW+'）</span></div>'+
+    '<div class="stat"><b>'+fh+'</b><span>前'+cnNum(HALF)+'周（W1–W'+HALF+'）</span></div>'+
+    '<div class="stat"><b>'+sh+'</b><span>后'+cnNum(NW-HALF)+'周（W'+(HALF+1)+'–W'+NW+'）</span></div>'+
     '<div class="stat"><b style="color:'+(d>0?'#e11d48':'#10b981')+'">'+(d>0?'+':'')+d+'</b><span>净变化'+(d>0?'（扩散）':'（收敛）')+'</span></div>';
   var arr = RANK.slice().sort(function(a,b){return Math.abs(b.delta)-Math.abs(a.delta) || b.total-a.total;}).slice(0,10);
   var max = Math.max.apply(null, arr.map(function(s){return Math.abs(s.delta);})) || 1;
@@ -3028,8 +2970,12 @@ function renderFocus(){
                 .sort(function(a,b){return (b.w[L]*2+b.w[L2])-(a.w[L]*2+a.w[L2]);});
   var html = '<div style="font-size:12.5px;color:var(--muted);margin-bottom:8px">累计 Top 5</div><div class="chips">';
   top.forEach(function(s){ html += '<span class="pill red" data-n="'+esc(s.name)+'">'+esc(s.name)+' · '+s.total+' 次</span>'; });
-  html += '</div><div style="font-size:12.5px;color:var(--muted);margin:16px 0 8px">'+SHORT[L2]+'–'+SHORT[L]+'仍在违纪（'+active.length+' 人）</div><div class="chips">';
-  active.forEach(function(s){ html += '<span class="pill" data-n="'+esc(s.name)+'">'+esc(s.name)+' · '+SHORT[L2]+' '+s.w[L2]+' / '+SHORT[L]+' '+s.w[L]+'</span>'; });
+  html += '</div><div style="font-size:12.5px;color:var(--muted);margin:16px 0 8px">'+
+    (SINGLE ? '第一周上榜（'+active.length+' 人）' : SHORT[L2]+'–'+SHORT[L]+'仍在违纪（'+active.length+' 人）')+'</div><div class="chips">';
+  active.forEach(function(s){
+    html += '<span class="pill" data-n="'+esc(s.name)+'">'+esc(s.name)+' · '+
+      (SINGLE ? 'W1 '+s.w[0]+' 次' : SHORT[L2]+' '+s.w[L2]+' / '+SHORT[L]+' '+s.w[L])+'</span>';
+  });
   html += '</div>';
   var el = $('focus');
   el.innerHTML = html;
@@ -3101,6 +3047,8 @@ function renderRank(){
 
 /* ============ 周明细 ============ */
 function renderWeek(){
+  /* 时间视图切换后周数变少，旧存档/记忆里的选中周可能越界 */
+  if(!(state.week >= 0 && state.week < NW)) state.week = L;
   $('weekChips').innerHTML = SHORT.map(function(s,i){
     return '<span class="chip'+(state.week===i?' on':'')+'" data-w="'+i+'">'+s+' · '+weekTotals[i]+' 次 / '+weekPeople[i]+' 人</span>';
   }).join('');
@@ -3227,7 +3175,7 @@ function patternHtml(){
     '持续型':''+WKT+'中有 4 周以上违纪，习惯性问题，需长期跟踪',
     '集中爆发型':'次数集中在 1–2 周内，多为偶发冲突或特定事件',
     '新增/复发型':'前期有过、近期又出现，需要及时提醒',
-    '已收敛型':'第四周起已归零，干预见效或已自行改正'
+    '已收敛型': SINGLE ? '仅 1 周，无法判断收敛' : ('W'+(HALF+1)+'起已归零，干预见效或已自行改正')
   };
   var html = '<div class="grid2b" style="gap:12px">';
   Object.keys(groups).forEach(function(k){
@@ -3284,9 +3232,13 @@ function openSheet(name){
     '<div style="margin-top:10px">'+tags.map(function(t){return '<span class="tag" style="background:'+t[1]+';color:'+t[2]+'">'+t[0]+'</span>';}).join('')+'</div>'+
     '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block;margin-top:12px">'+g+'</svg>'+
     '<div class="statgrid">'+
-      '<div class="stat"><b>'+s.first+'</b><span>前五周 W1–W'+HALF+'</span></div>'+
-      '<div class="stat"><b>'+s.last+'</b><span>后五周 W'+(HALF+1)+'–W'+NW+'</span></div>'+
-      '<div class="stat"><b style="color:'+(s.delta>0?'#e11d48':'#10b981')+'">'+(s.delta>0?'+':'')+s.delta+'</b><span>后半程变化</span></div>'+
+      (SINGLE
+        ? '<div class="stat"><b>'+s.total+'</b><span>第一周累计</span></div>'+
+          '<div class="stat"><b>'+s.w[0]+'</b><span>本周次数</span></div>'+
+          '<div class="stat"><b>—</b><span>暂无前后半程对比</span></div>'
+        : '<div class="stat"><b>'+s.first+'</b><span>前'+cnNum(HALF)+'周 W1–W'+HALF+'</span></div>'+
+          '<div class="stat"><b>'+s.last+'</b><span>后'+cnNum(NW-HALF)+'周 W'+(HALF+1)+'–W'+NW+'</span></div>'+
+          '<div class="stat"><b style="color:'+(s.delta>0?'#e11d48':'#10b981')+'">'+(s.delta>0?'+':'')+s.delta+'</b><span>后半程变化</span></div>')+
       '<div class="stat"><b>'+Math.round(s.total/(TOTAL||1)*100)+'%</b><span>占全班违纪</span></div></div>'+
     '<div style="font-size:12.5px;color:var(--muted);margin:6px 0">学科明细（主战场：'+s.topSub+' '+s.maxSub+' 次）</div>'+
     subHtml+
@@ -3392,7 +3344,7 @@ function buildAwards(){
   var one = BAD.filter(function(s){return s.total===1;});
   if(one.length) A.push({ico:'🎯', ttl:'差一点就完美奖', who:one[0].name+' 等 '+one.length+' 人', why:''+WKT+'只出现过 1 次，四舍五入就是没犯过', rib:'最轻微', bg:'linear-gradient(135deg,#64748b,#94a3b8)'});
   a = top1(BAD.filter(function(s){return s.first===0 && s.last>0;}), function(s){return s.last;});
-  if(a) A.push({ico:'🌱', ttl:'后半程新秀奖', who:a.name, why:'前半程零记录，后五周出现 '+a.last+' 次，需要及时提醒', rib:'新出现', bg:'linear-gradient(135deg,#db2777,#f59e0b)'});
+  if(a) A.push({ico:'🌱', ttl:'后半程新秀奖', who:a.name, why:'前半程零记录，后'+cnNum(NW-HALF)+'周出现 '+a.last+' 次，需要及时提醒', rib:'新出现', bg:'linear-gradient(135deg,#db2777,#f59e0b)'});
   a = top1(BAD.filter(function(s){return s.streak>=3;}), function(s){return s.streak;});
   if(a) A.push({ico:'🔥', ttl:'连续剧奖', who:a.name, why:'最长连续 '+a.streak+' 周违纪，堪称连续剧主角', rib:'连续周数', bg:'linear-gradient(135deg,#b91c1c,#7c3aed)'});
   var sci = BAD.filter(function(s){return s.sub[1]>0;});
@@ -4009,6 +3961,14 @@ var XROW   = {xDow:'dow', xWeek:'week', xSub:'sub', xGrp:'grp', xPerson:'person'
 var XPID   = {dow:'xDow', week:'xWeek', sub:'xSub', grp:'xGrp', person:'xPerson'};
 var XSTATE = {};
 
+function cnNum(n){
+  var cn = ['零','一','二','三','四','五','六','七','八','九','十',
+            '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十'];
+  return (n <= 20 ? cn[n] : n);
+}
+/* 单周视图下所有「前 X 周 / 后 Y 周」文案统一收口，避免出现 W1–W0、W2–W1 */
+function halfFront(){ return SINGLE ? '仅 1 周' : '前'+cnNum(HALF)+'周（W1–W'+HALF+'）'; }
+function halfBack(){  return SINGLE ? '暂无后半程' : '后'+cnNum(NW-HALF)+'周（W'+(HALF+1)+'–W'+NW+'）'; }
 function xWeeksTxt(){
   var cn = ['零','一','二','三','四','五','六','七','八','九','十',
             '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十'];
@@ -4918,7 +4878,9 @@ function pvBuild(dim){
     var halfB=weekTotals.slice(HALF).reduce(function(a,b){return a+b;},0);
     notes=[
       '<b>'+WEEKS[pk2]+'</b> 是峰值周（'+weekTotals[pk2]+' 次），占'+WKT+'总量的 '+Math.round(weekTotals[pk2]/TOTAL*100)+'%。',
-      '前五周 '+halfA+' 次、后五周 '+halfB+' 次，'+(halfB<halfA?'整体收敛了 '+(halfA-halfB)+' 次':'反而回升了 '+(halfB-halfA)+' 次')+'。',
+      (SINGLE ? '当前只有第一周，暂无前后半程对比。'
+        : ('前'+cnNum(HALF)+'周 '+halfA+' 次、后'+cnNum(NW-HALF)+'周 '+halfB+' 次，'+
+           (halfB<halfA?'整体收敛了 '+(halfA-halfB)+' 次':'反而回升了 '+(halfB-halfA)+' 次')+'。')),
       '最近一周（'+WEEKS[NW-1]+'）'+weekTotals[NW-1]+' 次，涉及 '+weekPeople[NW-1]+' 人。'
     ];
   }
@@ -5033,7 +4995,7 @@ function pvBuild(dim){
       {g:'学科',k:'topSub',t:'主战场',ty:'text'},
       {g:'学科',k:'subSpan',t:'学科广度',ty:'num'},
       {g:'趋势',k:'streak',t:'最长连续',ty:'num'},
-      {g:'趋势',k:'delta',t:'后半程变化',ty:'num'}
+      (SINGLE ? {g:'趋势',k:'w0',t:'本周次数',ty:'num'} : {g:'趋势',k:'delta',t:'后半程变化',ty:'num'})
     ];
     BAD.forEach(function(s){
       var fl=pvFirstLast(function(e){return e.n.indexOf(s.name)>=0;});
@@ -5047,19 +5009,19 @@ function pvBuild(dim){
         first:fl.f? ('W'+fl.f.w+' '+fl.f.date+' · '+SUBS[fl.f.sub]) : '—',
         last:fl.l? ('W'+fl.l.w+' '+fl.l.date+' · '+SUBS[fl.l.sub]) : '—',
         topSub:pvLink('sub',s.topSub,s.topSub+' '+s.maxSub+' 次'),
-        subSpan:s.subSpread, streak:pvStreak(s.w), delta:s.delta, _k:s.name
+        subSpan:s.subSpread, streak:pvStreak(s.w), delta:s.delta, w0:s.w[0], _k:s.name
       });
     });
     var zero=S.length-BAD.length;
     totals={label:'合计（'+BAD.length+' 人）',grp:'—',n:TOTAL,rank:'—',weeks:NW,topDow:'—',
       first:'2026.'+EV[0].date,last:'2026.'+EV[EV.length-1].date,topSub:'—',subSpan:subTotals.filter(function(v){return v>0;}).length,
-      streak:'—',delta:weekTotals.slice(HALF).reduce(function(a,b){return a+b;},0)-weekTotals.slice(0,HALF).reduce(function(a,b){return a+b;},0)};
+      streak:'—',delta:(SINGLE?0:weekTotals.slice(HALF).reduce(function(a,b){return a+b;},0)-weekTotals.slice(0,HALF).reduce(function(a,b){return a+b;},0)), w0:TOTAL};
     var late=BAD.filter(function(s){return s.first===0&&s.last>0;}).length;
     var quiet=BAD.filter(function(s){return s.last===0&&s.first>0;}).length;
     notes=[
       '全班 '+S.length+' 人中 <b>'+BAD.length+'</b> 人有记录、<b>'+zero+'</b> 人'+WKT+'零违纪（占 '+Math.round(zero/S.length*100)+'%）。',
       '榜首 <b>'+pvLink('person',RANK[0].name,RANK[0].name)+'</b> '+RANK[0].total+' 次，涉及 '+RANK[0].subSpread+' 门学科、活跃 '+RANK[0].spread+' 周。',
-      '后半程新出现 '+late+' 人、后半程完全归零 '+quiet+' 人。'
+      (SINGLE ? '当前只有第一周，暂无前后半程对比。' : '后半程新出现 '+late+' 人、后半程完全归零 '+quiet+' 人。')
     ];
   }
   var out={cols:cols,rows:rows,totals:totals,notes:notes};
@@ -6440,7 +6402,9 @@ function dtCluePool(s){
     {ico:'🎨', t:'学科广度', d:'违纪记录一共涉及 '+s.subSpread+' 门学科。'},
     {ico:'📚', t:'主战场', d:'最常出状况的是「'+s.topSub+'」课，共 '+s.maxSub+' 次。'},
     {ico:'💥', t:'峰值周', d:'火力最猛的是'+WEEKS[s.w.indexOf(s.maxw)]+'，单周 '+s.maxw+' 次。'},
-    {ico:'📈', t:'前后对比', d:'前五周 '+s.first+' 次，后五周 '+s.last+' 次 —— '+(s.delta>0?'后半程加重':(s.delta<0?'后半程好转':'前后持平'))+'。'},
+    (SINGLE
+      ? {ico:'📈', t:'当周表现', d:'当前只统计第一周，本周共 '+s.w[0]+' 次，暂无前后半程对比。'}
+      : {ico:'📈', t:'前后对比', d:'前'+cnNum(HALF)+'周 '+s.first+' 次，后'+cnNum(NW-HALF)+'周 '+s.last+' 次 —— '+(s.delta>0?'后半程加重':(s.delta<0?'后半程好转':'前后持平'))+'。'}),
     {ico:'🔤', t:'姓名线索', d:'姓名以「'+s.name.charAt(0)+'」开头，一共 '+s.name.length+' 个字。'},
     {ico:'🔢', t:'次数区间', d:'累计违纪在 '+Math.max(1,s.total-2)+' – '+(s.total+2)+' 次之间。'},
     {ico:'🏅', t:'排名区间', d:'在违纪榜上大约排第 '+Math.max(1,s.rank-2)+' – '+(s.rank+2)+' 名。'},
@@ -7153,6 +7117,19 @@ function bindSheetLinks(root){
 function renderAWeekly(){
   var box = document.getElementById('ana-aWeekly'); if(!box) return;
   var body = box.querySelector('.anbody'); if(!body) return;
+  if(SINGLE){
+    var names = S.filter(function(s){ return s.w[0]>0; });
+    body.innerHTML = '<div class="ok" style="margin:4px 0 12px"><b>🕰️ 当前时间视图就是第一周。</b><br>'+
+      '这里看的是「最新一周 vs 上一周」，只有 1 周时没有上一周可比。'+
+      '把顶部「时间视图」切到「截至 W2」或更后面即可看到新增 / 回归 / 消失与环比。</div>'+
+      '<div class="statgrid">'+
+      '<div class="stat"><b>'+TOTAL+'</b><span>第一周累计</span></div>'+
+      '<div class="stat"><b>'+names.length+'</b><span>第一周上榜人数</span></div>'+
+      '<div class="stat"><b>'+EV.length+'</b><span>逐日记录条数</span></div></div>'+
+      '<div class="dsec" style="margin-top:14px">📅 第一周逐日记录</div>'+
+      '<div class="chips">'+EV.map(function(e){ return '<span class="pill">'+esc(e.date)+' · '+esc(SUBS[e.sub])+' · '+e.n.length+' 人</span>'; }).join('')+'</div>';
+    heatify(body); return;
+  }
   var cur = weekTotals[L], prev = weekTotals[L2], diff = cur - prev;
   var evs = EV.filter(function(e){ return e.w === NW; });
   var prevEvs = EV.filter(function(e){ return e.w === NW-1; });
@@ -7251,7 +7228,16 @@ function renderAWeekly(){
 function renderAImprove(){
   var box = document.getElementById('ana-aImprove'); if(!box) return;
   var body = box.querySelector('.anbody'); if(!body) return;
-  var H1 = HALF, H2 = NW-HALF;
+  if(SINGLE){
+    body.innerHTML = '<div class="ok" style="margin:4px 0 12px"><b>🕰️ 当前时间视图只有第一周。</b><br>'+
+      '进步榜需要把前 / 后半程按周均比较，只有 1 周时没有比较对象。'+
+      '把顶部「时间视图」切到「截至 W2」或更后面即可看到降幅榜。</div>'+
+      '<div class="statgrid"><div class="stat"><b>'+TOTAL+'</b><span>第一周累计</span></div>'+
+      '<div class="stat"><b>'+weekPeople[0]+'</b><span>第一周上榜人数</span></div>'+
+      '<div class="stat"><b>'+BAD.length+'</b><span>有记录的同学</span></div></div>';
+    heatify(body); return;
+  }
+  var H1 = Math.max(1, HALF), H2 = Math.max(1, NW-HALF);
   var rows = BAD.map(function(s){
     var a = s.first, b = s.last, ar = a/H1, br = b/H2;
     return {s:s, a:a, b:b, ar:ar, br:br, gain:ar-br, c:cleanStat(s)};
@@ -7390,13 +7376,18 @@ function duoDraw(){
     {k:'活跃周数（周）',     a:A.spread, b:B.spread, low:true},
     {k:'单周最高（次）',     a:A.maxw, b:B.maxw, low:true},
     {k:'涉及学科数（科）',   a:A.subSpread, b:B.subSpread, low:true},
-    {k:'前半程 W1–W'+HALF+'（次）', a:A.first, b:B.first, low:true},
-    {k:'后半程周均（次/周）', a:+(A.last/(NW-HALF)).toFixed(2), b:+(B.last/(NW-HALF)).toFixed(2), low:true},
+    (SINGLE ? {k:'本周次数（次）', a:A.w[0], b:B.w[0], low:true}
+            : {k:'前半程 W1–W'+HALF+'（次）', a:A.first, b:B.first, low:true}),
     {k:'最新一周（次）',     a:A.recent, b:B.recent, low:true},
     {k:'当前连续零违纪（周）', a:ca.cur, b:cb.cur, low:false},
     {k:'最长连续零违纪（周）', a:ca.best, b:cb.best, low:false},
     {k:'零违纪周数（周）',   a:ca.zeroWeeks, b:cb.zeroWeeks, low:false}
   ];
+  /* 多于一周时补回「后半程周均」；单周没有后半程，避免出现 W1–W0 / 除零 */
+  if(!SINGLE){
+    items.splice(5, 0,
+      {k:'后半程周均（次/周）', a:+(A.last/H2EFF).toFixed(2), b:+(B.last/H2EFF).toFixed(2), low:true});
+  }
   var sa=0, sb=0, rows='';
   items.forEach(function(it){
     var aw=false, bw=false;
@@ -7566,8 +7557,10 @@ function renderACal(){
   }
 
   h += '<div class="dsec">🕳️ 最长安静段</div>';
-  h += '<div class="ok">连续 <b>'+best+'</b> 天没有任何记录（'+fmtDay(bs)+' – '+fmtDay(be)+'）；'+
-    '区间共 '+spanDays+' 天，其中 <b>'+recDays+'</b> 天有记录（占 '+Math.round(recDays/spanDays*100)+'%）。</div>';
+  h += SINGLE
+    ? '<div class="ok">当前时间视图只有第一周（'+fmtDay(f)+' – '+fmtDay(l)+'），共 '+spanDays+' 天、其中 '+recDays+' 天有记录；安静段需要更长的区间才能看出来。</div>'
+    : ('<div class="ok">连续 <b>'+best+'</b> 天没有任何记录（'+fmtDay(bs)+' – '+fmtDay(be)+'）；'+
+       '区间共 '+spanDays+' 天，其中 <b>'+recDays+'</b> 天有记录（占 '+Math.round(recDays/spanDays*100)+'%）。</div>');
 
   h += '<div class="dsec">🔎 记录完整度（附）</div>';
   h += '<div class="xwrap"><table class="anmat"><thead><tr><th style="text-align:left">检查项</th><th>数值</th><th>说明</th></tr></thead><tbody>'+
@@ -8075,6 +8068,50 @@ function rcptDraw(){
   out.innerHTML = h;
 }
 
+
+/* ================================================================
+ * 🕰️ 时间视图：整体回到某一周
+ * 选「截至第 N 周」后写入 localStorage 并刷新；data.js 在启动阶段就按
+ * W1..WN 重建 EVENTS / RAW / WEEKS / NW 等全部数据层，于是总览、28 个分析、
+ * 31 个玩法、主页读数都自动变成「当时只有 N 周」的样子，无需逐处改代码。
+ * ================================================================ */
+function cutOptions(){
+  var opts = '<option value="0">全部数据（W1–W' + NW_ALL + '）</option>';
+  for(var i=1;i<NW_ALL;i++){
+    opts += '<option value="'+i+'">截至 '+SHORT_ALL[i-1]+'（'+WEEKS_ALL[i-1]+'）</option>';
+  }
+  return opts;
+}
+function cutBarHtml(id){
+  var hint = CUT
+    ? '当前：只统计 W1–W'+CUT+'，整站分析 / 游戏 / 读数都按这一周为止重算'
+    : '选一周，整站按那时的数据重算；分析与游戏都只用到该周为止';
+  return '<div class="cutbar">'+
+    '<span class="cut-ico">🕰️</span><span class="cut-lab">时间视图</span>'+
+    '<select id="'+id+'" class="cutsel" aria-label="时间视图：选择截止周">'+cutOptions()+'</select>'+
+    '<span class="cut-hint">'+hint+'</span></div>';
+}
+function cutUI(){
+  var hero = document.querySelector('header.hero');
+  if(hero && !document.getElementById('cutSelTop')){
+    hero.insertAdjacentHTML('beforeend', cutBarHtml('cutSelTop'));
+  }
+  var tags = document.querySelector('#home .hz-tags');
+  if(tags && !document.getElementById('cutSelHome')){
+    tags.insertAdjacentHTML('afterend', '<div class="cutwrap">'+cutBarHtml('cutSelHome')+'</div>');
+  }
+  ['cutSelTop','cutSelHome'].forEach(function(id){
+    var sel = document.getElementById(id);
+    if(!sel) return;
+    sel.value = String(CUT);
+    sel.addEventListener('change', function(){
+      var v = parseInt(sel.value, 10) || 0;
+      try{ localStorage.setItem(CUT_KEY, String(v)); }catch(e){}
+      try{ location.reload(); }catch(e){}
+    });
+  });
+}
+
 function init(){
   /* 任何交互之后补一次热力化，覆盖后来才生成的表格 */
   document.addEventListener('click', function(){
@@ -8084,6 +8121,7 @@ function init(){
     setTimeout(function(){ try{ heatify(document); }catch(e){} }, 50);
   });
   initTheme();
+  cutUI();
   initNames();
   buildDow();
   grpBind();
@@ -8144,6 +8182,8 @@ function init(){
     '· 页面中的周次、学科、星期几、小组等所有维度，均由这一份流水实时统计生成，周次口径合计 '+wsumv+' 次、学科口径 '+ssumv+' 次，两者完全对齐。<br>'+
     '· 统计区间：2026.'+EV[0].date+' – 2026.'+EV[EV.length-1].date+'，共'+WKT+'；全班分为 '+GROUPS.length+' 个小组。<br>'+
     '· 「不详」指原记录中未注明学科的违纪。<br>'+
+    (CUT ? '· 🕰️ <b>当前时间视图：截至 '+WEEKS_ALL[CUT-1]+'（W1–W'+CUT+'）</b>，'+
+           '整站数据、分析与游戏都只统计这一周为止的记录；在顶部「时间视图」选「全部数据」可回到完整周期。<br>' : '')+
     '· 姓名为脱敏形式（姓氏 + 首字母），导出与打印时保持原样。';
   /* 默认落在主页：整页换成终端风；时钟每秒走一格 */
   if(document.getElementById('home') && !document.querySelector('.tab.on[data-t]:not([data-t=home])')){
